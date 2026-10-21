@@ -1,0 +1,149 @@
+<div class="col-xl-12">
+   
+    <button  [ngStyle]="{'display' : service.AddTariff === true ? 'block' : 'none' }" type="button"  class="btn btn-primary"   (click)="addTariff(addtariff)"
+     >Add</button>
+    <app-card cardTitle="Tariff Details" [options]="false" blockClass="table-border-style">
+      <div class="table-responsive">
+        <table id="mytable" class="table table-hover">
+          <thead>
+            <tr>
+              <th>Tariff Type</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of tariffdata; let i=index">
+              <td>{{data.tariffname}}</td>
+              <td *ngIf="data.isactive=='1'"><label class="switch">
+                  <input type="checkbox" [checked]="data.isactive==1" (click)="changeTariffStatus(data)" />
+                  <span class="slider round"></span>
+                </label></td>
+  
+              <td *ngIf="data.isactive==0"><label class="switch">
+                  <input type="checkbox" [checked]="data.isactive==1" (click)="changeTariffStatus(data)" />
+                  <span class="slider round"></span> </label></td>
+              <td><a style="cursor: pointer;" data-toggle="modal" [routerLink]="['/admin/adminsettings/viewtariff']"
+                  (click)="getValueIndex(i)"><i style="color: #1e90ff; padding: 5px;" class=" fa fa-eye" 
+                    aria-hidden="true" title="View Tariff"></i></a>
+                <a style="cursor: pointer;" data-toggle="modal" title="Assign Parking Space" id="btn"
+                  (click)="getValueIndex(i)" (click)="getEndPointUnderme()" (click)="checkTariff()"
+                  (click)="assignTariff(assigntariff)"><i style="color: #1e90ff; padding: 5px;" class=" fas fa-tasks"
+                    aria-hidden="true"></i></a>
+              </td>
+  
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+<!-- Add Tariff Schema Defenition ................................................................................-->
+  <ng-template #addtariff let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Scheme Definition</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+    </div>
+    <div class="modal-body">
+        <form action="javascript:" autocomplete="off" id="schemedefenition" #f="ngForm">
+           
+            <div class="form-group">
+              <label for="inputdescription" class="required">Tariff Name</label>
+              <input type="text" class="form-control" name="tariffname" placeholder="Tariff Name"
+                [(ngModel)]="service.schemedefinition.tariffname" ngModel #tariffname="ngModel"
+                [ngClass]="{'is-invalid': !tariffname.valid && tariffname.errors.pattern}" pattern="[a-zA-Z ]*$" required>
+              <label *ngIf="!tariffname.valid && tariffname.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please Enter a valid Name.</label>
+            </div>
+            <div id="datafield">
+              <div class="app-modal-body" *ngFor="let object of formdata" value='1'>
+      
+                <div class="form-group" *ngIf="object.type=='text'">
+                  <label class="required">{{object.label}}</label>
+                  <input id={{object.name}} type="text" required class="form-control myinput" name="ob" #ob="ngModel" ngModel
+                    [ngClass]="{'is-invalid': !ob.valid && ob.errors.pattern}" pattern="[a-zA-Z ]*$">
+                  <label *ngIf="!ob.valid && ob.errors.pattern"
+                    class="error jquery-validation-error small form-text invalid-feedback">Please Enter a valid Input.</label>
+                </div>
+      
+                <div class="form-group" *ngIf="object.type=='dropdown'">
+                  <label>{{object.label}}</label>
+                  <!-- <select id={{object.name}} required class="form-control myinput">
+                    <option *ngFor="let data of value" [selected]="data == object.default">
+                      {{data}}</option>
+                  </select> -->
+                  <select id={{object.name}} #elm class="form-control myinput" required>
+                <!-- <option *ngFor="let data of typedefvalue" [selected]="data == object.default">
+                    {{(data == '*' ? 'All' : data)}}</option> -->
+              </select>
+                </div>
+      
+                <div class="form-group" *ngIf="object.type=='date'">
+                  <label class="required">{{object.label}}</label>
+                  <input id={{object.name}} required class="form-control myinput" type="date" name="date" [min]="myDate"
+                    (click)="dateFormat()">
+                  <!-- <ejs-datepicker class="myinput" id={{object.name}} name="date" placeholder='Select a date' format="dd/MM/yyyy"></ejs-datepicker> -->
+                </div>
+      
+                <div class="form-group" *ngIf="object.type=='array'">
+                  <!-- <label>{{object.label}}</label> -->
+                  <input id={{object.name}} required class="form-control myinput" value="array" hidden>
+                </div>
+      
+              </div>
+      
+            </div>
+      
+            <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              (click)="resetform()" (click)="ngOnInit()">Close</button>
+            <button type="button" class="pull-left btn btn-primary pull-right mb-2" data-dismiss="modal" [disabled]="!f.valid"
+            (click)="modal.close('Close click')" (click)="saveSchemeDefenition()">Save</button>
+          </form>
+    </div>
+  </ng-template>
+
+
+  <!-- Assigining Tariff to the corresponding Parking Space...................................................... -->
+  <ng-template #assigntariff let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Parking Space Tariff Assigning</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+    </div>
+    <div class="modal-body" *ngFor="let Tname of indexeddata">
+        <form #form='ngForm'>
+            <div class="form-group">
+              <h3 style="text-align: center;">{{Tname.tariffname}}</h3>
+            </div>
+            <div *ngIf='viewcount==1' class="form-group"><label>
+                <h4>Organizations</h4>
+              </label>
+              <select id="orgtypename" class="select2_demo_1 form-control" style="width: 100%"
+                (change)="getParkingSpaces($event)">
+                <option selected>Choose a Organization</option>
+                <option *ngFor="let values of endpoint" [value]="values.orgid">{{values.org_name}}</option>
+                <!-- <option>All</option> -->
+              </select>
+            </div>
+            <h4 *ngIf='viewcount==1'>ParkingSpace Name</h4>
+            <div *ngIf='viewcount==1' class="form-group">
+    
+              <div *ngFor="let value of parkingspace; let i = index">
+                <label *ngIf="dropvalue==1">
+                  <input [id]="value.parking_lot_id" class="mycheckbox " type="checkbox" [value]="value.parking_lot_id"
+                    (change)="toggleEditable($event)" (click)="parkingLotsAvail($event)" />
+                  {{value.parking_lot_name}}
+                </label>
+    
+              </div>
+              <button type="button" *ngIf="viewvalue==1" class="btn btn-primary me-2 mb-2" data-dismiss="modal"
+                (click)="assignParkSpace(value)" (click)="modal.close('Close click')">Save</button>
+              <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                (click)="ngOnInit()">Close</button>
+    
+            </div>
+            <h4 *ngIf='viewcount==0' style="color: red; text-align: center;">Tariff is not completed it cannot be assigned
+            </h4>
+          </form>
+    </div>
+  </ng-template>

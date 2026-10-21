@@ -1,0 +1,148 @@
+<div class="row">
+    <div class="col-xl-12">
+       <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <!-- <span> ➔ <i class="fas fa-chevron-circle-right"></i> </span> -->
+      <span> <i  class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3" ></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+    <option [value]="null"  selected>Select</option>
+    <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+  </select>
+  </div>
+      <div class="row">
+        <div class="col-sm-2">
+          <br /><br />
+          <button  type="button" class="btn drp-icon btn-rounded btn-primary"
+        data-toggle="modal" (click)="addPos(add)"><i class="feather icon-plus"></i></button>
+        </div>
+      </div>
+  <app-card cardTitle="POS Device Details" [options]="false" blockClass="table-border-style">
+    <div class="table-responsive">
+      <table class="table table-hover" id="mytable1">
+        <thead>
+          <tr>
+            <th>Serial Number</th>
+            <th>PID</th>
+            <th>SIM Number</th>
+             <th>Parking Space</th>
+             <th>Created Date</th>
+            <th>Status</th>
+             <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of pos; let i = index">
+  
+            <td>{{data.serialno}}</td>
+            <td >{{data.pid}}</td>
+            <td>{{data.simno}}</td>
+            <td>{{data.parking_lot_name}}</td>
+            <td>{{data.createddate}}</td>
+             <td *ngIf="data.isactive==1"><label class="switch">
+                    <input type="checkbox" [checked]="data.isactive==1" (click)="changeStatus(data)" />
+                    <span class="slider round"></span> </label></td>
+                <td *ngIf="data.isactive==0"><label class="switch">
+                    <input type="checkbox" [checked]="data.isactive==1" (click)="changeStatus(data)" />
+                    <span class="slider round"></span> </label></td>
+                    <td ><a style="cursor: pointer;"
+                    data-toggle="modal" (click)="getIndex(i)" (click)="editData(edit)"><i style="color: #1e90ff"
+                      class="fas fa-pencil-alt" aria-hidden="true"></i></a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
+  </div>
+  <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+<!-- Add Pos details............................ -->
+  <ng-template #add let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add POS Device Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off" #f="ngForm">
+
+            <div class="form-group"><label class="required">Serial Number</label>
+              <input type="text" class="form-control" required placeholder="Serail Number" name="serialno"
+                [ngClass]="{'is-invalid': !serialno.valid && serialno.errors.pattern}" ngModel #serialno="ngModel" required
+                ngModel  maxlength="16" [(ngModel)]="service.posdata.serialno">
+              <label *ngIf="!serialno.valid"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid serial number
+                .</label>
+            </div>
+            <div class="form-group"><label>PID</label>
+              <input type="text" class="form-control" placeholder="PID" name="pid" ngModel #pid="ngModel" ngModel [(ngModel)]="service.posdata.pid"
+               >
+            </div>
+             <div class="form-group"><label>SIM Nmber</label>
+              <input type="text" class="form-control" placeholder="SIM Number" name="simno" ngModel #simno="ngModel" ngModel [(ngModel)]="service.posdata.simno"
+               >
+            </div>
+            <div class="form-group">
+              <label class="required">Parking Space</label>
+              <select class="select2_demo_1 form-control"  name="parking_lot_id" required [(ngModel)]="service.posdata.parking_lot_id">
+                <option value="" disabled selected>Select parking area</option>
+                <option *ngFor="let value of areaname" [value]="value.parking_lot_id">{{value.parking_lot_name}}</option>
+              </select>
+            </div>
+            
+              <button type="button" class="btn btn-primary me-2 mb-2" [disabled]="!f.valid" data-dismiss="modal"
+              (click)="modal.close('Close click')" (click)="savePos()">Save</button>
+              <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+              (click)="modal.close('Close click')" >Close</button>
+            
+          </form>
+    </div>
+  </ng-template>
+  <!-- .......................................................... -->
+
+<!-- 
+Edit Pos details ..................................................................-->
+  <ng-template #edit let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Edit POS Device Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngFor="let editdata of dataindex">
+        <form autocomplete="off" #f="ngForm">
+
+            <div class="form-group"><label class="required">Serial Number</label>
+              <input type="text" class="form-control" required placeholder="Serail Number" name="serialno"
+                [ngClass]="{'is-invalid': !serialno.valid && serialno.errors.pattern}" ngModel #serialno="ngModel" required
+                ngModel  maxlength="16" [(ngModel)]="editdata.serialno">
+              <label *ngIf="!serialno.valid"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid serial number
+                .</label>
+            </div>
+            <div class="form-group"><label>PID</label>
+              <input type="text" class="form-control" placeholder="PID" name="pid" ngModel #pid="ngModel" ngModel [(ngModel)]="editdata.pid"
+               >
+            </div>
+             <div class="form-group"><label>SIM Nmber</label>
+              <input type="text" class="form-control" placeholder="SIM Number" name="simno" ngModel #simno="ngModel" ngModel [(ngModel)]="editdata.simno"
+               >
+            </div>
+            <div class="form-group">
+              <label class="required">Parking Space</label>
+              <select class="select2_demo_1 form-control"  name="parking_lot_id" required [(ngModel)]="editdata.parking_lot_id">
+                <option value="" disabled selected>Select parking area</option>
+                <option *ngFor="let value of areaname" [value]="value.parking_lot_id">{{value.parking_lot_name}}</option>
+              </select>
+            </div>
+            
+              <button type="button" class="btn btn-primary me-2 mb-2" [disabled]="!f.valid" data-dismiss="modal"
+              (click)="modal.close('Close click')"  (click)="editPOSdetails(editdata)">Save</button>
+              <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+              (click)="modal.close('Close click')" >Close</button>
+            
+          </form>
+    </div>
+  </ng-template>

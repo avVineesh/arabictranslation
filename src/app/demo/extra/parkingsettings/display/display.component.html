@@ -1,0 +1,239 @@
+<div class="row">
+    <div class="col-xl-12">
+        
+      <button [ngStyle]="{'display': service.add == true ? 'block' : 'none'}" type="button" class="btn btn-primary"
+        data-toggle="modal" (click)="addDisplay(add)">Add New</button>
+      <app-card cardTitle="Display Details" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table class="table table-hover" id="displaytable">
+            <thead>
+              <tr>
+                <th>Device Id</th>
+                <th>Model Name</th>
+                <th>Display Type</th>
+                <th>Parking Space Name</th>
+                <th>Boombarrier ID</th>
+                <th>Display IP</th>
+                <th>Lane ID</th>
+                <th>Created Date</th>
+                <th>Warranty Start Date</th>
+                <th>Warranty End Date</th>
+                <th>Password</th>
+                <th>Status</th>
+                
+                <th [ngStyle]="{'display': service.edit == true ? 'block' : 'none'}">Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of data;let i = index;">
+                <td>{{data.deviceid}}</td>
+                <td>{{data.modelname}}</td>
+                <td>{{data.displaytype}}</td>
+                <td>{{data.parking_lot_name}}</td>
+                <td>{{data.boombarrierid}}</td>
+                <td>{{data.ip}}</td>
+                <td>{{data.laneid}}</td>
+                <td>{{data.createddate| date:'dd-MMM-yyy'}}</td>
+                <td>{{data.warrantystartdate| date:'dd-MMM-yyy'}}</td>
+                <td>{{data.warrantyenddate| date:'dd-MMM-yyy'}}</td>
+                <td>{{data.password}}</td>
+                <td *ngIf="data.isactive==1"><label class="switch">
+                    <input type="checkbox" [checked]="data.isactive==1" (click)="changeStatus(data)" />
+                    <span class="slider round"></span> </label></td>
+                <td *ngIf="data.isactive==0"><label class="switch">
+                    <input type="checkbox" [checked]="data.isactive==1" (click)="changeStatus(data)" />
+                    <span class="slider round"></span> </label></td>
+                   
+                <td  [ngStyle]="{'display': service.edit == true ? 'block' : 'none'}"><a style="cursor: pointer;"
+                    data-toggle="modal" (click)="getIndex(i)" (click)="editDisplay(edit)"><i style="color: #1e90ff"
+                      class="fas fa-pencil-alt" aria-hidden="true"></i></a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+
+  <!-- Add Display Details .........................-->
+  <ng-template #add let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel" >Add Display Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form action="javascript:" #form="ngForm" autocomplete="off">
+            <div class="form-group">
+              <label for="deviceid" class="required">Display ID</label>
+              <input type="text" class="form-control" placeholder="Display ID" [(ngModel)]="service.displaydata.deviceid"
+                [ngClass]="{'is-invalid': !deviceid.valid }" ngModel #deviceid="ngModel" required
+                name="deviceid" ngModel  maxlength="30">
+              <label *ngIf="!deviceid.valid "
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid display id
+                .</label>
+            </div>
+            <div class="form-group">
+              <label for="modelname" class="required">Model Name</label>
+              <input type="text" class="form-control" placeholder="Model Name" [(ngModel)]="service.displaydata.modelname"
+                ngModel #modelname="ngModel" required name="modelname">
+            </div>
+            <div class="form_group">
+              <label class="required">Parking Space</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="parking_lot_id" required
+                [(ngModel)]="service.displaydata.parking_lot_id" (change)='getBoombarrierList($event)'>
+                <option value="" disabled selected>Select parking area</option>
+                <option *ngFor="let value of parkingarea" [value]="value.parking_lot_id">{{value.parking_lot_name}}</option>
+              </select>
+            </div>
+            <div class="form_group">
+              <label class="required">Type</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="type" required
+                [(ngModel)]="service.displaydata.displaytype" (change)="getDisplayType($event)">
+                <option value="" disabled selected>Select Display type</option>
+                <option value="availability">Availability</option>
+                <option value="pathfinder">Path Finder</option>
+                <option value="message">Message Display</option>
+              </select>
+            </div>
+            <div class="form_group" *ngIf="showbblist==1">
+              <label class="required">Boombarrier</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="boombarrierid"
+                [(ngModel)]="service.displaydata.boombarrierid">
+                <option value="" disabled selected>Select boombarrier</option>
+                <option *ngFor="let data of boombarrierlist" [value]="data.deviceid">{{data.boombarriername}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="laneid" >Lane ID</label>
+              <input type="text" class="form-control" placeholder="Parking Lane ID" [(ngModel)]="service.displaydata.laneid"
+                ngModel #laneid="ngModel"  name="laneid">
+            </div>
+            <div class="form-group">
+              <label for="ip" >IP</label>
+              <input type="text" class="form-control" placeholder="Display IP" [(ngModel)]="service.displaydata.ip"
+                ngModel #ip="ngModel"  name="ip">
+            </div>
+            <div class="form-group">
+              <label for="digit" >Digit</label>
+              <input type="number" class="form-control" placeholder="Display Digit" [(ngModel)]="service.displaydata.digit"
+                ngModel #digit="ngModel"  name="digit">
+            </div>
+            <div class="form-group"><label>Warranty Start Date</label>
+              <input id="warrantystartdate" type="date" class="form-control" placeholder="Warranty Start Date"
+                name="warrantystartdate" ngModel #warrantystartdate="ngModel"
+                [(ngModel)]="service.displaydata.warrantystartdate">
+            </div>
+            <div class="form-group"><label>Warranty End Date</label>
+              <input id="warrantyenddate" [min]="myDate" type="date" class="form-control" placeholder="Warranty End Date"
+                name="warrantystartdate" ngModel (click)="dateFormat()" #warrantyenddate="ngModel"
+                [(ngModel)]="service.displaydata.warrantyenddate">
+            </div>
+            <div class="form-group">
+              <label for="password" class="required">Device Password</label>
+              <input type="password" id="password" name="password" class="form-control" maxlength="4" minlength="4"
+                placeholder="Device Password" #password="ngModel" [(ngModel)]="service.displaydata.password"
+                [ngClass]="{'is-invalid': !password.valid && password.errors.pattern}" ngModel pattern="\d{4}" required>
+              <label *ngIf="!password.valid && password.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid
+                password.</label>
+            </div>
+            <div class="app-modal-footer">
+              <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                (click)="resetform()">Close</button>
+              <button type="button" class="pull-left btn btn-primary pull-right mb-2" data-dismiss="modal" [disabled]="!form.valid"
+              (click)="modal.close('Close click')" (click)="saveDisplay()">Save</button>
+            </div>
+          </form>
+    </div>
+  </ng-template>
+  <!-- ......................... -->
+
+
+  <!-- Edit Display Details.................................... -->
+  <ng-template #edit let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel" >Edit Display Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngFor="let editdata of indexdatata">
+        <form action="javascript:" #form="ngForm" autocomplete="off">
+            <div class="form-group">
+              <label for="deviceid" class="required">Device ID</label>
+              <input type="text" class="form-control" placeholder="Device ID" [(ngModel)]="editdata.deviceid"
+                [ngClass]="{'is-invalid': !deviceid.valid }" ngModel #deviceid="ngModel" required
+                name="deviceid" ngModel  maxlength="30">
+              <label *ngIf="!deviceid.valid"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid device id
+                .</label>
+            </div>
+            <div class="form-group">
+              <label for="modelname" class="required">Model Name</label>
+              <input type="text" class="form-control" placeholder="Model Name" [(ngModel)]="editdata.modelname" ngModel
+                #modelname="ngModel" required name="modelname">
+            </div>
+            <div class="form_group">
+              <label class="required">Parking Space</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="parking_lot_id" required
+                [(ngModel)]="editdata.parking_lot_id">
+                <option *ngFor="let value of parkingarea" [value]="value.parking_lot_id">{{value.parking_lot_name}}</option>
+              </select>
+            </div>
+            <div class="form_group">
+              <label class="required">Type</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="type" required [(ngModel)]="editdata.displaytype"
+                (change)="getDisplayType($event)">
+                <option value=null>Select Display Type</option>
+                <option value='availability'>Availability</option>
+                <option value='pathfinder'>Path Finder</option>
+                <option value='message'>Message Display</option>
+              </select>
+            </div>
+            <div class="form_group" *ngIf="showbblist==1">
+              <label class="required">Boombarrier</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="boombarrierid"
+                [(ngModel)]="editdata.boombarrierid">
+                <option value=null disabled selected>Select boombarrier</option>
+                <option *ngFor="let data of boombarrierlist" [value]="data.deviceid">{{data.boombarriername}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ip" >Device IP</label>
+              <input type="text" class="form-control" placeholder="Device IP" [(ngModel)]="editdata.ip" ngModel
+                #ip="ngModel" name="ip">
+            </div>
+            <div class="form-group">
+              <label for="digit" >Digit</label>
+              <input type="number" class="form-control" placeholder="Digit" [(ngModel)]="editdata.digit" ngModel
+                #digit="ngModel" name="digit">
+            </div>
+           
+            <div class="form-group"><label>Warranty Start Date</label>
+              <input id="warrantystartdate" type="date" class="form-control" placeholder="Warranty Start Date"
+                name="warrantystartdate" ngModel #warrantystartdate="ngModel" [(ngModel)]="editdata.warrantystartdate">
+            </div>
+            <div class="form-group"><label>Warranty End Date</label>
+              <input id="warrantyenddate" [min]="myDate" type="date" class="form-control" placeholder="Warranty End Date"
+                name="warrantyenddate" ngModel (click)="dateFormat()" #warrantyenddate="ngModel"
+                [(ngModel)]="editdata.warrantyenddate">
+            </div>
+            <div class="form-group">
+              <label for="password" class="required">Device Password</label>
+              <input type="password" id="password" name="password" class="form-control" maxlength="4" minlength="4"
+                placeholder="Device Password" #password="ngModel" [(ngModel)]="editdata.password"
+                [ngClass]="{'is-invalid': !password.valid && password.errors.pattern}" ngModel pattern="\d{4}" required>
+              <label *ngIf="!password.valid && password.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid
+                password.</label>
+            </div>
+            <div class="app-modal-footer">
+              <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                (click)="ngOnInit()">Close</button>
+              <button type="button" class="pull-left btn btn-primary pull-right mb-2" data-dismiss="modal" [disabled]="!form.valid"
+              (click)="modal.close('Close click')" (click)="editData(editdata)">Save</button>
+            </div>
+          </form>
+    </div>
+  </ng-template>
+  <!-- .................................. -->

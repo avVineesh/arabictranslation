@@ -1,0 +1,239 @@
+<!-- <div class="row">
+  <div class="col-xl-12">
+      <h4 style="font-weight: bold; float: left;">Filter Options</h4>
+  </div>
+</div> -->
+<!-- <div class="row">
+  <div class="col-xl-12">
+    
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Hierarchy" value="1" id="radio-p-fill-10" [(ngModel)]="filteroption" (click)="ngOnInit()">
+                <label for="radio-p-fill-10" class="cr">Hierarchy</label>
+              </div>
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Parkingspace" value="0" id="radio-p-fill-11" [(ngModel)]="filteroption">
+                <label for="radio-p-fill-11" class="cr">Parkingspace</label>
+              </div>
+  </div>
+</div> -->
+<div class="row">
+   <!-- <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==1">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <span> <i  class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3" ></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+    <option [value]="null"  selected>Select</option>
+    <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+  </select>
+  </div> -->
+
+  <!-- <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==0">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">Select a parkingspace</span>
+    </ng-container>
+     <ng-container >
+    
+            <select id="parkingarea" class="entity-dropdown" (change)="parkispaceFilter($event)">
+              <option disabled selected>Select</option>
+              <option *ngFor="let option of parkingspacelist" [value]="option.parking_lot_id">{{option.parking_lot_name}}</option>
+            </select>
+        
+     </ng-container>
+   
+  </div> -->
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button   [ngStyle]="{'display': service.edit == true ? 'block' : 'none'}"  type="button" style="margin:5px;" class="btn btn-primary"
+              (click)="filtData(filt)">Select Data</button>
+          </div>
+        </div>
+         <div class="col-sm-2">
+          <div class="form-group"><label>Date(From)</label>
+            <input type="date" class="form-control" [ngModel]="filtdate | date:'yyyy-MM-dd'" (ngModelChange)="filtdate = $event">
+          </div>
+        </div>
+         <div class="col-sm-2">
+          <div class="form-group"><label>Date(To)</label>
+            <input type="date" class="form-control" [ngModel]="filttodate | date:'yyyy-MM-dd'" (ngModelChange)="filttodate = $event">
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button    type="button" style="margin:5px;" class="btn btn-primary"
+              (click)="getReconiliationdata()">Filter</button>
+              </div>
+        </div>
+      </div>
+
+    
+      <app-card cardTitle="Bank Reconciliation-File Upload" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table  class="table table-lg table-styling" id="mytable1">
+            <thead>
+              <tr>
+  
+                <th>SI No</th>
+                <th>Agency</th>
+                <th>File Name</th>
+                <th>Date</th>
+                <th style="text-align: center;">Success(count)</th>
+                <th style="text-align: center;">Failure(count)</th>
+                <th style="text-align: center;">Total(count)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of reconciliationdata;let i=index">
+                <td scope="row">{{i+1}}</td>
+                <td >{{data.org_name}}</td>
+                <td>{{data.filename}}</td>
+                <td>{{data.createddate}}</td>
+                <td style="text-align: center;" (click)="getSuccess(suc)" (click)="getIndexData(i)" (click)="getAcceptedTransaction()" > <label class="label label-md label-primary" style="cursor: pointer;">{{data.success}}</label></td>
+                <td style="text-align: center;" (click)="getFailed(fil)" (click)="getIndexData(i)" (click)="getFailedTransaction()"><label class="label label-md label-danger" style="cursor: pointer;">{{data.failure}}</label></td>
+                <td style="text-align: center;"><label class="label label-md label-warning">{{data.total}}</label></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+     <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+  
+  <ng-template #filt let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Select Data for Reconciliation</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form action="javascript:" #form="ngForm" autocomplete="off">
+           <div class="form-group"><label class="required">Parking Space</label>
+            <select id="parkingarea" class="select2_demo_1 form-control" style="width: 100%"  (change)="parkispaceFilter($event)" required>
+              <option disabled selected>Select</option>
+              <option *ngFor="let option of parkingspacelist" [value]="option.parking_lot_id">{{option.parking_lot_name}}</option>
+            </select>
+          </div>
+        <div class="form-group"><label class="required">Payment Mode</label>
+            <select id="paymentmode" class="select2_demo_1 form-control" style="width: 100%"  (change)="getPaymentMode($event)" required>
+              <option disabled selected>Select payment Mode</option>
+              <option [value]="'manual'">POS</option>
+               <option [value]="'fastag'">Fastag</option>
+              <option [value]="'Razorpay'">Booking</option>
+            </select>
+          </div>
+          
+           <div  class="form-group"><label class="required">From Date</label>
+            <input  type="date" class="form-control" [ngModel]="date | date:'yyyy-MM-dd'" (change)="getFromdate($event)" required>
+          </div>
+
+            <div  class="form-group"><label class="required">To Date</label>
+              <input   type="date" class="form-control" [ngModel]="date | date:'yyyy-MM-dd'" (change)="getTodate($event)" required>
+            </div>
+       
+        <button  type="button"  class="btn btn-primary me-2 mb-2"
+              (click)="getCustomFastagData()" (click)="modal.close('Close click')" [disabled]="!form.valid">Filter</button>
+          <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" #bottonclose
+          (click)="modal.close('Close click')">Cancel</button>
+          </form>
+    </div>
+  </ng-template>
+
+
+  <ng-template #rec let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Reconciliation</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group"><label for="layout">Upload the Excel file for generating reconciliation report</label>
+            <div class="dropzone">
+              <input type="file" (change)="addFile($event)" placeholder="Upload file" #myInput required
+                accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+            </div>
+          </div>
+          <!-- <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="exampleModalLong.hide()">Save</button> -->
+          <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" #buttonclose
+          (click)="modal.close('Close click')">Cancel</button>
+    </div>
+  </ng-template>
+
+  <ng-template #suc let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel" style="color: green;">Success Transactions -- {{successtotal}} RS</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngIf="viewaccept==0">
+        <div class="table-responsive">
+            <table  class="table table-lg table-styling" id="mytable2">
+              <thead>
+                <tr>
+    
+                  <th>Parkingspace</th>
+                  <th>POS/Plaza ID</th>
+                  <th>Amount</th>
+                  <th>Transaction ID</th>
+                  <th>Payment Mode</th>
+                  <th>Transaction Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let accdata of accepteddata">
+                  <td>{{accdata.parking_lot_name}}</td>
+                  <td>{{accdata.posid}}</td>
+                  <td>{{accdata.txnamount}}</td>
+                  <td>{{accdata.billinvoice}}</td>
+                   <td>{{accdata.paymentmode}}</td>
+                  <td>{{accdata.txndate}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+    </div>
+    <div class="modal-body" *ngIf="viewaccept==1">
+        <h3 style="color: red; text-align: center;">No Successfull Transaction</h3>
+    </div>
+  </ng-template>
+
+  <ng-template #fil let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel" style="color: red;">Failed Transactions -- {{failedtotal}} RS</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngIf="viewfailed==0">
+        <div class="table-responsive">
+            <table  class="table table-lg table-styling" id="mytable3">
+              <thead>
+                <tr>
+    
+                 <th>Parkingspace</th>
+                  <th>POS/Plaza ID</th>
+                  <th>Amount</th>
+                  <th>Transaction ID</th>
+                  <th>Payment Mode</th>
+                  <th>Transaction Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let failed of faileddata">
+                  <td>{{failed.parking_lot_name}}</td>
+                  <td>{{failed.posid}}</td>
+                  <td>{{failed.txnamount}}</td>
+                  <td>{{failed.billinvoice}}</td>
+                   <td>{{failed.paymentmode}}</td>
+                  <td>{{failed.txndate}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+    </div>
+    <div class="modal-body" *ngIf="viewfailed==1">
+        <h3 style="color: red;text-align: center;">No Failed Transaction</h3>
+    </div>
+  </ng-template>

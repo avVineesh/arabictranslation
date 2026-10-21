@@ -1,0 +1,464 @@
+<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<div class="row" id="print-section">
+<div class="container-fluid">
+
+  <!-- Filter Card -->
+  <div class="card shadow-sm border-0 rounded-3 p-3 mb-3">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+      <h5 class="fw-bold mb-0">Filter Options</h5>
+
+      <div class="text-end">
+        <div class="fw-semibold">{{date | date:'shortTime'}}</div>
+        <small class="text-muted">{{date | date:'fullDate'}}</small>
+      </div>
+    </div>
+
+    <!-- Toggle Buttons -->
+    <div class="d-flex gap-2 mb-3">
+      <button class="btn"
+        [ngClass]="filteroption==1 ? 'btn-primary' : 'btn-outline-primary'"
+        (click)="filteroption=1; ngOnInit()">
+        Hierarchy
+      </button>
+
+      <button class="btn"
+        [ngClass]="filteroption==0 ? 'btn-primary' : 'btn-outline-primary'"
+        (click)="filteroption=0">
+        Parkingspace
+      </button>
+    </div>
+
+    <!-- Hierarchy Section -->
+    <div *ngIf="filteroption==1"
+      class="d-flex flex-wrap align-items-center gap-2 mb-3">
+
+      <span class="badge bg-light text-dark p-2"
+        (click)="ngOnInit()">
+        {{orgname}}
+      </span>
+
+      <ng-container *ngFor="let item of nameArray">
+        <i class="fas fa-chevron-right text-primary small"></i>
+
+        <span class="badge bg-info text-dark p-2"
+          (click)="getId(item.id)">
+          {{ item.name }}
+        </span>
+      </ng-container>
+
+      <select *ngIf="resLength!='2'"
+        class="form-select form-select-sm w-auto"
+        (change)="selectEvent($event)">
+        <option [value]="null">Select</option>
+        <option *ngFor="let option of orglist"
+          [value]="option.id">
+          {{option.name}}
+        </option>
+      </select>
+
+    </div>
+
+    <!-- Parking Section -->
+    <div *ngIf="filteroption==0"
+      class="d-flex align-items-center gap-3 mb-3">
+
+      <span class="text-muted">Select a parkingspace</span>
+
+      <select class="form-select form-select-sm w-auto"
+        (change)="parkispaceFilter($event)">
+        <option disabled selected>Select</option>
+        <option *ngFor="let option of parkingspacelist"
+          [value]="option.parking_lot_id">
+          {{option.parking_lot_name}}
+        </option>
+      </select>
+
+    </div>
+
+    <!-- Date Filters -->
+    <div class="row g-3 align-items-end">
+
+      <div class="col-md-3">
+        <label class="form-label small text-muted">From</label>
+        <input type="date" class="form-control form-control-sm"
+          [(ngModel)]="fromdate" (ngModelChange)="fromdate = $event">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label small text-muted">To</label>
+        <input type="date" class="form-control form-control-sm"
+          [(ngModel)]="todate" (ngModelChange)="todate = $event">
+      </div>
+
+      <div class="col-md-4 d-flex align-items-end gap-1">
+  <button class="btn btn-primary btn-sm" (click)="dateFilter()">
+    <i class="fas fa-filter me-1"></i> Filter
+  </button>
+
+  <button class="btn btn-secondary btn-sm" (click)="downloadPDF()">
+    <i class="fas fa-download me-1"></i> PDF
+  </button>
+</div>
+
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+  <div class="analysis-header">
+    <div class="row">
+      <div class="col-sm-1">
+        <h2>Analysis</h2>
+      </div>
+      <div class="col-sm-1">
+        <h3 (click)="changetoActual()" [ngClass]="{ 'selected-tab': selectedTab === 'actual' }">Actual</h3>
+      </div>
+    <div class="col-sm-1">
+      <h3 (click)="changetoProjected()" [ngClass]="{ 'selected-tab': selectedTab === 'projected' }">Projected</h3>
+    </div>
+    
+    </div>
+    
+    <div class="underline">
+      <span class="underline"></span>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="present=='1'">
+
+ 
+  @for (sale of sales; track sale) {
+    <div class="{{ sale.design }} col-xl-3" >
+      @defer (on viewport) {
+        <app-card cardTitle="{{ sale.title }}"   [options]="false" >
+          <div class="row d-flex align-items-center">
+            <div class="col-9">
+              <h3 class="f-w-300 d-flex align-items-center m-b-0">
+                <i class="feather {{ sale.icon }} f-30 m-r-10"></i>
+                {{ sale.amount }}
+              </h3>
+            </div>
+            <div class="col-3 text-end">
+              <p class="m-b-0">{{ sale.percentage }}</p>
+            </div>
+          </div>
+          <div class="m-t-30">
+            <h5>{{sale.pre}}</h5>
+            <ngb-progressbar type="progress-bar {{ sale.progress_bg }}" height="7px" [value]="sale.progress"></ngb-progressbar>
+             
+          </div>
+        </app-card>
+      } @placeholder {
+        <app-placeholder-card-1 [height]="169" />
+      }
+    </div>
+  }
+  <div class="col-xl-3">
+    @defer (on viewport) {
+      <app-card cardClass="card theme-bg2" blockClass="text-center" [hidHeader]="true" [options]="false">
+        <!-- <img class="img-female" src="assets/images/user/user-1.png" alt="visitor-user" /> -->
+      <h5 class="text-white m-0">
+  TOP REVENUE PARKINGSPACE 
+  {{ showoption === 0 ? 'MONTHLY' : ('FROM ' + fromdate + ' TO ' + todate) }}
+</h5>
+        <h6 class="text-white m-0">with respect to actual parking count</h6>
+        <h3 class="text-white m-t-10 f-w-300">{{lotname}} </h3>
+        <h4 class="text-white m-t-10 f-w-300">{{totalamount}} Rupees</h4>
+        <!-- <img class="img-men" src="assets/images/user/user-2.png" alt="visitor-user" /> -->
+      </app-card>
+    } @placeholder {
+      <app-placeholder-card-1 [height]="150" />
+    }
+  </div>
+  
+  <div class="col-xl-12 col-md-6">
+    @defer (on viewport) {
+   <app-card 
+  [cardTitle]="showoption === 0 
+    ? 'Daily Vehicle Count Statistics' 
+    : 'Vehicle Count Statistics (FROM ' + fromdate + ' TO ' + todate + ')'" 
+  [options]="false">
+        <div id="container1" style="height:340px;"></div>
+      </app-card>
+    } @placeholder {
+      <app-placeholder-card-1 [height]="572" />
+    }
+  </div>
+
+  
+  <div class="col-xl-12 col-md-6">
+    @defer (on viewport) {
+      <app-card 
+  [cardTitle]="showoption === 0 
+    ? 'Payment Daily Statistics' 
+    : 'Payment Statistics (FROM ' + fromdate + ' TO ' + todate + ')'" 
+  [options]="false">
+        <div id="container2" style="height:340px;"></div>
+      </app-card>
+    } @placeholder {
+      <app-placeholder-card-1 [height]="572" />
+    }
+  </div> 
+
+  <div class="col-xl-6 col-md-6 ">
+    <div class="card theme-bg">
+      <div class="card-header borderless">
+        <h5>Vacant Slots</h5>
+      </div>
+      <div class="card-body">
+        <ngb-carousel [showNavigationArrows]="true" [showNavigationIndicators]="false" [interval]="5000">
+          <ng-template ngbSlide *ngFor="let card of occupancydata">
+            <div class="col-md-6 col-xl-12 h-100">
+              @defer (on viewport) {
+                <app-card cardClass="theme-bg" [hidHeader]="true"  [options]="false" class="h-100 d-flex flex-column justify-content-between">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="fw-bold text-white mb-0">{{ card.parking_lot_name }}</h2>
+                    <i class="bi bi-geo-alt-fill text-muted fs-5"></i>
+                  </div>
+            
+                  <div class="mt-2">
+                    <h4 class="text-white">Available parking slots</h4>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="display-6 fw-semibold text-white" >{{ card.vacant }}</span>
+                      <span class="fs-3 text-secondary text-white">/ {{ card.total_slots }}</span>
+                    </div>
+            
+                    <ngb-progressbar 
+                      [value]="card.occupancy_percentage" 
+                      [type]="getOccupancyColor(card.occupancy_percentage)"
+                      height="10px"
+                      class="rounded-pill">
+                    </ngb-progressbar>
+            
+                    <div class="text-end mt-3  fs-4 text-white">
+                      {{ card.occupancy_percentage }}% Occupied
+                    </div>
+                  </div>
+                </app-card>
+              } @placeholder {
+                <app-placeholder-card-1 [height]="184" class="h-100" />
+              }
+            </div>
+            
+          </ng-template>
+         
+        </ngb-carousel>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6 col-md-6 ">
+   
+    <app-card 
+  [cardTitle]="showoption === 0 
+    ? 'Payment Mode Distribution' 
+    : 'Payment Mode Distribution (FROM ' + fromdate + ' TO ' + todate + ')'" 
+  [options]="false">
+     
+     <div class="payment-summary-minimal row text-center g-3">
+  <div class="col-6 col-md-4 col-lg">
+    <span>Cash</span>
+    <strong>₹{{ cashTotal }}</strong>
+  </div>
+
+  <div class="col-6 col-md-4 col-lg">
+    <span>UPI</span>
+    <strong>₹{{ upiTotal }}</strong>
+  </div>
+
+  <div class="col-6 col-md-4 col-lg">
+    <span>QR</span>
+    <strong>₹{{ qrtotal }}</strong>
+  </div>
+
+  <div class="col-6 col-md-4 col-lg">
+    <span>Card</span>
+    <strong>₹{{ cardTotal }}</strong>
+  </div>
+
+  <div class="col-6 col-md-4 col-lg">
+    <span>Booking</span>
+    <strong>₹{{ bookingTotal }}</strong>
+  </div>
+
+  <div class="col-6 col-md-4 col-lg">
+    <span>Fastag</span>
+    <strong>₹{{ fastagtotal }}</strong>
+  </div>
+</div>
+
+      <div id="piecontainer" style="width: 100%; height: 400px;"></div>
+    </app-card>
+    
+  </div>
+
+  <div class="col-xl-4 col-md-12">
+     @defer (on viewport) {
+         <app-card 
+  [cardTitle]="showoption === 0 
+    ? 'Amount Collected by Agencies- Monthly' 
+    : 'Amount Collected by Agencies (FROM ' + fromdate + ' TO ' + todate + ')'"  cardClass="note-bar" blockClass="p-0"
+  [options]="false">
+        @for (task of agencytotal; track task) {
+          <a href="javascript:" class="media friendlist-box border-top" *ngIf="showdata==1">
+            <div class="me-3 photo-table">
+              <i class="f-30"><img src="assets/images/rupee-1.png" height="40px" width="40px"></i>
+            </div>
+            <div class="media-body" >
+              <h6>{{ task.name }}</h6>  
+              <span class="f-16 float-end badge theme-bg text-white ">₹{{ task.total }}</span>
+              <p class="text-muted m-0">{{ task.parent_name }}</p>
+            </div>
+          </a>
+        }
+      </app-card>
+    } @placeholder {
+      <app-placeholder-card-1 [height]="472" />
+    }
+  </div>
+  <div class="col-xl-8 col-md-6">
+    @defer (on viewport) {
+      <app-card cardTitle="Blacklisted Vehicles" cardClass="Recent-Users table-card" blockClass="p-0" [options]="false">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <tbody>
+              @for (table of blacklistedvehicles; track $index;) {
+                <tr class="unread">
+                  <td> 
+                    <img class="rounded-circle" style="width: 40px" src="assets/images/alarm.png" alt="activity-user" />
+                  </td>
+                  <td>
+                    <h6 class="mb-1">{{ table.vehno }}</h6>
+                    <p class="m-0">{{ table.parking_lot_name }}</p>
+                  </td>
+                  <td>
+                    <h6 class="text-muted">
+                      <i *ngIf="$index%2==0" class="fas fa-circle text-c-green f-10 m-r-15"></i>
+                      <i *ngIf="$index%2==1" class="fas fa-circle text-c-red f-10 m-r-15"></i>
+                      {{ table.startdate  }}
+                    </h6>
+                  </td>
+                  <td>
+                    <a href="javascript:" class="label theme-bg2 text-white f-12 rounded-pill" (click)="getIndex($index)">Remove</a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    } @placeholder {
+      <app-placeholder-card-1 [height]="475" />
+    }
+  </div>
+  <div class="col-sm-4">
+    @defer (on viewport) {
+      <app-card [hidHeader]="false" cardTitle="Overstayed Vehicles" [options]="false">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Vehicle NO</th>
+                  <th>Parkingspace</th>
+                 
+                  <th>Duration</th>
+                  <th class="text-end"></th>
+                </tr>
+              </thead>
+    
+              <tbody>
+                <tr *ngFor="let data of parkedveh">
+                  <td>{{data.vehno}}</td>
+                  <td>{{data.parking_lot_name}}</td>
+                  
+                  <td>{{data.duration}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      </app-card>
+    } @placeholder {
+      <app-placeholder-card-1 [height]="572" />
+    }
+  </div>
+</div>
+
+<div class="row" *ngIf="present=='0'">
+  @for (sale of projectedsales; track sale) {
+    <div class="{{ sale.design }} col-xl-4" >
+      @defer (on viewport) {
+        <app-card cardTitle="{{ sale.title }}"   [options]="false" >
+          <div class="row d-flex align-items-center">
+            <div class="col-9">
+              <h3 class="f-w-300 d-flex align-items-center m-b-0">
+                <i class="feather {{ sale.icon }} f-30 m-r-10"></i>
+                {{ sale.amount }}
+              </h3>
+            </div>
+            <div class="col-3 text-end">
+              <p class="m-b-0">{{ sale.percentage }}</p>
+            </div>
+          </div>
+          <div class="m-t-30">
+            <h5>{{sale.pre}}</h5>
+            <ngb-progressbar type="progress-bar {{ sale.progress_bg }}" height="7px" [value]="sale.progress"></ngb-progressbar>
+             
+          </div>
+        </app-card>
+      } @placeholder {
+        <app-placeholder-card-1 [height]="169" />
+      }
+    </div>
+  }
+  <div class="col-xl-8 col-md-6">
+    @defer (on viewport) {
+      <app-card cardTitle="Projected amount based on daily vehicle count (in Hours)"  [options]="false">
+        <div id="container3" style="height:340px;"></div>
+      </app-card>
+    } @placeholder {
+      <app-placeholder-card-1 [height]="572" />
+    }
+  </div>
+  <div class="col-xl-4">
+    @defer (on viewport) {
+      <app-card cardClass="card theme-bg2" blockClass="text-center" [hidHeader]="true" [options]="false">
+        <!-- <img class="img-female" src="assets/images/user/user-1.png" alt="visitor-user" /> -->
+        <h5 class="text-white m-0">Top Performing Parking Lots – Real Revenue Insights -Monthly</h5>
+        <h6 class="text-white m-0">with respect to projected parking count</h6>
+        <h3 class="text-white m-t-10 f-w-300">{{excpectedlot}} </h3>
+        <h4 class="text-white m-t-10 f-w-300">{{expectedcount}} Rupees</h4>
+        <!-- <img class="img-men" src="assets/images/user/user-2.png" alt="visitor-user" /> -->
+      </app-card>
+    } @placeholder {
+      <app-placeholder-card-1 [height]="150" />
+    }
+    @defer (on viewport) {
+      <app-card cardTitle="Projected Revenue by Agencies – Monthly" cardClass="note-bar" blockClass="p-0" [options]="false">
+        @for (task of expectedagency; track task) {
+          <a href="javascript:" class="media friendlist-box border-top">
+            <div class="me-3 photo-table">
+              <i class="f-30"><img src="assets/images/rupee-1.png" height="40px" width="40px"></i>
+            </div>
+            <div class="media-body" >
+              <h6>{{ task.name }}</h6>  
+              <span class="f-16 float-end badge theme-bg text-white ">₹{{ task.total}}</span>
+              <p class="text-muted m-0">{{ task.parent_name }}</p>
+            </div>
+          </a>
+        }
+      </app-card>
+    } @placeholder {
+      <app-placeholder-card-1 [height]="472" />
+    }
+  </div>
+  
+  
+</div>
+  <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+</div>

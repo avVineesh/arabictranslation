@@ -1,0 +1,40 @@
+<!--  vertical layouts -->
+@if (this.config['layout'] === 'vertical') {
+  <ng-scrollbar style="height: calc(100vh - 70px)" exclude="'#mobile-collapse1'" visibility="hover" [dir]="direction">
+    <div class="navbar-content">
+      <ul class="nav pcoded-inner-navbar" (clickOutside)="fireOutClick()" (mouseleave)="navMob()">
+        @for (item of navigations; track item) {
+          @if (item.type === 'group') {
+            <app-nav-group [item]="item" />
+          }
+        }
+      </ul>
+      <!-- <div class="version">
+        <label for="version" disabled class="pe-auto">v{{ currentApplicationVersion }}</label>
+      </div> -->
+    </div>
+  </ng-scrollbar>
+}
+
+<!-- horizontal layouts -->
+@if (this.config['layout'] === 'horizontal') {
+  <div class="navbar-content sidenav-horizontal" id="layout-sidenav">
+    <a href="javascript:" aria-label="scroll-right" class="sidenav-horizontal-prev" [ngClass]="prevDisabled" (click)="scrollMinus()"></a>
+    <div #navbarWrapper class="sidenav-horizontal-wrapper">
+      <ul
+        #navbarContent
+        id="side-nav-horizontal"
+        class="nav pcoded-inner-navbar sidenav-inner"
+        (clickOutside)="fireLeave()"
+        (mouseleave)="fireLeave()"
+      >
+        @for (item of navigations; track item) {
+          @if (item.type === 'group') {
+            <app-nav-group [item]="item" />
+          }
+        }
+      </ul>
+    </div>
+    <a href="javascript:" aria-label="scroll-left" class="sidenav-horizontal-next" [ngClass]="nextDisabled" (click)="scrollPlus()"></a>
+  </div>
+}

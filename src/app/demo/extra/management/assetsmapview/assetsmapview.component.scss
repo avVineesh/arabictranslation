@@ -1,0 +1,183 @@
+
+
+::ng-deep .gm-style-iw {
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  max-width: 250px;
+  padding: 10px;
+}
+
+.info-window-content h2 {
+  font-size: 20px;
+  color: #ff0000;
+  margin-bottom: 5px;
+}
+
+.info-window-content .parking-info {
+  margin-top: 5px;
+}
+
+// .info-window-content ul {
+//   padding-left: 15px;
+// }
+
+// .info-window-content li {
+//   list-style: none;
+//   padding: 2px 0;
+// }
+
+.other-details p {
+  margin: 5px 0;
+}
+
+
+.custom-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  max-width: 600px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.custom-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  font-size: 15px;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s ease-in-out;
+}
+
+.custom-list li:last-child {
+  border-bottom: none;
+}
+
+.custom-list li:hover {
+  background: #fafafa;
+}
+
+/* Header row */
+.custom-list-header {
+  background-color: #f9fafb;
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Name column */
+.item-name {
+  flex: 2;
+  color: #333;
+}
+
+/* Count badges container */
+.count-wrapper {
+  display: flex;
+  flex: 1.5;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Count badge */
+.item-count,
+.item-error {
+  min-width: 50px;
+  text-align: center;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 20px;
+  transition: all 0.2s ease-in-out;
+}
+
+.item-count {
+  background: #1976d2;
+  color: #fff;
+}
+
+.item-error {
+  background: #ffc107;
+  color: #212529;
+}
+
+.slot-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.slot-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  transition: background 0.3s ease-in-out;
+}
+
+.slot-list li:last-child {
+  border-bottom: none;
+}
+
+.slot-list li:hover {
+  background: #f4f4f4;
+}
+
+.slot-icon {
+  font-size: 22px;
+}
+
+.slot-name {
+  font-weight: bold;
+  color: #333;
+  flex-grow: 1;
+}
+
+.slot-count {
+  background: #208003;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+}
+
+
+.dashboard-container {
+  font-family: Arial, sans-serif;
+  padding: 10px;
+}
+.entity-dropdown {
+  padding: 2px;
+  color: #000;
+  font-size: 14px;
+}
+
+.selected-item {
+  font-weight: 600;
+  color: #4A5759;
+  padding-right: 10px;
+  text-transform: uppercase;
+  font-family: Roboto, monospace;
+}
+
+.selected-item:hover {
+ // font-size: 15px;
+  color: #007bff;
+}

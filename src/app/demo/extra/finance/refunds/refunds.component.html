@@ -1,0 +1,81 @@
+<div class="row">
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group"><label>Parking Area</label>
+            <select id="parkingarea" class="select2_demo_1 form-control" style="width: 100%"
+            (change)="getParkingArea($event)">
+              <option disabled selected>Select parking area</option>
+              <option [value]=0>All Parking Area</option>
+              <option *ngFor="let value of parkingarea" [value]="value.parking_lot_id">{{value.parking_lot_name}}</option>
+            </select>
+          </div>
+  
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>Refund Date</label>
+            <input type="date" class="form-control" [ngModel]="date | date:'yyyy-MM-dd'" (ngModelChange)="refundservice.filterdate = $event">
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>Status</label>
+            <select id="status" class="select2_demo_1 form-control" style="width: 100%"
+            (change)="getStatus($event)">
+              <option disabled selected>Select Status</option>
+              <option [value]=2>All</option>
+              <option [value]=1>Success</option>
+              <option [value]=0>Processing</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-primary" (click)="filterRefundData()">Filter</button>
+          </div>
+        </div>
+      </div>
+      <app-card cardTitle="Refund Details" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table id="mytable" class="table table-stripped">
+            <thead>
+              <tr>
+  
+                <th>BookingID</th>
+                <th>PayID</th>
+                <th>Customer Name</th>
+                <th>Contact Number</th>
+                <th>Vehicle Number</th>
+                <th>Parking Area</th>
+                <th>Refund Amount</th>
+                <th>Refund charges</th>
+                <th>Refund Type</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of refunddata; let i = index">
+                <td>{{data.bookingid}}</td>
+                <td>{{data.payid}}</td>
+                <td>{{data.fullname}}</td>
+                <td>{{data.phone}}</td>
+                <td>{{data.vehicleno}}</td>
+                <td>{{data.parking_lot_name}}</td>
+                <td>{{data.refundamount}}</td>
+                <td>{{data.refundcharges}}</td>
+                <td>{{data.paytype}}</td>
+                <td>{{data.createddate| date:'dd-MMM-yyy'}}</td>
+                <td *ngIf="data.isconfirm ==0 && data.paytype=='Razorpay'" style="color: rgb(247, 20, 20);">Processing</td>
+                <td *ngIf="data.isconfirm ==1" style="color: rgb(26, 189, 11);">Success</td>
+                <td *ngIf="data.isconfirm ==0 && data.paytype=='UPI'">
+                  <label class="switch"><input type="checkbox" (click)="changePayStausForUpi(data)"/><span class="slider round"></span> </label>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+      <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+    </div>
+  

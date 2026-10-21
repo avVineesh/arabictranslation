@@ -1,0 +1,95 @@
+<!-- <div class="col-xl-4 col-md-6">
+    <app-card cardTitle="Optional Sizes" [options]="false">
+      <button
+        type="button"
+        class="btn btn-primary me-2 mb-2"
+        data-bs-toggle="modal"
+        data-bs-target=".bd-example-modal-lg"
+        (click)="openLg(content6)"
+      >
+        Large modal
+      </button>
+     
+      
+    </app-card>
+  </div> -->
+<!-- Organization Type List Start -->
+<div class="row">
+    <div class="col-xl-12">
+      
+      <button   [ngStyle]="{'display': service.addorgtype == true ? '' : 'none'}"  type="button" class="btn btn-primary" (click)="openLg(content6)"
+        data-toggle="modal">Add Organization Type</button>
+      <app-card cardTitle="Organization Type" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+    
+                <th>Organization Type</th>
+                <th>Parent Type</th>
+                <th>Is End Point</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor='let list of orgtypedata; let i=index'>
+                <td>{{list.hierarchy_type}}</td>
+                <td>{{list.parent}}</td>
+                <td *ngIf="list.isendpoint ==0">No</td>
+                <td *ngIf="list.isendpoint ==1">Yes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+    </div>
+    <!-- Organization Type List End -->
+  <ng-template #content6 let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add Organization Type</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+    </div>
+    <div class="modal-body">
+        <form action="javascript:" #orgtype="ngForm"  autocomplete="off">
+            <div class="form-group">
+              <label for="inputrolename" class="required">Organization Type</label>
+              <input type="text" class="form-control"  name="organizationtype" [(ngModel)]="service.OrgModal.orgtype"
+                placeholder="Organizationtype" style="text-transform: capitalize;">
+      
+            </div>
+            <div class="form-group">
+              <label for="inputdescription" class="required">Parent Type</label>
+              
+              <select class="select2_demo_1 form-control" required style="width: 100%" name="parentid" [(ngModel)]="service.OrgModal.parentid">
+                <option value="" disabled selected>Choose a Parent</option>
+                <option [value]=0>Root</option>
+              <option *ngFor="let values of parenttype" [value]="values.id">{{values.hierarchy_type}}</option>
+            </select>
+      
+            </div>
+            <div class="form-group">
+              <label for="inputdescription" class="required">Is End Point</label>
+              
+              <div class="form-group d-inline" >
+                <div class="radio radio-primary d-inline">
+                  <input type="radio" name="endpoint" value=1   id="radio-p-fill-5" [(ngModel)]="service.OrgModal.isendpoint">
+                  <label for="radio-p-fill-5" class="cr">Yes</label>
+                </div>
+              </div>
+              <div class="form-group d-inline">
+                <div class="radio radio-primary d-inline">
+                  <input type="radio" name="endpoint"  value=0 id="radio-p-fill-6" checked [(ngModel)]="service.OrgModal.isendpoint">
+                  <label for="radio-p-fill-6"  class="cr">No</label>
+                </div>  
+              </div>
+      
+            </div>
+      
+            <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal"
+            (click)="modal.close('Close click')" (click)="resetform()">Close</button>
+            <button type="button" class="pull-left btn btn-primary pull-right mb-2" data-dismiss="modal"
+            (click)="modal.close('Close click')" (click)="SaveOrgType()" [disabled]="!orgtype.valid">Save</button>
+          </form>
+    </div>
+  </ng-template>

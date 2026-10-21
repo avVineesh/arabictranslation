@@ -1,0 +1,979 @@
+<!-- Parkign Space Details View Starts -->
+<div class="row">
+  <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;">
+    <ng-container>
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <!-- <span> ➔ <i class="fas fa-chevron-circle-right"></i> </span> -->
+      <span> <i class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3"></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+      <option [value]="null" selected>Select</option>
+      <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+    </select>
+  </div>
+  <div class="col-xl-12">
+    <div class="row">
+      <div class="col-sm-2">
+        <br /><br />
+
+        <button type="button" [ngStyle]="{'display': PAreaSer.AddParkArea == true ? 'block' : 'none'}"
+          class="btn btn-primary" data-toggle="modal" (click)="addSpace(add)">Add Parking Space
+        </button>
+        <!-- <div class="form-group">
+            
+            <button [ngStyle]="{'display': PAreaSer.AddParkArea == true ? 'block' : 'none'}" type="button"
+              class="btn btn-primary" data-toggle="modal" (click)="exampleModalLong.show()">Add Parking Space
+            </button>
+          </div> -->
+      </div>
+      <!-- <div class="col-sm-2">
+          <div class="form-group"><label>Filterby</label>
+            <select id="orgtypename" class="form-control"    style="width: 100%" (change)="nameSelect()">
+              <option value=0 selected>Choose a Organization</option>
+              <option *ngFor="let values of undermeList" [value]="values.org_name">{{values.org_name}}</option>
+            </select>
+          </div>
+        </div> -->
+    </div>
+    <app-card cardTitle="Parking Space Details" [options]="false" blockClass="table-border-style">
+      <div class="table-responsive">
+        <table id="mytable" class="table table-hover">
+          <thead>
+            <tr>
+              <th>Parking Space Name</th>
+              <th>Parking Space Type</th>
+              <th>Organization</th>
+              <th>Location Name</th>
+              <th>Status</th>
+              <th [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }">Tariff</th>
+              <th [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }">Boom Barriers</th>
+              <th [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }">Display Boards</th>
+                <th [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }">Booking disabled Dates</th>
+              <th [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }">Camera</th>
+
+              <th >Staff's</th>
+
+              <th [ngStyle]="{'display': PAreaSer.EditParkArea == true ? '' : 'none'}">Edit</th>
+
+              <th [ngStyle]="{'display': PAreaSer.EditParkArea == true ? '' : 'none'}">Settings</th>
+
+              <th [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? 'block' : 'none' }">Parking Lots</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let PAdata of ParkSettingOnly;let i=index ">
+              <td>{{PAdata.parking_lot_name}}</td>
+              <td>{{PAdata.parking_type}}</td>
+              <td>{{PAdata.org_name}}</td>
+              <td>{{PAdata.locationname}}</td>
+              <td><label class="switch"><input type="checkbox" (click)="OnChangeStatusPArea(PAdata)"
+                    [checked]="PAdata.isactive==1" /><span class="slider round"></span> </label></td>
+
+              <td [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }"> <a style="cursor: pointer;"
+                  data-toggle="modal" (click)="tarifflistValues(i)" (click)="tariffList(tariff)"><i
+                    style="color: #1e90ff" class="fas fa-list"></i></a></td>
+              <td [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }"> <a style="cursor: pointer;"
+                  data-toggle="modal" (click)="boombarrierList(i)" (click)="boomList(boom)"><i style="color: #1e90ff"
+                    class="fas fa-list"></i></a></td>
+
+              <td [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }" *ngIf="PAdata.layout!='no'">
+                <a style="cursor: pointer;" data-toggle="modal" (click)="displayList(i)" (click)="disList(dis)"><i
+                    class="fa fa-desktop" style="color: green" aria-hidden="true"></i></a>
+              </td>
+              <td [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }" *ngIf="PAdata.layout=='no'">
+                <a style="cursor: pointer;" data-toggle="modal" (click)="displayList(i)" (click)="disList(dis)"><i
+                    class="fa fa-desktop" style="color:#C71C22" aria-hidden="true"></i></a>
+              </td>
+                <td [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }"> <a style="cursor: pointer;"
+                  data-toggle="modal" (click)="disabedDAte(i)"   (click)="bookingDisable(bookingdis)" ><i style="color: #1e90ff"
+                    class="fas fa-list"></i></a></td>
+
+
+              <td [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? '' : 'none' }"> <a style="cursor: pointer;"
+                  data-toggle="modal" (click)="GetParkingLotsIndex(i)"
+                  [routerLink]="['/admin/parkingsettings/camera']"><i style="color: #1e90ff"
+                    class="fas fa-camera"></i></a></td>
+
+              <td ><a style="cursor: pointer;"
+                  data-toggle="modal" (click)="staffToggle()" (click)="GetPASValueIndex(i)"
+                  (click)="staffList(staff)"><i style="color: #1e90ff" class="fas fa-users"></i></a></td>
+
+              <td [ngStyle]="{'display': PAreaSer.EditParkArea == true ? '' : 'none'}"><label><a
+                    style="cursor: pointer;" data-toggle="modal" (click)="GetPAValueIndex(i)"
+                    (click)="editSpace(edit)"><span><i style="color: #1e90ff" class="fas fa-pencil-alt"
+                        aria-hidden="true"></i></span>
+                  </a></label></td>
+
+              <td [ngStyle]="{'display': PAreaSer.EditParkArea == true ? '' : 'none'}"><a style="cursor: pointer;"
+                  data-toggle="modal" (click)="GetPAValueIndex1(i)" (click)="getParkingLotCount(i)"
+                  (click)="openSettings(settings)" (click)="toggle()" (click)="custToggle()"><i style="color: #1e90ff"
+                    class="fas fa-cog"></i></a></td>
+              <!-- <td [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? 'block' : 'none' }"><button type="button"
+                    class="btn btn-primary" data-toggle="modal" (click)="GetParkingLotsIndex(i)"
+                    [routerLink]="['/admin/parkingsettings/parkinglots']">Add
+                  </button></td> -->
+
+              <td [ngStyle]="{'display': PLotservice.AddParkLotSer ==true ? 'block' : 'none' }"
+                style="text-align: center;"><label><a style="cursor: pointer;" data-toggle="modal"
+                    (click)="GetParkingLotsIndex(i)" [routerLink]="['/admin/parkingsettings/parkinglots']">
+                    <span><i style="color: #1e90ff" class="fas fa-plus" aria-hidden="true"></i></span>
+                  </a></label></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+  <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+</div>
+<!-- Parking Space Details View Ends -->
+
+<!-- Add parking space details Starts -->
+<ng-template #add let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Add Parking Space Details</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div class="modal-body">
+    <form autocomplete="off" #f="ngForm">
+      <div class="row">
+        <div class="col-sm-6">
+
+          <div class="form-group">
+            <label class="required">Parking Space Name</label>
+            <input type="text" class="form-control" required #parkingspacename="ngModel" name="parkingspacename"
+              [(ngModel)]="PAreaSer.ParkArea.parkingspacename" placeholder="Enter Parking Space Name"
+              style="text-transform: capitalize;" required>
+            <label *ngIf="!parkingspacename.valid"
+              class="error jquery-validation-error small form-text invalid-feedback">Please enter a Parking Space
+              Name.</label>
+          </div>
+          <div class="form-group">
+            <label class="required">Organization Name</label>
+            <select class="select2_demo_1 form-control" style="width: 100%" name="orgid"
+              [(ngModel)]="PAreaSer.ParkArea.orgid" required>
+              <option value="" disabled selected>Choose a Organization</option>
+              <option *ngFor="let values of undermeList" [value]="values.orgid">{{values.org_name}}</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="required">Parking Space Type</label>
+            <select class="select2_demo_1 form-control" style="width: 100%" name="parkingspacetype"
+              [(ngModel)]="PAreaSer.ParkArea.parkingspacetype" required>
+              <option value="" disabled selected>Choose a Type</option>
+              <option value="Covered">Covered</option>
+              <option value="Uncovered">Uncovered</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="inputlogo">Images</label>
+
+            <div class="dropzone" dropZone (hovered)="toggleHover($event)" (dropped)="scriptCompress($event)"
+              [class.hovering]="isHovering">
+
+              <div class="file">
+                <label class="file-label">
+
+                  <input type="file" (change)="onFileSelect($event)" accept="image/*" multiple>
+                  <!-- Upload button -->
+                  <button (click)="onUpload()">Upload</button>
+
+                </label>
+              </div>
+
+
+              <!-- <button type="button" class="btn btn-secondary" (click)="urlvalue(url)">Upload Image</button> -->
+              <div *ngIf="percentage | async as pct">
+
+                <progress class="progress is-info" [value]="pct" max="100">
+                </progress>
+
+                {{ pct | number }}%
+                <div *ngIf="downloadURL | async as url">
+
+
+                  <button type="button" class="btn btn-secondary" (click)="urlvalue(url)" name="org_logo">Save</button>
+                  <a [href]="url" target="_blank" rel="noopener">View Image</a>
+                </div>
+
+              </div>
+
+
+              <!-- <div *ngIf="snapshot | async as snap">
+                {{ snap.bytesTransferred  }} of {{ snap.totalBytes  }} 
+              
+                <div *ngIf="downloadURL | async as url">
+                  <h3>Results!</h3>
+                  <img [src]="url"><br>
+                  <a [href]="url" target="_blank" rel="noopener">Download Me!</a>
+                </div> 
+              
+                <button (click)="task.pause()" class="button is-warning" [disabled]="!isActive(snap)">Pause</button>
+                <button (click)="task.cancel()" class="button is-danger" [disabled]="!isActive(snap)">Cancel</button>
+                <button (click)="task.resume()" class="button is-info"   [disabled]="!(snap?.state === 'paused')">Resume</button>
+              
+              </div> -->
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label class="required">Location Name</label>
+            <input type="text" class="form-control" required #locationname="ngModel" name="locationname"
+              [(ngModel)]="PAreaSer.ParkArea.locationname" placeholder="Enter Location Name"
+              style="text-transform: capitalize;">
+            <label *ngIf="!locationname.valid "
+              class="error jquery-validation-error small form-text invalid-feedback">Please enter a Location
+              Name.</label>
+          </div>
+
+          <div class="form-group">
+            <label class="required">Latitude</label>
+            <input type="text" class="form-control" #lat="ngModel"
+              [ngClass]="{'is-invalid': !lat.valid && lat.errors.pattern}" name="lat"
+              [(ngModel)]="PAreaSer.ParkArea.lat" placeholder="Enter Latitude" required>
+            <label *ngIf="!lat.valid && lat.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please enter a Latitude.</label>
+          </div>
+          <div class="form-group">
+            <label class="required">Longtitude</label>
+            <input type="text" class="form-control" #lng="ngModel"
+              [ngClass]="{'is-invalid': !lng.valid && lng.errors.pattern}" name="lng"
+              [(ngModel)]="PAreaSer.ParkArea.lng" placeholder="Enter Longtitude" required>
+            <label *ngIf="!lng.valid && lng.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please enter a
+              Longtitude.</label>
+          </div>
+          <div class="form-group">
+            <label>Topic</label>
+            <input type="text" class="form-control" #topic="ngModel" name="topic" [(ngModel)]="PAreaSer.ParkArea.topic"
+              placeholder="Enter MQTT Topic">
+            <label *ngIf="!topic.valid " class="error jquery-validation-error small form-text invalid-feedback">Please
+              enter a Valid
+              Topic.</label>
+          </div>
+        </div>
+
+      </div>
+
+
+
+      <button type="button" [disabled]="!f.valid" class="btn btn-primary me-2 mb-2" data-dismiss="modal"
+        (click)="OnAddPArea()" (click)="modal.close('Close click')">Save</button>
+      <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="reset()"
+        (click)="modal.close('Close click')">Close</button>
+    </form>
+  </div>
+</ng-template>
+<!-- Parking Space details add end -->
+
+<!-- UPDATING PARKING SPACE    -->
+<ng-template #edit let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Update Parking Space Details</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div class="modal-body" *ngFor="let data of ParkAreaIndex">
+    <form autocomplete="off" #f="ngForm">
+      <div class="row">
+        <div class="col-sm-6">
+
+          <div class="form-group">
+            <label class="required">Parking Space Name</label>
+            <input type="text" class="form-control" #parking_lot_name="ngModel" required name="parking_lot_name"
+              [(ngModel)]="data.parking_lot_name" style="text-transform: capitalize;">
+          </div>
+          <!-- <div class="form-group">
+                  <label class="required">Organization Name</label>
+                  <input type="text" class="form-control" name="orgid" [(ngModel)]="data.org_name" readonly>
+                </div> -->
+          <div class="form-group">
+            <label class="required">Organization Name</label>
+            <select class="select2_demo_1 form-control" style="width: 100%" name="orgid" [(ngModel)]="data.orgid"
+              required>
+              <option value="" disabled selected>Choose a Organization</option>
+              <option *ngFor="let values of undermeList" [value]="values.orgid">{{values.org_name}}</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="required">Parking Space Type</label>
+            <select required class="select2_demo_1 form-control" style="width: 100%" name="parking_type"
+              [(ngModel)]="data.parking_type">
+              <!-- <option *ngFor="let value of ParkType" [selected]="value" [value]="value">{{value}}</option> -->
+              <option value="Covered">Covered</option>
+              <option value="Uncovered">Uncovered</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="inputlogo">Images</label>
+
+            <div *ngIf="ParkAreaImage && ParkAreaImage.length > 0">
+              <div *ngFor="let imageUrl of ParkAreaImage; let i = index" class="card-container">
+                <div class="card">
+                  <img [src]="imageUrl" alt="Parking Image" class="thumbnail">
+                  <span (click)="removeImage(i)" class="cross-btn">X</span>
+                </div>
+              </div>
+            </div>
+            <div class="dropzone" dropZone (hovered)="toggleHover($event)" (dropped)="scriptCompress($event)"
+              [class.hovering]="isHovering">
+
+              <div class="file">
+                <label class="file-label">
+
+
+                  <!-- <input class="file-input" type="file" (change)="scriptCompress($event)"> -->
+                  <input type="file" (change)="onFileSelect($event)" accept="image/*" multiple>
+                  <!-- Upload button -->
+                  <button (click)="onUpload()">Upload</button>
+
+
+                </label>
+              </div>
+
+
+              <!-- <button type="button" class="btn btn-secondary" (click)="urlvalue(url)">Upload Image</button> -->
+              <div *ngIf="percentage | async as pct">
+
+                <progress class="progress is-info" [value]="pct" max="100">
+                </progress>
+
+                {{ pct | number }}%
+              </div>
+              <div *ngIf="downloadURL | async as url">
+
+
+                <button type="button" class="btn btn-secondary pull right" (click)="urlvalue(url)"
+                  name="org_logo">Save</button>
+                <a [href]="url" target="_blank" rel="noopener">View Image</a>
+              </div>
+
+
+
+
+              <!-- <div *ngIf="snapshot | async as snap">
+                {{ snap.bytesTransferred  }} of {{ snap.totalBytes  }} 
+              
+                <div *ngIf="downloadURL | async as url">
+                  <h3>Results!</h3>
+                  <a [href]="url" target="_blank" rel="noopener">Download Me!</a>
+                </div> 
+              
+                <button (click)="task.pause()" class="button is-warning" [disabled]="!isActive(snap)">Pause</button>
+                <button (click)="task.cancel()" class="button is-danger" [disabled]="!isActive(snap)">Cancel</button>
+                <button (click)="task.resume()" class="button is-info"   [disabled]="!(snap?.state === 'paused')">Resume</button>
+              
+              </div> -->
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+
+          <div class="form-group">
+            <label class="required">Location Name</label>
+            <input type="text" class="form-control" #locationname="ngModel" required name="locationname"
+              [(ngModel)]="data.locationname" style="text-transform: capitalize;">
+          </div>
+          <!-- <div class="form-group">
+                  <label>Latitude</label>
+                  <input type="text" class="form-control" name="lat" [(ngModel)]="data.lat">
+                </div>
+                <div class="form-group">
+                  <label>Longtitude</label>
+                  <input type="text" class="form-control" name="lng" [(ngModel)]="data.lng">
+                </div> -->
+          <div class="form-group">
+            <label class="required">Latitude</label>
+            <input type="text" class="form-control" #lat="ngModel"
+              [ngClass]="{'is-invalid': !lat.valid && lat.errors.pattern}" name="lat" [(ngModel)]="data.lat"
+              placeholder="Enter Latitude" required>
+            <label *ngIf="!lat.valid && lat.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please enter a Latitude.</label>
+          </div>
+          <div class="form-group">
+            <label class="required">Longtitude</label>
+            <input type="text" class="form-control" #lng="ngModel"
+              [ngClass]="{'is-invalid': !lng.valid && lng.errors.pattern}" name="lng" [(ngModel)]="data.lng"
+              placeholder="Enter Longtitude" required>
+            <label *ngIf="!lng.valid && lng.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please enter a
+              Longtitude.</label>
+          </div>
+          <div class="form-group">
+            <label>Topic</label>
+            <input type="text" class="form-control" #topic="ngModel" name="topic" [(ngModel)]="data.topic">
+          </div>
+        </div>
+      </div>
+
+
+      <button type="button" [disabled]="!f.valid" class="btn btn-primary me-2 mb-2" data-dismiss="modal"
+        (click)="modal.close('Close click')" (click)="OnUpdatePArea(data)">Save</button>
+      <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal"
+        (click)="modal.close('Close click')">Close</button>
+
+    </form>
+  </div>
+</ng-template>
+<!-- UPDATING PARKING SPACE  end   -->
+
+<!-- Parking space Settings -->
+<ng-template #settings let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Parking Space Settings</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div class="modal-body" *ngFor="let data of ParkSettingAll">
+    <form autocomplete="off" #f="ngForm">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group"><label>Parking Space Name</label>
+            <input type="text" class="form-control" readonly [(ngModel)]="data.parking_lot_name"
+              #parking_lot_name="ngModel" required name="parking_lot_name" ngModel style="text-transform: capitalize;">
+          </div>
+
+          <div class="form-group" hidden><label>Region</label>
+            <input type="text" class="form-control" placeholder="Enter Region" ngModel #region="ngModel" name="Region"
+              [(ngModel)]="data.region" style="text-transform: capitalize;">
+          </div>
+
+          <!-- <div class="form-group"><label>Vehicle Type Already Selected</label>
+                  <input  type="text" class="form-control" readonly  [value]="data.vehicletype">        
+                </div>  -->
+
+          <!-- <div class="form-group" ><label>Vehicle Type &nbsp;&nbsp;<i>Use CTRL to Select Mulitple Type</i></label> 
+                <select  class="select2_demo_1 form-control"  [multiple]="true" style="width: 100%"  ngModel #vehiclemake="ngModel" required  name="vehicletype" [(ngModel)]="data.vehicletype" >
+                     <option *ngFor="let value of VehType" [selected]="value.vehicletype" name="vehicletype"  [value]="value.vehicletype" >{{value.vehicletype}}</option>
+                 </select>
+                </div>   -->
+
+          <!-- <div class="form-group">
+                  <ng-select [ngClass]="'ng-select'" [options]="simpleOption"   [multiple]="true"></ng-select>
+                </div> -->
+
+          <!-- <div class="form-group">               
+                  <div class="checkbox d-inline" *ngFor="let value of VehType; let i = index">
+                      <input type="checkbox" name="value.vehicletype{{i}}" [value]="value.vehicletype" id="checkbox-fill-1" [(ngModel)]="value.vehicletype" >{{value.vehicletype}}
+                    </div>
+                  </div>  -->
+          <div class="form-group"><label>Vehicle Number Prefix</label>
+            <input type="text" class="form-control" style="text-transform: uppercase"
+              placeholder="Enter Vehicle Prefix " ngModel #vehiclenoprefix="ngModel" required name="vehiclenoprefix"
+              [(ngModel)]="data.vehiclenoprefix">
+          </div>
+
+          <div class="form-group"><label>Parking Time Allowed (in Hrs..) </label>
+            <input type="text" class="form-control" placeholder="Enter In Hours"
+              [ngClass]="{'is-invalid': !parkmaxtime.valid && parkmaxtime.errors.pattern}" ngModel
+              #parkmaxtime="ngModel" pattern="\d{1,3}" maxlength="3" required name="parkmaxtime"
+              [(ngModel)]="data.parkmaxtime">
+            <label *ngIf="!parkmaxtime.valid && parkmaxtime.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid time in
+              hours.</label>
+          </div>
+          <div class="form-group"><label>Value added Services</label>
+            <!-- <textarea type="text" class="form-control"   placeholder="Enter Panic Number " ngModel [ngClass]="{'is-invalid': !panicnumber.valid && panicnumber.errors.pattern}" #panicnumber="ngModel" pattern="^(\d{10},)*\d{10}$" required name="panicnumber" > </textarea> -->
+            <input type="text" class="form-control" placeholder="Add Multiple Services With Comma Seperated" ngModel
+              #vas="ngModel" [ngClass]="{'is-invalid': !vas.valid && vas.errors.pattern}" name="vas"
+              pattern="[a-zA-Z, ]*[a-zA-Z ]" [(ngModel)]="data.vas">
+            <label *ngIf="!vas.valid && vas.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please Enter Valid
+              Services</label>
+          </div>
+          <div class="form-group"><label>Lead Time(in Minutes)</label>
+            <input type="text" class="form-control"
+              [ngClass]="{'is-invalid': !leadtime.valid && leadtime.errors.pattern}" pattern="\d{1,3}" maxlength="3"
+              placeholder="Enter Lead Time" leadtime ngModel #leadtime="ngModel" name="leadtime"
+              [(ngModel)]="data.leadtime">
+            <label *ngIf="!leadtime.valid && leadtime.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please Enter Valid
+              Lead Time</label>
+          </div>
+          <div class="form-group"><label>Buffer(Value must be less than {{actualbufslot}})</label><a
+              style="cursor: pointer; padding: 5px"> <i style="color: #5f6266" class="fa fa-info-circle"
+                aria-hidden="true" title="Buffer Value must be less than active parkingslots"></i></a>
+            <input type="text" id="buffer" class="form-control" (input)="onSearchChange($event.target.value)"
+              [ngClass]="{'is-invalid': !buffer.valid && buffer.errors.pattern }" pattern="[0-9]\d*|0\d+"
+              placeholder="Enter Buffer in numbers" ngModel #buffer="ngModel" name="buffer" [(ngModel)]="data.buffer">
+            <label *ngIf="!buffer.valid && buffer.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please Enter Valid
+              Buffer</label>
+          </div>
+          <div class="form-group"><label>FastTag Slots(Value must be less than {{actualfastslot}})</label><a
+              style="cursor: pointer; padding: 5px"> <i style="color: #5f6266" class="fa fa-info-circle"
+                aria-hidden="true" title="Fast Tag Slots  must be less than active parkingslots"></i></a>
+            <input type="text" id="fastslot" class="form-control" (input)="onFastTagChange($event.target.value)"
+              [ngClass]="{'is-invalid': !fastslot.valid && fastslot.errors.pattern }" pattern="[0-9]\d*|0\d+"
+              placeholder="Enter the value in numbers" ngModel #fastslot="ngModel" name="fastslot"
+              [(ngModel)]="data.fastslot">
+            <label *ngIf="!fastslot.valid && fastslot.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please Enter Valid
+              Number</label>
+          </div>
+          <!-- <div class="form-group"><label>Wallet Parking Amount</label>
+                  <input type="text" id="walletamount" class="form-control"
+                    [ngClass]="{'is-invalid': !walletamount.valid && walletamount.errors.pattern }" pattern="[0-9]\d*|0\d+"
+                    placeholder="Enter the amount in numbers" ngModel #walletamount="ngModel" name="walletamount"
+                    [(ngModel)]="data.walletamount">
+                  <label *ngIf="!walletamount.valid && walletamount.errors.pattern"
+                    class="error jquery-validation-error small form-text invalid-feedback">Please Enter Valid
+                    Amount</label>
+                </div> -->
+          <div class="form-group"><label>
+              <h6>Availability Time</h6>
+            </label>&nbsp;&nbsp;
+            <div class="form-group d-inline">
+              <div class="radio radio-primary d-inline">
+                <input type="radio" name="time" value="daily" id="radio-p-fill-7" (click)="triggerValueFalse()"
+                  [(ngModel)]="data.availability">
+                <label for="radio-p-fill-7" class="cr">24*7</label>
+              </div>
+            </div>
+            <div class="form-group d-inline">
+              <div class="radio radio-primary d-inline">
+                <input type="radio" name="time" value="custom" id="radio-p-fill-8" (click)="triggerValueTrue()"
+                  [(ngModel)]="data.availability">
+                <label for="radio-p-fill-8" class="cr">Custom</label>
+              </div>
+            </div>
+            <!-- <select  class="select2_demo_1 form-control"  style="width: 100%"  ngModel #vehiclemake="ngModel" required  name="Payment" [(ngModel)]="data.paymenttype" >
+                      <option *ngFor="let value of VehType" [value]="value.categoryname"  [selected]="value.categoryname">{{value.categoryname}}</option>
+                  </select> -->
+          </div>
+          <div class="form-group" *ngIf="viewflag==1 ||data.availability=='custom'">
+            <label>
+              <h6>From</h6>
+            </label>
+            <input type="time" class="form-control" name="start" ngModel [(ngModel)]="data.start">
+          </div>
+          <div class="form-group" *ngIf="viewflag==1 ||data.availability=='custom'">
+            <label>
+              <h6>To</h6>
+            </label>
+            <input type="time" class="form-control" name="end" ngModel [(ngModel)]="data.end">
+          </div>
+          <!-- <div class="form-group">
+                  <em  style="cursor:pointer; color: #037ef8;" (click)="bankDetails(bank)"><b>Bank Details</b></em>
+                </div> -->
+                  <div class="form-group"><label>Panic Number</label>
+            <!-- <textarea type="text" class="form-control"   placeholder="Enter Panic Number " ngModel [ngClass]="{'is-invalid': !panicnumber.valid && panicnumber.errors.pattern}" #panicnumber="ngModel" pattern="^(\d{10},)*\d{10}$" required name="panicnumber" > </textarea> -->
+            <input type="text" class="form-control" placeholder="Enter Multiple Number With Comma Seperated" ngModel
+              #panicnumber="ngModel" [ngClass]="{'is-invalid': !panicnumber.valid && panicnumber.errors.pattern}"
+              required name="panicnumber" pattern="^(\d{10},)*\d{10}$" [(ngModel)]="data.panicnumber">
+            <label *ngIf="!panicnumber.valid && panicnumber.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid phone
+              number.</label>
+          </div>
+           <div class="form-group">
+            <label for="inputdescription">
+              <h6>About</h6>
+            </label>
+            <!-- <input type="text" class="form-control" 
+                          ngModel [(ngModel)]="service.FormData.roledesc"
+                          name="roledesc" placeholder="Role Description"> -->
+            <textarea class="form-control" name="about" ngModel [(ngModel)]="data.about"
+              id="exampleFormControlTextarea2" rows="5" style="text-transform: capitalize;"></textarea>
+
+          </div>
+        </div>
+        <div class="col-sm-6">
+        
+
+          <div class="form-group">
+            <label for="options">VehicleType</label>
+            <div *ngFor="let value of VehType; let i = index">
+              <label>
+                <input type="checkbox" [id]="value.vehicletype" class="mycheckbox" name="vehicletype"
+                  [value]="value.vehicletype" [checked]="vehtypearray.includes(value.vehicletype)"
+                  (change)="onVehicleToggle(value.vehicletype, $event.target.checked)" />
+                {{ value.vehicletype }}
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="options">Customer Type</label>
+            <div *ngFor="let cust of custtype; let i = index">
+              <label>
+                <input type="checkbox" [id]="cust.type" class="mycheckbox1" name="type" [value]="cust.type"
+                  [checked]="customertypearray.includes(cust.type)"
+                  (change)="onCustomerToggle(cust.type, $event.target.checked)" />
+                {{ cust.type }}
+              </label>
+            </div>
+          </div>
+           <div class="form-group">
+            <label for="options">Auto Exit</label>
+            <div *ngFor="let data of VehType; let i = index">
+              <label>
+                <input type="checkbox" [id]="data.vehicletype" class="mycheckbox2" name="vehicletype"
+                  [value]="data.vehicletype" [checked]="autoexittypearray.includes(data.vehicletype)"
+                  (change)="onAutoExitToggle(data.vehicletype, $event.target.checked)" />
+                {{ data.vehicletype }}
+              </label>
+            </div>
+          </div>
+         
+
+          <div class="form-group"><label>Payment Type</label>&nbsp;&nbsp;
+            <div class="form-group d-inline">
+              <div class="radio radio-primary d-inline">
+                <input type="radio" name="Payment" value="prepaid" id="radio-p-fill-5" [(ngModel)]="data.paymenttype">
+                <label for="radio-p-fill-5" class="cr">Prepaid</label>
+              </div>
+            </div>
+            <div class="form-group d-inline">
+              <div class="radio radio-primary d-inline">
+                <input type="radio" name="Payment" value="postpaid" id="radio-p-fill-6" [(ngModel)]="data.paymenttype">
+                <label for="radio-p-fill-6" class="cr">Postpaid</label>
+              </div>
+            </div>
+            <!-- <select  class="select2_demo_1 form-control"  style="width: 100%"  ngModel #vehiclemake="ngModel" required  name="Payment" [(ngModel)]="data.paymenttype" >
+                        <option *ngFor="let value of VehType" [value]="value.categoryname"  [selected]="value.categoryname">{{value.categoryname}}</option>
+                    </select> -->
+          </div>
+          <div class="form-group"><label>Reservation</label>&nbsp;&nbsp;
+            <div class="form-group d-inline">
+              <div class="radio radio-primary d-inline">
+                <input type="radio" name="reservation" value="1" id="radio-p-fill-10" [(ngModel)]="data.reservation">
+                <label for="radio-p-fill-10" class="cr">Yes</label>
+              </div>
+            </div>
+            <div class="form-group d-inline">
+              <div class="radio radio-primary d-inline">
+                <input type="radio" name="reservation" value="0" id="radio-p-fill-11" [(ngModel)]="data.reservation">
+                <label for="radio-p-fill-11" class="cr">NO</label>
+              </div>
+            </div>
+            <!-- <select  class="select2_demo_1 form-control"  style="width: 100%"  ngModel #vehiclemake="ngModel" required  name="Payment" [(ngModel)]="data.paymenttype" >
+                        <option *ngFor="let value of VehType" [value]="value.categoryname"  [selected]="value.categoryname">{{value.categoryname}}</option>
+                    </select> -->
+          </div>
+        </div>
+      </div>
+      <br />
+
+
+
+      <div class="form-group ">
+
+        <button type="button" id="mybtn" class="btn btn-primary me-2 mb-2" data-dismiss="modal"
+          (click)="modal.close('Close click')" (click)="OnPAreaSetting(data)"
+          [disabled]="!f.valid ||!buttonview">Save</button>
+        <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="toggle()"
+          (click)="modal.close('Close click')">Close</button>
+      </div>
+
+    </form>
+  </div>
+</ng-template>
+<!-- Parking space settings end -->
+
+
+<!-- Tariff list................................. -->
+<ng-template #tariff let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Tariff</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div *ngIf='viewtariff==0' class="modal-body">
+
+    <form action="javascript:" autocomplete="off">
+      <ul *ngFor="let list of tarifflist">
+        <li>
+          <h6>{{list.tariffname}}</h6>
+        </li>
+      </ul>
+      <a style="text-align: center;" [routerLink]="['/admin/adminsettings/settariff']">Click here for adding new
+        Tariff</a>
+    </form>
+
+  </div>
+  <div *ngIf='viewtariff==1' class="modal-body">
+    <h4 style="color: red;">No Tariff assigned to the Parking space</h4>
+    <a style="text-align: center;" [routerLink]="['/admin/adminsettings/settariff']">Click here for adding new
+      Tariff</a>
+  </div>
+</ng-template>
+
+<!-- Bom Barrier List -->
+<ng-template #boom let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Boom Barriers</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div *ngIf="viewbb==0" class="modal-body">
+    <form action="javascript:" autocomplete="off">
+      <ul *ngFor="let list of boombarrierlist">
+        <li>
+          <h6>{{list.boombarriername}}</h6>
+        </li>
+      </ul>
+      <a style="text-align: center;" [routerLink]="['/admin/parkingsettings/boombarrier']">Click here for adding new
+        Boom Barriers</a>
+    </form>
+
+  </div>
+  <div *ngIf="viewbb==1" class="modal-body">
+    <h4 style="color: red;">No Boombarrier assigned to the parking space</h4>
+    <a style="text-align: center;" [routerLink]="['/admin/parkingsettings/boombarrier']">Click here for adding new Boom
+      Barriers</a>
+  </div>
+</ng-template>
+
+
+<!-- Display List .........................-->
+<ng-template #dis let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Display Boards</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div *ngIf="viewdisplay==0" class="modal-body">
+    <form action="javascript:" autocomplete="off">
+      <ul *ngFor="let dislist of displaylistdat">
+        <li>
+          <h6>{{dislist.deviceid}}-{{dislist.modelname}}</h6>
+        </li>
+      </ul>
+      <a style="text-align: center;" [routerLink]="['/admin/parkingsettings/display']">Click here for adding new
+        Display Boards</a>
+    </form>
+  </div>
+  <div *ngIf="viewdisplay==1" class="modal-body">
+    <h4 style="color: red;">No Display Boards assigned to the parking space</h4>
+    <a style="text-align: center;" [routerLink]="['/admin/parkingsettings/display']">Click here for adding new Display
+      Boards</a>
+  </div>
+</ng-template>
+
+
+<!-- Staff Assign ...........................................-->
+<ng-template #staff let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Parking Space Staff Assigning</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div class="modal-body" *ngFor="let data of SParkAreaIndex">
+
+    <form #form='ngForm'>
+
+      <!-- <div class="form-group"> 
+                  <ejs-multiselect id='localData' name='name'   [(value)]='value' [dataSource]='StaffName1' [fields]='localFields' [(ngModel)]='value2.fullname' [placeholder]='localWaterMark'></ejs-multiselect>
+                  <button type="button" (click)="Add(value2)" ejs-button>Submit</button>
+              </div> -->
+      <div class="form-group">
+        <label>Parking Space Name</label>
+        <input type="text" class="form-control" readonly #parkingspacename="ngModel" name="parking_lot_name"
+          [(ngModel)]="data.parking_lot_name">
+      </div>
+
+
+
+      <div class="form-group">
+        <label for="options">Staff Name</label>
+        <div *ngFor="let value of StaffName1; let i = index">
+          <label>
+            <input [id]="value.staffid" #elm1 class="mycheckbox" type="checkbox" [value]="value.staffid"
+              [checked]="checkParkAssign(elm1.id)" name="parkassignstaff"
+              (ngModelChange)="checkParkAssign(elm1.id)" />{{value.fullname}}
+          </label>
+        </div>
+      </div>
+
+
+      <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+        (click)="OnParkStaff(value)">Save</button>
+      <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+        (click)="modal.close('Close click')">Close</button>
+    </form>
+  </div>
+</ng-template>
+
+
+<!-- Bank Details -->
+<ng-template #bank let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Bank Details</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div class="modal-body">
+    <form autocomplete="off">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>Vendor Name</label>
+            <input type="text" class="form-control" name="vendorname" placeholder="Enter Vendor Name">
+          </div>
+          <div class="form-group">
+            <label>Account Number</label>
+            <input type="text" class="form-control" name="accountno" placeholder="Enter Account Number">
+          </div>
+          <div class="form-group">
+            <label>IFSC</label>
+            <input type="text" class="form-control" name="ifsc" placeholder="Enter IFSC">
+          </div>
+          <div class="form-group">
+            <label>Branch Name</label>
+            <input type="text" class="form-control" name="branch" placeholder="Enter Branch Name">
+          </div>
+          <div class="form-group">
+            <label>Address</label>
+            <textarea class="form-control" name="address" placeholder="Enter Address"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Registration Copy/GST Copy</label>
+            <div class="input-group cust-file-button">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="currentInput" name="currentInput"
+                  [(ngModel)]="currentInput" multiple>
+                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">Upload</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Cancel Cheque</label>
+            <div class="input-group cust-file-button">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile04">
+                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">Upload</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="form-group">
+            <label>Authorised signatories pan and Adhaar cards</label>
+            <div class="input-group cust-file-button">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile04">
+                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">Upload</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Board Resolution Copy</label>
+            <div class="input-group cust-file-button">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile04">
+                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">Upload</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>MOA,AOA and COI</label>
+            <div class="input-group cust-file-button">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile04">
+                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">Upload</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Company photos along with display board</label>
+            <div class="input-group cust-file-button">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile04">
+                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">Upload</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Beneficial ownership declaration</label>
+            <div class="input-group cust-file-button">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile04">
+                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">Upload</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Company Pan Card</label>
+            <div class="input-group cust-file-button">
+              <div class="custom-file">
+                <input type="file" class="custom-file-input" id="inputGroupFile04">
+                <label class="custom-file-label" for="inputGroupFile04">Choose file</label>
+              </div>
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="button">Upload</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="app-modal-footer">
+        <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal"
+          (click)="exampleModalCenter.hide()">Close</button>
+        <button type="button" class="pull-left btn btn-primary pull-right" data-dismiss="modal"
+          (click)="exampleModalCenter.hide()" (click)="messagetoaster()">Save</button>
+      </div>
+    </form>
+
+  </div>
+</ng-template>
+
+<!-- Booking disabled dates list and add -->
+<ng-template #bookingdis let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Booking Disabled Dates</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div  class="modal-body">
+    <form action="javascript:" autocomplete="off">
+       <div class="form-group"><label>Add Date</label>
+          <input type="date" class="form-control" [ngModel]="disableddate | date:'yyyy-MM-dd'"
+            (ngModelChange)="disableddate = $event">
+        </div>
+        <div class="modal-body" *ngIf="viewdates==0">
+          <h6 style="color: blueviolet;">Disabled Dates</h6>
+           <ul *ngFor="let list of disableddates">
+        <li>
+          <h6>{{list.date}}</h6>
+        </li>
+      </ul>
+        </div>
+     
+ <div *ngIf="viewdates==1" class="modal-body">
+    <h4 style="color: red;">Dates are not added</h4>
+
+  </div>
+      <button type="button"  class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="saveDates()"
+        (click)="modal.close('Close click')" >Save</button>
+      <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal"
+        (click)="modal.close('Close click')">Close</button>
+    </form>
+
+  </div>
+  <!-- <div *ngIf="viewbb==1" class="modal-body">
+    <h4 style="color: red;">No Boombarrier assigned to the parking space</h4>
+  </div> -->
+</ng-template>

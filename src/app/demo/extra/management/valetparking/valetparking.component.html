@@ -1,0 +1,67 @@
+<div class="row">
+    <div class="col-sm-12">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group"><label>Parking Date</label>
+            <input type="date" class="form-control" [ngModel]="date | date:'yyyy-MM-dd'" (ngModelChange)="date = $event">
+          </div>
+        </div>
+  
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-primary" (click)="filterValetDetails()">Filter</button>
+          </div>
+        </div>
+      </div>
+  
+      <app-card cardTitle="Valet Parking Details" cardClass="User-Activity" blockClass="pb-0">
+        <div class="table-responsive">
+          <table id="mytable" class="table table-hover">
+            <thead>
+              <tr>
+                <th>Parking Space Name</th>
+                <th>Vehicle Number</th>
+                <th>Owner Phone Number</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <!-- <th class="text-right"></th> -->
+            </thead>
+            <tbody>
+              <tr *ngFor="let reportdata of valetdata;let i=index">
+                <td>
+                  <h6 class="m-0">{{reportdata.parking_lot_name}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.vehicleno}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.phonenumber}}</h6>
+                </td>
+                <td class="text-c-green">
+                  <h6 class="m-0">{{reportdata.startdate}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.enddate}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.amount}}</h6>
+                </td>
+                <td *ngIf="reportdata.status=='1'">
+                  <h6 class="m-0">Parked</h6>
+                </td>
+                <td *ngIf="reportdata.status=='0'">
+                  <h6 class="m-0">Completed</h6>
+                </td>
+              </tr>
+  
+            </tbody>
+          </table>
+        </div>
+        <!-- </form> -->
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>

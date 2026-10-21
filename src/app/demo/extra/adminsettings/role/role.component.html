@@ -1,0 +1,765 @@
+<!-- table view start -->
+<div class="row">
+    <div class="col-xl-12">
+        
+      <button [ngStyle]="{'display': service.RoleAdSer == true ? 'block' : 'none'}"  type="button" class="btn btn-primary" (click)="addModal(addrole)"
+        data-toggle="modal" >Add Role</button>
+      <app-card cardTitle="User Role" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+    
+                <th>Role Name</th>
+                <th>Role Description</th>
+                <th>Status</th>
+               
+                <th  [ngStyle]="{'display': service.RoleEdSer == true ? 'block' : 'none'}">Edit</th>
+               
+                <th  [ngStyle]="{'display': service.RoleAdSer == true ? '' : 'none'}">Privileges</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of datas;let i=index">
+    
+                <td>{{data.rolename}}</td>
+                <td>{{data.roledesc}}</td>
+    
+                <td *ngIf="data.isactive==1"><label class="switch">
+                    <input type="checkbox" [checked]="data.isactive==1" (click)="changeStatus(data)" />
+                    <span class="slider round"></span> </label></td>
+                <td *ngIf="data.isactive==0"><label class="switch">
+                    <input type="checkbox" [checked]="data.isactive==1" (click)="changeStatus(data)" />
+                    <span class="slider round"></span> </label></td>
+                    
+                <td [ngStyle]="{'display': service.RoleEdSer == true ? 'block' : 'none'}"><a style="cursor: pointer;"
+                    data-toggle="modal"  (click)="GetRolePriIndex(i)" (click)="editModal(editrole)"><i
+                      style="color: #1e90ff" class="fas fa-pencil-alt" aria-hidden="true"></i></a></td>
+                      
+                <td [ngStyle]="{'display': service.RoleAdSer == true ? '' : 'none'}"><a  style="cursor: pointer;"
+                    data-toggle="modal" (click)="GetRolePriIndex(i)" (click)="privModal(addpriv)"><i
+                      style="color: #1e90ff" class="fas fa-shield-alt"></i></a></td>
+    
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+    </div>
+    <!-- table view end -->
+
+    <!-- Add role starts.................................................................................................................... -->
+    <ng-template #addrole let-modal>
+        <div class="modal-header">
+          <h5 class="modal-title h4" id="myLargeModalLabel">Add User Role</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+        </div>
+        <div class="modal-body">
+            <form action="javascript:"  #form="ngForm" autocomplete="off">
+                <div class="form-group">
+                  <label for="inputrolename" class="required">Role Name</label>
+                  <input type="text" class="form-control" ngModel [(ngModel)]="service.FormData.rolename" name="rolename"
+                    placeholder="Role Name" style="text-transform: capitalize;" required>
+          
+                </div>
+                <div class="form-group">
+                  <label for="inputdescription">Role Description</label>
+                  <!-- <input type="text" class="form-control" 
+                          ngModel [(ngModel)]="service.FormData.roledesc"
+                          name="roledesc" placeholder="Role Description"> -->
+                  <textarea class="form-control" name="roledesc" ngModel [(ngModel)]="service.FormData.roledesc"
+                    id="exampleFormControlTextarea1" rows="5" style="text-transform: capitalize;"></textarea>
+          
+                </div>
+                <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal"
+                (click)="modal.close('Close click')" (click)="resetform()">Close</button>
+                <button type="button" class="pull-left btn btn-primary pull-right mb-2" data-dismiss="modal" (click)="onSubmit(form)" [disabled]="!form.valid"
+                (click)="modal.close('Close click')">Save</button>
+              </form>
+        </div>
+      </ng-template>
+      <!-- Add Role ends.................................................................................................................... -->
+
+      <!-- Edit Start.................................................................................................................... -->
+      <ng-template #editrole let-modal>
+        <div class="modal-header">
+          <h5 class="modal-title h4" id="myeditmodal">Edit User Role</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+        </div>
+        <div class="modal-body" *ngFor="let data of roleindex">
+            <form action="javascript:" #userrole="ngForm" #form="ngForm" autocomplete="off">
+                <div class="form-group">
+                  <label for="inputrolename">Role Name</label>
+                  <input type="text" class="form-control" ngModel [(ngModel)]="data.rolename" name="rolename"
+                    placeholder="Role Name" style="text-transform: capitalize;">
+          
+                </div>
+                <div class="form-group">
+                  <label for="inputdescription">Role Description</label>
+                  
+                  <textarea class="form-control" name="roledesc" ngModel [(ngModel)]="data.roledesc"
+                    id="exampleFormControlTextarea1" rows="5" style="text-transform: capitalize;"></textarea>
+          
+                </div>
+               
+          
+                <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="OnUpdate(data)"
+                (click)="modal.close('Close click')">Save</button>
+                <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+                (click)="modal.close('Close click')" (click)="onGet()">Close</button>
+              </form>
+        </div>
+      </ng-template>
+      <!-- Edit End................................................................................................................ -->
+<!-- Role privilege Starts................................................................................................ -->
+      <ng-template #addpriv let-modal>
+        <div class="modal-header">
+          <h5 class="modal-title h4" id="privmodal">Add User Privilege</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+        </div>
+        <div class="modal-body">
+            <form action="javascript:" *ngFor="let privilegedata of roleindex">
+                <div class="form-group" style="text-align: center;">
+                 <h5>{{privilegedata.rolename}}</h5>
+                </div> 
+                <div class="col-sm-12">
+                  <h5>Screens</h5>
+                  <div class="card">
+                    <div class="card-body">
+                      <div ngbAccordion [closeOthers]="true">
+                        @for (Data of RolePrivData.Privilege.Privileges; track Data) {
+                          <div ngbAccordionItem >
+                            <h2 ngbAccordionHeader>
+                              <button ngbAccordionButton>Analytics</button>
+                            </h2>
+                            <div ngbAccordionCollapse>
+                              <div ngbAccordionBody>
+                                <ng-template>
+                                    <table class="table table-striped table-hover table-responsive-sm">
+                                        <thead>
+                                          <tr>
+                                            <th></th>
+                                            <th>View</th>
+                                            <!-- <th>Edit</th>
+                                            <th>Create</th> -->
+                        
+                        
+                                          </tr>
+                                          <!-- <tr>
+                                            <th></th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                        
+                                          </tr>  -->
+                                        </thead>
+                                        <tbody>
+                        
+                                          <tr>
+                                            <td>Dialy Transaction Report</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Analytics.ParkingAreaReport.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <!-- <th> <input type="checkbox" name="Edit" [(ngModel)]="pri.Analytics.ParkingLots.Edit" >
+                                            </th> -->
+                                          </tr>
+                                          <tr>
+                                            <td>Parkingarea Report</td>
+                                            <th> <input type="checkbox" name="View" [(ngModel)]="Data.Analytics.ParkedVehicle.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <!-- <th> <input type="checkbox" name="Edit"  >
+                                            </th> -->
+                                          </tr>
+                                          <tr>
+                                            <td>Parked Vehicles</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Analytics.Occupancy.View" [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <!-- <th> <input type="checkbox" name="Edit" >
+                                            </th> -->
+                                          </tr>
+                                          <!-- <tr>
+                                            <td>Device Performance</td>
+                                            <th><input type="checkbox" name="View" >
+                                            </th>
+                                            <th> <input type="checkbox" name="Edit" >
+                                            </th>
+                                          </tr> -->
+                                          <tr>
+                                            <td>Summary</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Analytics.Summary.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <!-- <th> <input type="checkbox" name="Edit" [(ngModel)]="Data.Analytics.TaxReport.Edit">
+                                            </th> -->
+                        
+                                          </tr>
+                        
+                                          <!-- <tr>
+                                            <td>Custom Report</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Analytics.customreport.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                           
+                        
+                                          </tr> -->
+                                          <tr>
+                                            <td>Custom Analytics</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Analytics.customanalytics.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <!-- <th> <input type="checkbox" name="Edit" [(ngModel)]="Data.Analytics.TaxReport.Edit">
+                                            </th> -->
+                        
+                                          </tr>
+
+                                           <tr>
+                                            <td>Parking History</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Analytics.parkinghistory.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <!-- <th> <input type="checkbox" name="Edit" [(ngModel)]="Data.Analytics.TaxReport.Edit">
+                                            </th> -->
+                        
+                                          </tr>
+                                          <br><br>
+                        
+                        
+                                        </tbody>
+                                      </table>
+                                </ng-template>
+                              </div>
+                            </div>
+                          </div>
+                          <div ngbAccordionItem >
+                            <h2 ngbAccordionHeader>
+                              <button ngbAccordionButton>Accounts</button>
+                            </h2>
+                            <div ngbAccordionCollapse>
+                              <div ngbAccordionBody>
+                                <ng-template>
+                                    <table class="table table-striped table-hover table-responsive-sm">
+                                        <thead>
+                                          <tr>
+                                            <th></th>
+                                            <th>View</th>
+                                            <th>Edit</th>
+                                            <th>Create</th>
+                        
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                        
+                                          <tr>
+                                            <td>Payment Details</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Finanace.Paymentlog.View" [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Finanace.Paymentlog.Edit" [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Finanace.Paymentlog.Create"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Refunds</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Finanace.Refunds.View"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit"  [(ngModel)]="Data.Finanace.Refunds.Edit" [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Finanace.Refunds.Create"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Reconciliation</td>
+                                            <th><input type="checkbox" name="View"  [(ngModel)]="Data.Finanace.Reconciliation.View" [ngModelOptions]="{standalone: true}" >
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Finanace.Reconciliation.Edit" [ngModelOptions]="{standalone: true}" >
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Finanace.Reconciliation.Create" [ngModelOptions]="{standalone: true}" >
+                                            </th>
+                                          </tr>
+                        
+                        
+                        
+                                          <br><br>
+                        
+                        
+                                        </tbody>
+                                      </table>
+                                </ng-template>
+                              </div>
+                            </div>
+                          </div>
+                          <div ngbAccordionItem >
+                            <h2 ngbAccordionHeader>
+                              <button ngbAccordionButton>Management</button>
+                            </h2>
+                            <div ngbAccordionCollapse>
+                              <div ngbAccordionBody>
+                                <ng-template>
+                                    <table class="table table-striped table-hover table-responsive-sm">
+                                        <thead>
+                                          <tr>
+                                            <th></th>
+                                            <th>View</th>
+                                            <th>Edit</th>
+                                            <th>Create</th>
+                        
+                        
+                                          </tr>
+                                          <!-- <tr>
+                                            <th></th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                        
+                                          </tr> -->
+                                        </thead>
+                                        <tbody>
+                        
+                                          <tr>
+                                            <td>Monthly Pass</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.MonthlyPass.View"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.MonthlyPass.Edit"  [ngModelOptions]="{standalone: true}">
+                                                </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.MonthlyPass.Create"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                        
+                                          <!-- <tr>
+                                            <td>Vehicles</td>
+                                            <th><input type="checkbox" name="View"  [(ngModel)]="Data.Management.Vehicles.View" > 
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.Vehicles.Edit" >
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.Vehicles.Create" >
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Live View</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.LiveView.View" >
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.LiveView.Edit" >
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.LiveView.Create" >
+                                            </th>
+                                          </tr> -->
+                                          <tr>
+                                            <td>Whitelisted vehicles</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.CustomerDet.View"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.CustomerDet.Edit"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.CustomerDet.Create"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Booking Details</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.BookingDetails.View"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.BookingDetails.Edit"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.BookingDetails.Create"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>FasTag Details</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.FasTagdetails.View"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.FasTagdetails.Edit"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.FasTagdetails.Create"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <!-- <tr>
+                                            <td>Network Monitoring</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.NetworkMonitor.View"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.NetworkMonitor.Edit"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.NetworkMonitor.Create"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr> -->
+                                          <!-- <tr>
+                                            <td>Service Monitoring</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.servicemonitor.View"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.servicemonitor.Edit"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.servicemonitor.Create"  [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            </tr> -->
+                                            <!-- <tr>
+                                              <td>Boombarrier Log</td>
+                                              <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.boombarrierlog.View"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.boombarrierlog.Edit"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.boombarrierlog.Create"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                            </tr> -->
+                                            <!-- <tr>
+                                              <td>Valet Details</td>
+                                              <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.valetdetails.View"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.valetdetails.Edit"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.valetdetails.Create"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                            </tr> -->
+                                            <!-- <tr>
+                                              <td>Custom RF Tag Details</td>
+                                              <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.employeetag.View"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.employeetag.Edit"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.employeetag.Create"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                            </tr> -->
+                                            <tr>
+                                              <td>Attendance Register Details</td>
+                                              <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.attendanceregister.View"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.attendanceregister.Edit"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.attendanceregister.Create"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                            </tr>
+                                            <tr>
+                                              <td>Blacklisted Vehicles</td>
+                                              <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.blacklistedvehicles.View"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.blacklistedvehicles.Edit"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.blacklistedvehicles.Create"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                            </tr>
+                                            <tr>
+                                              <td>Assets Management</td>
+                                              <th><input type="checkbox" name="View" [(ngModel)]="Data.Management.assets.View"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Edit" [(ngModel)]="Data.Management.assets.Edit"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                              <th><input type="checkbox" name="Create" [(ngModel)]="Data.Management.assets.Create"  [ngModelOptions]="{standalone: true}">
+                                              </th>
+                                            </tr>
+                                          <br><br>
+                        
+                        
+                                        </tbody>
+                                      </table>
+                                </ng-template>
+                              </div>
+                            </div>
+                          </div>
+                          <div ngbAccordionItem >
+                            <h2 ngbAccordionHeader>
+                              <button ngbAccordionButton>Admin Settings</button>
+                            </h2>
+                            <div ngbAccordionCollapse>
+                              <div ngbAccordionBody>
+                                <ng-template>
+                                    <table class="table table-striped table-hover table-responsive-sm">
+                                        <thead>
+                                          <tr>
+                                            <th></th>
+                                            <th>View</th>
+                                            <th>Edit</th>
+                                            <th>Create</th>
+                        
+                                          </tr>
+                                          <!-- <tr>
+                                            <th></th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                        
+                                          </tr> -->
+                                        </thead>
+                                        <tbody>
+                                          <tr>
+                                            <td>Organization Type</td>
+                                            <th> <input type="checkbox" name="View" [(ngModel)]="Data.AdminSetting.OrgType.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.AdminSetting.OrgType.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.AdminSetting.OrgType.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Organization Profile</td>
+                                            <th> <input type="checkbox" name="View" [(ngModel)]="Data.AdminSetting.OrgProf.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.AdminSetting.OrgProf.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.AdminSetting.OrgProf.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Role</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.AdminSetting.Role.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.AdminSetting.Role.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.AdminSetting.Role.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Staff</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.AdminSetting.Staff.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.AdminSetting.Staff.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.AdminSetting.Staff.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                        
+                                          <tr>
+                                            <td>Tariff</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.AdminSetting.Tariff.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.AdminSetting.Tariff.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.AdminSetting.Tariff.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                        
+                                          <tr>
+                                            <td>Organizational Functional Map</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.AdminSetting.orgfunctionalmap.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.AdminSetting.orgfunctionalmap.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.AdminSetting.orgfunctionalmap.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                        
+                                          <tr>
+                                            <td>Organization Domains</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.AdminSetting.orgdomain.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.AdminSetting.orgdomain.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.AdminSetting.orgdomain.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <br><br>
+                        
+                        
+                                        </tbody>
+                                      </table>
+                                </ng-template>
+                              </div>
+                            </div>
+                          </div>
+                          <div ngbAccordionItem >
+                            <h2 ngbAccordionHeader>
+                              <button ngbAccordionButton>Parking Space Settings</button>
+                            </h2>
+                            <div ngbAccordionCollapse>
+                              <div ngbAccordionBody>
+                                <ng-template>
+                                    <table class="table table-striped table-hover table-responsive-sm">
+                                        <thead>
+                                          <tr>
+                                            <th></th>
+                                            <th>View</th>
+                                            <th>Edit</th>
+                                            <th>Create</th>
+                        
+                                          </tr>
+                                          <!-- <tr>
+                                            <th></th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                                            <th> <input type="checkbox">
+                                            </th>
+                        
+                                          </tr> -->
+                                        </thead>
+                                        <tbody>
+                        
+                                          <tr>
+                                            <td>Parking Space</td>
+                                            <th> <input type="checkbox" name="View" [(ngModel)]="Data.ParkingSetting.ParkingSpace.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.ParkingSetting.ParkingSpace.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.ParkingSetting.ParkingSpace.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Parking Lots</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.ParkingSetting.ParkingLots.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.ParkingSetting.ParkingLots.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.ParkingSetting.ParkingLots.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Boom Barrier</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.ParkingSetting.boombarrier.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.ParkingSetting.boombarrier.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.ParkingSetting.boombarrier.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Sensor</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.ParkingSetting.sensor.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.ParkingSetting.sensor.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.ParkingSetting.sensor.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                        
+                        
+                                          <tr>
+                                            <td>Display</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.ParkingSetting.display.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.ParkingSetting.display.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.ParkingSetting.display.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>POS Devices</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.ParkingSetting.posdevices.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.ParkingSetting.posdevices.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.ParkingSetting.posdevices.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                           <tr>
+                                            <td>RF Reader</td>
+                                            <th><input type="checkbox" name="View" [(ngModel)]="Data.ParkingSetting.rfreaders.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Edit" [(ngModel)]="Data.ParkingSetting.rfreaders.Edit"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                            <th><input type="checkbox" name="Create" [(ngModel)]="Data.ParkingSetting.rfreaders.Create"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <br><br>
+                        
+                        
+                                        </tbody>
+                                      </table>
+                                </ng-template>
+                              </div>
+                            </div>
+                          </div>
+                          <div ngbAccordionItem >
+                            <h2 ngbAccordionHeader>
+                              <button ngbAccordionButton>Mobile Privileges</button>
+                            </h2>
+                            <div ngbAccordionCollapse>
+                              <div ngbAccordionBody>
+                                <ng-template>
+                                    <table class="table table-striped table-hover table-responsive-sm">
+                                        <thead>
+                                          <tr>
+                                            <th></th>
+                                            <th>View</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                          
+                                          <tr>
+                                            <td>Full Sumaary</td>
+                                            <th> <input type="checkbox" name="View" [(ngModel)]="Data.MobilePrivileges.fullsummary.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td>Analytics</td>
+                                            <th> <input type="checkbox" name="View" [(ngModel)]="Data.MobilePrivileges.analytics.View"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </th>
+                                          </tr>
+                          
+                          
+                          
+                                          <br><br>
+                          
+                          
+                                        </tbody>
+                                      </table>
+                                </ng-template>
+                              </div>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+          
+                </div>
+          
+                <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                  (click)="AddPrivil(RolePrivData)">Save</button>
+                <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+                (click)="modal.close('Close click')">Close</button>
+              </form>
+        </div>
+      </ng-template>
+      <!-- Role Privilege ends -->

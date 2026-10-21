@@ -1,0 +1,334 @@
+<div class="row">
+    <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;">
+        <ng-container >
+          <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+        </ng-container>
+        <ng-container *ngFor="let item of nameArray">
+          <!-- <span> ➔ <i class="fas fa-chevron-circle-right"></i> </span> -->
+          <span> <i  class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3" ></i></span>
+          <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+        </ng-container>
+        <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+        <option [value]="null"  selected>Select</option>
+        <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+      </select>
+      </div>
+    <div class="col-xl-12">
+     <div class="row align-items-center mb-3">
+  <div class="col-12 col-md d-flex flex-wrap gap-2">
+    <button 
+      type="button"
+      class="btn btn-primary"
+      (click)="addAsset(add)">
+      Add New
+    </button>
+
+    <button
+      type="button"
+      class="btn btn-outline-primary" 
+      (click)="summary(sum)" (click)="ngOnInit()">
+      Assets Active Summary
+    </button>
+  </div>
+
+  <div class="col-12 col-md d-flex justify-content-md-end mt-2 mt-md-0" >
+    <button
+      type="button"
+      class="btn btn-secondary"
+      [routerLink]="['/admin/management/assetsmapview']">
+      Map View
+    </button>
+  </div>
+</div>
+
+       
+        
+      <app-card cardTitle="Assets Details" [options]="false" blockClass="table-border-style" *ngIf="summarytable==0">
+        <div class="table-responsive">
+          <table class="table table-hover" id="mytable">
+            <thead>
+              <tr>
+  
+                <th>Serial Number</th>
+                <th>Device Name</th>
+                <th>IP</th>
+                <th>Specification</th>
+                <th>ParkingSpace</th>
+                <th>Created Date</th>
+                <th>Status</th>
+                <th>Edit</th>
+                <!-- <th>Parking Space</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of assets; let i = index" 
+              [ngStyle]="{ 'background-color': (data.isactive=='0' && !['9','11','6'].includes(data.devicetype) && data.status=='1') ? '#ffe0e0' : '' }">
+                <td>{{data.serialnumber}}</td>
+                <td>{{data.itemname}}</td>
+                <td>{{data.ip}}</td>
+                <td>{{data.specification}}</td>
+                <td>{{data.parking_lot_name}}</td>
+                <td>{{data.createddate}}</td>
+                <td *ngIf="data.status=='0'" style="color: blue;">Not Fixed</td>
+                <td *ngIf="data.status=='1'" style="color: green;">Fixed</td>
+                <td *ngIf="data.status=='2'" style="color: red;">Defect</td>
+                <td *ngIf="data.status=='3'" style="color: orangered;">Replaced</td>
+                <td><a style="cursor: pointer;"
+                    data-toggle="modal"><i style="color: #1e90ff"
+                      class="fas fa-pencil-alt" aria-hidden="true" (click)="getIndex(i)" (click)="editAssets(edit)"></i></a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+      <app-card cardTitle="Assets Active Time Summary" [options]="false" blockClass="table-border-style" *ngIf="summarytable==1">
+        <div class="table-responsive">
+         <table class="table table-bordered text-center align-middle" id="mytable1">
+   <thead>
+  <tr>
+    <th rowspan="2" class="align-middle">Parking Lot</th>
+    <th [attr.colspan]="months.length" class="text-center">
+      Downtime %
+    </th>
+    <th [attr.colspan]="months.length" class="text-center">
+      Uptime %
+    </th>
+  </tr>
+
+  <tr>
+    <ng-container *ngFor="let m of months">
+      <th class="text-center">{{ m }} Down Time</th>
+    </ng-container>
+    <ng-container *ngFor="let m of months">
+      <th class="text-center">{{ m }} Up Time</th>
+    </ng-container>
+  </tr>
+</thead>
+
+    <tbody>
+      <tr *ngFor="let row of tableData">
+        <td class="text-start fw-semibold">
+          {{ row.parking_lot_name }}
+        </td>
+
+        <!-- Downtime -->
+        <ng-container *ngFor="let m of months">
+          <td class="text-danger">
+            {{ row.downtime[m] ?? '0.00' }}%
+          </td>
+        </ng-container>
+
+        <!-- Uptime -->
+        <ng-container *ngFor="let m of months">
+          <td class="text-s">
+            {{ row.uptime[m] ?? '100' }}%
+          </td>
+        </ng-container>
+      </tr>
+    </tbody>
+  </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+
+  <ng-template #add let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add Assets Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form action="javascript:" #form="ngForm" autocomplete="off">
+            <div class="form-group">
+              <label for="serialnumber" class="required">Serial Number</label>
+              <input type="text" class="form-control" placeholder="Serial Number"
+                [ngClass]="{'is-invalid': !serialnumber.valid && serialnumber.errors.pattern}" ngModel #serialnumber="ngModel" required
+                name="serialnumner" ngModel  [(ngModel)]="service.assetdata.serialnumber">
+              <label *ngIf="!serialnumber.valid && serialnumber.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid Serial Number
+                .</label>
+            </div>
+            <div class="form_group">
+              <label class="required">Device Type</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="devicetype" required [(ngModel)]="service.assetdata.devicetype">
+                <option value="" disabled selected>Select Device Type</option>
+                <option *ngFor="let list of itemslist" [value]="list.id">{{list.itemname}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ip" >Device IP</label>
+              <input type="text" class="form-control" placeholder="IP"
+                [ngClass]="{'is-invalid': !ip.valid && ip.errors.pattern}" ngModel #ip="ngModel" 
+                name="ip" ngModel  [(ngModel)]="service.assetdata.ip">
+              <label *ngIf="!ip.valid && ip.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid IP
+                .</label>
+            </div>
+            <div class="form-group">
+                <label for="specification">Specification</label>
+                <input type="text" class="form-control" placeholder="Device Specification" ngModel #specification="ngModel"
+                  name="specification" [(ngModel)]="service.assetdata.specification">
+              </div>
+            <div class="form_group">
+              <label class="required">Parking Space</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="parking_lot_id" required [(ngModel)]="service.assetdata.parkingspaceid">
+                <option value="" disabled selected>Select parking area</option>
+                <option *ngFor="let value of parkingspacelist" [value]="value.parkingspaceid">{{value.parking_lot_name}}</option>
+              </select>
+            </div>
+            <div class="form_group">
+                <label class="required">Status</label>
+                <select class="select2_demo_1 form-control" style="width: 100%" name="status" required [(ngModel)]="service.assetdata.status">
+                  <option value="" disabled selected>Select Device Status</option>
+                  <option value="0" >Not Fixed</option>
+                  <option value="1" >Fixed</option>
+                  <option value="2" >Defect</option>
+                  <option value="3" >Replaced</option>
+                </select>
+              </div>
+             
+              <div class="form-group">
+                <label for="lat" >Latitude</label>
+                <input type="text" class="form-control" placeholder="Device Lattitude"
+                  [ngClass]="{'is-invalid': !lat.valid && lat.errors.pattern}" ngModel #lat="ngModel"
+                  name="lat" pattern="^-?\d+(\.\d+)?$" [(ngModel)]="service.assetdata.lat">
+                <label *ngIf="!lat.valid && lat.errors.pattern"
+                  class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid lattitude
+                  .</label>
+              </div>
+              <div class="form-group">
+                <label for="lng" >Longtitude</label>
+                <input type="text" class="form-control" placeholder="Device Longtitude"
+                  [ngClass]="{'is-invalid': !lng.valid && lng.errors.pattern}" ngModel #lng="ngModel"
+                  name="lng" pattern="^-?\d+(\.\d+)?$" [(ngModel)]="service.assetdata.lng">
+                <label *ngIf="!lng.valid && lng.errors.pattern"
+                  class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid Longtitude
+                  .</label>
+              </div>
+            <div class="app-modal-footer">
+              <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                (click)="resetform()">Close</button>
+              <button type="button" class="pull-left btn btn-primary pull-right mb-2" data-dismiss="modal" [disabled]="!form.valid"
+              (click)="modal.close('Close click')" (click)="saveData()">Save</button>
+            </div>
+      
+          </form>
+    </div>
+  </ng-template>
+
+
+  <!-- Edit asset details......................................... -->
+  <ng-template #edit let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Edit Assets Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngFor="let editdata of editassets">
+        <form action="javascript:" #form="ngForm" autocomplete="off">
+            <div class="form-group">
+              <label for="serialnumber" class="required">Serial Number</label>
+              <input type="text" class="form-control" placeholder="Serial Number"
+                [ngClass]="{'is-invalid': !serialnumber.valid && serialnumber.errors.pattern}" ngModel #serialnumber="ngModel" required
+                name="serialnumner" ngModel  [(ngModel)]="editdata.serialnumber">
+              <label *ngIf="!serialnumber.valid && serialnumber.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid Serial Number
+                .</label>
+            </div>
+            <div class="form_group">
+              <label class="required">Device Type</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="devicetype" required [(ngModel)]="editdata.devicetype">
+                <option value="" disabled selected>Select Device Type</option>
+                <option *ngFor="let list of itemslist" [value]="list.id">{{list.itemname}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ip" >Device IP</label>
+              <input type="text" class="form-control" placeholder="IP"
+                [ngClass]="{'is-invalid': !ip.valid && ip.errors.pattern}" ngModel #ip="ngModel" 
+                name="ip" ngModel  [(ngModel)]="editdata.ip">
+              <label *ngIf="!ip.valid && ip.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid IP
+                .</label>
+            </div>
+            <div class="form-group">
+                <label for="specification">Specification</label>
+                <input type="text" class="form-control" placeholder="Device Specification" ngModel #specification="ngModel"
+                  name="specification" [(ngModel)]="editdata.specification">
+              </div>
+            <div class="form_group">
+              <label class="required">Parking Space</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="parking_lot_id" required [(ngModel)]="editdata.parking_lot_id">
+                <option value="" disabled selected>Select parking area</option>
+                <option *ngFor="let value of parkingspacelist" [value]="value.parkingspaceid">{{value.parking_lot_name}}</option>
+              </select>
+            </div>
+            <div class="form_group">
+                <label class="required">Status</label>
+                <select class="select2_demo_1 form-control" style="width: 100%" name="status" required [(ngModel)]="editdata.status">
+                  <option value="" disabled selected>Select Device Status</option>
+                  <option value="0" >Not Fixed</option>
+                  <option value="1" >Fixed</option>
+                  <option value="2" >Defect</option>
+                  <option value="3" >Replaced</option>
+                </select>
+              </div>
+             
+              <div class="form-group">
+                <label for="lat" >Latitude</label>
+                <input type="text" class="form-control" placeholder="Device Lattitude"
+                  [ngClass]="{'is-invalid': !lat.valid && lat.errors.pattern}" ngModel #lat="ngModel"
+                  name="lat" pattern="^-?\d+(\.\d+)?$" [(ngModel)]="editdata.lat">
+                <label *ngIf="!lat.valid && lat.errors.pattern"
+                  class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid lattitude
+                  .</label>
+              </div>
+              <div class="form-group">
+                <label for="lng" >Longtitude</label>
+                <input type="text" class="form-control" placeholder="Device Longtitude"
+                  [ngClass]="{'is-invalid': !lng.valid && lng.errors.pattern}" ngModel #lng="ngModel"
+                  name="lng" pattern="^-?\d+(\.\d+)?$" [(ngModel)]="editdata.lng">
+                <label *ngIf="!lng.valid && lng.errors.pattern"
+                  class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid Longtitude
+                  .</label>
+              </div>
+            <div class="app-modal-footer">
+              <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                (click)="resetform()" (click)="getDetails()">Close</button>
+              <button type="button" class="pull-left btn btn-primary pull-right mb-2" data-dismiss="modal" [disabled]="!form.valid" (click)="editDetails(editdata)"
+              (click)="modal.close('Close click')">Save</button>
+            </div>
+      
+          </form>
+    </div>
+  </ng-template>
+  <!-- ............................ -->
+
+
+  <ng-template #sum let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Assets Active Summary</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form action="javascript:" #form="ngForm" autocomplete="off">
+            <div class="form-group">
+              <label for="From" class="required">From</label>
+               <input type="date" class="form-control" [ngModel]="date | date:'yyyy-MM-dd'" (ngModelChange)="date = $event" [max]="today" required>
+            </div>
+            <div class="form-group">
+              <label for="todate" class="required">To</label>
+              <input type="date" class="form-control" [ngModel]="todate | date:'yyyy-MM-dd'" (ngModelChange)="todate = $event" [max]="today" required>
+            </div>
+
+            <div class="app-modal-footer">
+              <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                (click)="resetform()">Close</button>
+              <button type="button" class="pull-left btn btn-primary pull-right mb-2" data-dismiss="modal" [disabled]="!form.valid"
+              (click)="modal.close('Close click')" (click)="getSummary()" (click)="resetform()">Get Summary</button>
+            </div>
+      
+          </form>
+    </div>
+  </ng-template>

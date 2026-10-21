@@ -1,0 +1,346 @@
+<div class="main_div container">
+    <div class="container-fluid head">
+      <a style="cursor: pointer;" [routerLink]="['/admin/adminsettings/settariff']"><i style="color: #1e90ff"
+          class="fas fa-arrow-left fa-2x"></i></a>
+  
+    </div>
+    <app-card cardTitle="Tariff Details" blockClass="table-border-style">
+      <div class="col-xl-12 inner_div">
+        <!-- <div>
+          <h6 style=" color: rgb(253, 0, 0);">*Incomplete Tariff*</h6>
+        <h6 style="color: rgb(253, 0, 0);">*Overlapping Tariff*</h6>
+        </div> -->
+        <div class="container-fluid top_table_div pull-left">
+          <!-- <div class="form-group pull-right" *ngIf="usedcount !=0"><label>End Date</label>
+            <input type="date" [min]="myDate" class="form-control" placeholder="To Date" name="date"  [value]="tariffdata[0]['enddate']"  (change)="updateSchemeEnddate($event)" (click)="dateFormat()">
+          </div> -->
+          <table class="table table-bordered">
+            <thead style="text-align:center">
+              <tr>
+                <th>Tariff Name</th>
+                <th>Scheme</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Basedon</th>
+                <th>Unit Type</th>
+               
+                <th  [ngStyle]="{'display' : service.EditTariff === true? 'block' : 'none'  }" *ngIf="usedcount ==0">Action</th>
+              </tr>
+            </thead>
+            <tbody style="text-align:center">
+              <tr *ngFor="let data of tariffdata">
+                <td>{{data.TariffName}}</td>
+                <td>{{data.SchemeName}}</td>
+                <td> {{data.startdate| date:'dd-MMM-yyy'}}</td>
+                <td>{{data.enddate| date:'dd-MMM-yyy'}}</td>
+                <td>{{data.basedon}}</td>
+                <td>{{data.unittype}}</td>
+               
+                <td  [ngStyle]="{'display' : service.EditTariff === true? 'block' : 'none'  }" *ngIf="usedcount ==0">
+                  <a style="cursor: pointer;" data-toggle="modal" 
+                    (click)="editTariff(edit)" (click)="editScheme(data)">
+                    <i style="color: #1e90ff" class="fas fa-pencil-alt" aria-hidden="true"></i></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+  
+        <div class="col-xl-12 row inner_div2">
+          <div class="col-xl-3 left_inner_div">
+            <ul>
+              <li *ngFor="let one of button; let i = index">
+                <button #buttonClick id={{i}} class="btn btn-info color me-2 mb-2" (click)="getValueIndex(i)">{{one}}</button>
+               
+                <a  [ngStyle]="{'display' : service.EditTariff === true? 'inline' : 'none'  }" *ngIf="usedcount==0" style="cursor: pointer;"
+                  data-toggle="modal"><i style="color: #1e90ff" class="fa fa-trash mb-2" aria-hidden="true"
+                    (click)="deleteType(deletetype)"></i></a>
+                    <ng-template #deletetype let-modal>
+                      <div class="modal-header">
+                        <h5 class="modal-title h4" id="myLargeModalLabel">Confirm Delete</h5>
+                        <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+                      </div>
+                      <div class="modal-body">
+                        <h4>Do you really want to delete it?</h4>
+                      </div>
+                      <div class="app-modal-footer">
+                        <button type="button" class="btn btn-secondary close_modal me-2 mb-2" data-dismiss="modal"
+                        (click)="modal.close('Close click')">No</button>
+                        <button type="button" class="btn btn-primary save_modal me-2 mb-2"
+                        (click)="modal.close('Close click')" (click)="deleteTypedefinition(i)">Yes</button>
+                      </div>
+                    </ng-template>
+  
+              </li>
+            </ul>
+          </div>
+          <div class="col-xl-9">
+            <div class="col-sm-12 nopad">
+               
+              <h5  [ngStyle]="{'display' : settariffservice.AddTariff === true? 'inline' : 'none' }">Tariff Varaiation <a 
+                  style="cursor: pointer; padding: 5px"  (click)="editType = false;" *ngIf="usedcount==0"
+                (click)="addTariffVariation(addvariation)" (click)="getdropdownvalue()"><i style="color: #1e90ff" class="fa fa-plus" aria-hidden="true"
+                    title="Add New Tariff variation"></i></a></h5>
+              <table class="table table-bordered">
+                <thead style="text-align:center">
+                  <tr>
+                    <th>Parking Type</th>
+                    <th>Customer Type</th>
+                    <th>Vehicle Type</th>
+                    <th>Accumulate Charges</th>
+                    
+                    <th [ngStyle]="{'display':service.EditTariff === true? 'block' : 'none'}" *ngIf="usedcount ==0">Action</th>
+                  </tr>
+                </thead>
+                <tbody style="text-align:center">
+                  <tr *ngFor="let object of indexeddata; let x=index">
+                    <!-- <td *ngIf="object.pktype=='*'">All</td> -->
+                    <td>{{object.pktype=='*' ? 'All' : object.pktype}}</td>
+                    <td>{{object.custtype=='*' ? 'All' : object.custtype}}</td>
+                    <td>{{object.vehtype=='*' ? 'All' : object.vehtype}}</td>
+                    <td>{{accumulatecharge}}</td>
+                    
+                    <td [ngStyle]="{'display' : service.EditTariff === true? 'block' : 'none'  }"  *ngIf="usedcount==0">
+                      <a style="cursor: pointer;" data-toggle="modal" (click)="addTariffVariation(addvariation)"
+                        (click)="getdropdownvalue()" (click)="editTypeDef(object, accumulatecharge)"><i
+                          style="color: #1e90ff" class="fas fa-pencil-alt" aria-hidden="true"></i></a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+  
+            <div class="col-sm-12 nopad">
+               
+              <h5  [ngStyle]="{'display' : settariffservice.AddTariff === true? 'inline' : 'none'  }">Unit Definition<a (click)="addUnitValue(addunitvalue)"
+                  style="cursor: pointer; padding: 5px"  (click)="editUnit = false;" *ngIf="usedcount==0"
+                  (click)=" lastaddedunit()"><i style="color: #1e90ff" class="fa fa-plus" aria-hidden="true"
+                    title="Add New Unit"></i></a></h5>
+  
+              <table class="table table-bordered" id="unittable">
+                <thead style="text-align:center">
+                  <tr>
+                    <th>Unit Start ({{unittype}})</th>
+                    <th>Unit End ({{unittype}})</th>
+                    <th>Price (Rs)</th>
+                    <th>Charging Method</th>
+                   
+                    <th  [ngStyle]="{'display' : service.EditTariff === true? 'block' : 'none'  }" *ngIf="usedcount==0">Action</th>
+  
+                  </tr>
+                </thead>
+                <tbody style="text-align:center">
+                  <tr *ngFor="let unit of unitvalues; let k=index">
+                    <td>{{unit.unitstart}}</td>
+                    <td>{{unit.unitend}}</td>
+                    <td>{{unit.price}}</td>
+                    <td>{{unit.chargingmethod}}</td>
+                  
+                    <td   [ngStyle]="{'display' : service.EditTariff === true? 'block' : 'none'  }"  *ngIf="usedcount ==0">
+                      <a style="cursor: pointer; padding: 5px" data-toggle="modal" (click)="getIndex(k)" (click)="addUnitValue(addunitvalue)"
+                         (click)="editUnits(unit, k)"><i style="color: #1e90ff"
+                          class="fas fa-pencil-alt" aria-hidden="true"></i></a>
+                      <!-- <a style="cursor: pointer; padding: 5px" data-toggle="modal" (click)="exampleModalCenter.show()"><i 
+                                                  style="color: #1e90ff" class="fa fa-trash" aria-hidden="true"></i></a> -->
+  
+                    </td>
+                   
+                  </tr>
+                </tbody>
+              </table>
+             
+              <button   [ngStyle]="{'display' : service.EditTariff === true? 'block' : 'none'  }" type="button" *ngIf="usedcount==0"
+                class="btn btn-primary save_modal"  (click)="deleteUnit(deleteunit)">Delete Last Unit</button>
+                <ng-template #deleteunit let-modal>
+                  <div class="modal-header">
+                    <h5 class="modal-title h4" id="myLargeModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+                  </div>
+                  <div class="modal-body">
+                    <h4>Do you really want to delete it?</h4>
+                  </div>
+                  <div class="app-modal-footer">
+                    <button type="button" class="btn btn-secondary close_modal me-2 mb-2" data-dismiss="modal"
+                    (click)="modal.close('Close click')">No</button>
+                    <button type="button" class="btn btn-primary save_modal me-2 mb-2"
+                    (click)="modal.close('Close click')" (click)=" deletelastValue()">Yes</button>
+                  </div>
+                </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+<!-- Traiff variation Add Starts................................................................................................... -->
+  <ng-template #addvariation let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Type Definition</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+    </div>
+    <div class="modal-body">
+      <form action="javascript:" autocomplete="off" id="schemedefenition" #a="ngForm">
+        <div id="datafield">
+          <div class="app-modal-body" *ngFor="let object of typedefdata" value='1'>
+  
+            <div class="form-group" *ngIf="object.type=='text'">
+              <label for="inputphone">{{object.label}}</label>
+              <input name="text" id={{object.name}} type="text" class="form-control myinput" required>
+  
+            </div>
+  
+            <div class="form-group" *ngIf="object.type=='dropdown'">
+              <label>{{object.label}}</label> <a style="cursor: pointer; padding: 5px"> <i style="color: #5f6266"
+                  class="fa fa-info-circle" aria-hidden="true"></i></a>
+              <select id={{object.name}} #elm class="form-control myinput" required>
+                <!-- <option *ngFor="let data of typedefvalue" [selected]="data == object.default">
+                    {{(data == '*' ? 'All' : data)}}</option> -->
+              </select>
+            </div>
+  
+            <div class="form-group" *ngIf="object.type=='date'">
+              <label>{{object.label}}</label>
+              <input id={{object.name}} class="form-control myinput" type="date" required>
+            </div>
+  
+            <div class="form-group" *ngIf="object.type=='array'">
+              <!-- <label>{{object.label}}</label> -->
+              <input id={{object.name}} class="form-control myinput" value="array" hidden>
+            </div>
+            <div class="form-group" *ngIf="object.type=='object'">
+              <!-- <label>{{object.label}}</label> -->
+              <input id={{object.name}} class="form-control myinput" value="object" hidden>
+            </div>
+  
+          </div>
+  
+        </div>
+  
+        <button type="button" class="btn btn-secondary close_modal me-2 mb-2" data-dismiss="modal"
+        (click)="modal.close('Close click')" (click)="ngOnInit()">Close</button>
+        <button type="button" class="pull-left btn btn-primary pull-right save_modal me-2 mb-2" data-dismiss="modal"
+          [disabled]="!a.valid" (click)="modal.close('Close click')"
+          (click)="editType ? editTypeDefValue() : updateTypedef()">Save</button>
+      </form>
+    </div>
+  </ng-template>
+  <!-- Traiff variation Add Ends................................................................................................... -->
+
+  <!-- Tariff Units Add Starts .....................................................................................................-->
+  <ng-template #addunitvalue let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Units value</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+    </div>
+    <div class="modal-body">
+      <form action="javascript:" autocomplete="off" id="unitsvalue" #u="ngForm">
+        <div id="unitfield">
+          <div class="app-modal-body" *ngFor="let object of unitvaluedata" value='1'>
+  
+            <div class="form-group" *ngIf="object.type=='text'">
+              <label for="inputphone">{{object.label}}</label> <a style="cursor: pointer; padding: 5px"> <i
+                  style="color: #5f6266" class="fa fa-info-circle" aria-hidden="true"></i></a>
+              <input id={{object.name}} type="text" class="form-control myinput" name="obj" #obj="ngModel" ngModel
+                [ngClass]="{'is-invalid': !obj.valid && obj.errors.pattern}" pattern="[0-9]*$" required>
+              <label *ngIf="!obj.valid && obj.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please Enter a valid Input.</label>
+            </div>
+  
+            <div class="form-group" *ngIf="object.type=='dropdown'">
+              <label>{{object.label}}</label> <a style="cursor: pointer; padding: 5px"> <i style="color: #5f6266"
+                  class="fa fa-info-circle" aria-hidden="true"></i></a>
+              <select id={{object.name}} #elm class="form-control myinput" required>
+                <option *ngFor="let data of unitdatavalue" [selected]="data == object.default">
+                  {{(data == '*' ? 'All' : data)}}</option>
+              </select>
+            </div>
+  
+            <div class="form-group" *ngIf="object.type=='date'">
+              <label>{{object.label}}</label> <a style="cursor: pointer; padding: 5px"> <i style="color: #5f6266"
+                  class="fa fa-info-circle" aria-hidden="true"></i></a>
+              <input id={{object.name}} name="date" class="form-control myinput" type="date" required
+                (click)="dateFormat()">
+            </div>
+  
+            <div class="form-group" *ngIf="object.type=='array'">
+              <!-- <label>{{object.label}}</label> -->
+              <input id={{object.name}} class="form-control myinput" value="array" hidden>
+            </div>
+            <div class="form-group" *ngIf="object.type=='object'">
+              <!-- <label>{{object.label}}</label> -->
+              <input id={{object.name}} class="form-control myinput" value="object" hidden>
+            </div>
+  
+          </div>
+  
+        </div>
+  
+        <button type="button" class="btn btn-secondary close_modal me-2 mb-2" data-dismiss="modal"
+        (click)="modal.close('Close click')" (click)="onGettariff()">Close</button>
+        <button type="button" class="pull-left btn btn-primary pull-right save_modal mb-2" data-dismiss="modal"
+          [disabled]="!u.valid" (click)="modal.close('Close click')"
+          (click)=" editUnit ? editUnitsValue():updateunitdef()">Save</button>
+      </form>
+    </div>
+  </ng-template>
+  <!-- Traiff Unit Add End .........................................................................................................-->
+
+  <!-- update tariff def starts .....................................................................................................-->
+  <ng-template #edit let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Scheme Definition</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"></button>
+    </div>
+    <div class="modal-body">
+      <form action="javascript:" autocomplete="off" id="schemedefenition" #s="ngForm">
+          <div class="form-group">
+            <label for="inputdescription">Tariff Name</label>
+            <input type="text" class="form-control myinput" placeholder="Tariff Name" ngModel #tariffname="ngModel"
+              [(ngModel)]="tariffdata[0]['TariffName']" [ngModelOptions]="{standalone: true}"
+              [ngClass]="{'is-invalid': !tariffname.valid && tariffname.errors.pattern}" pattern="[a-zA-Z ]*$" required>
+            <label *ngIf="!tariffname.valid && tariffname.errors.pattern"
+              class="error jquery-validation-error small form-text invalid-feedback">Please Enter a valid Name.</label>
+          </div>
+            <div id="schemefield">
+          <div class="app-modal-body" *ngFor="let object of formdata" value='1'>
+           
+            <div class="form-group" *ngIf="object.type=='text'">
+              <label for="inputphone">{{object.label}}</label>
+              <input id={{object.name}} type="text" class="form-control myinput" name="text" required>
+  
+            </div>
+  
+            <div class="form-group" *ngIf="object.type=='dropdown'">
+              <label>{{object.label}}</label>
+              <!-- <select id={{object.name}} class="form-control myinput" required>
+                <option *ngFor="let data of value" [selected]="data == object.default">
+                  {{data}}</option>
+              </select> -->
+              <select id={{object.name}} #elm class="form-control myinput"  required>
+              
+              </select>
+            </div>
+  
+            <div class="form-group" *ngIf="object.type=='date'">
+              <label>{{object.label}}</label>
+              <input id={{object.name}} class="form-control myinput" type="date" [min]="myDate" (click)="dateFormat()" required>
+            </div>
+  
+            <div class="form-group" *ngIf="object.type=='array'">
+              <!-- <label>{{object.label}}</label> -->
+              <input id={{object.name}} class="form-control myinput" value="array" hidden>
+            </div>
+  
+          </div>
+  
+        </div>
+  
+        <button type="button" class="btn btn-secondary close_modal me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+          (click)="ngOnInit()">Close</button>
+        <button type="submit" class="pull-left btn btn-primary pull-right save_modal me-2 mb-2" data-dismiss="modal"
+          [disabled]="!s.valid" (click)="modal.close('Close click')" (click)="updateScheme()">Save</button>
+      </form>
+    </div>
+  </ng-template>

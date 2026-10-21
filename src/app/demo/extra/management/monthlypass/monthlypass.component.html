@@ -1,0 +1,269 @@
+<div class="row">
+  <div class="col-xl-12">
+      <h4 style="font-weight: bold; float: left;">Filter Options</h4>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-12">
+    
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Hierarchy" value="1" id="radio-p-fill-10" [(ngModel)]="filteroption" (click)="ngOnInit()">
+                <label for="radio-p-fill-10" class="cr">Hierarchy</label>
+              </div>
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Parkingspace" value="0" id="radio-p-fill-11" [(ngModel)]="filteroption">
+                <label for="radio-p-fill-11" class="cr">Parkingspace</label>
+              </div>
+  </div>
+</div>
+<!-- Monthly Pass View -->
+<div class="row">
+   <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==1">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <span> <i  class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3" ></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+    <option [value]="null"  selected>Select</option>
+    <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+  </select>
+  </div>
+
+  <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==0">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">Select a parkingspace</span>
+    </ng-container>
+     <ng-container >
+       <!-- <div class="form-group col-sm-2"> -->
+            <select id="parkingarea" class="entity-dropdown" (change)="parkispaceFilter($event)">
+              <option disabled selected>Select</option>
+              <option *ngFor="let option of parkingspacelist" [value]="option.parking_lot_id">{{option.parking_lot_name}}</option>
+            </select>
+          <!-- </div> -->
+     </ng-container>
+   
+  </div>
+    <div class="col-xl-12">
+       
+      <!-- <button  type="button"  [ngStyle]="{'display': service.AddMonPasServ == true ? 'block' : 'none'}"
+        class="btn btn-primary" data-toggle="modal" (click)="addPass(add)">Add</button> -->
+        <div class="row">
+           <div class="col-sm-2">
+          <div class="form-group"><label>Pass Type</label>
+            <select id="passtype" class="select2_demo_1 form-control" style="width: 100%"  [(ngModel)]="selecttype"
+              (change)="getPassType($event)">
+              <option disabled selected>Select Pass Type</option>
+              <option [value]=0>All</option>
+              <option [value]="'month'">Monthly</option>
+               <option [value]="'week'">Weekly</option>
+            </select>
+          </div>
+        </div>
+         <div class="col-sm-2">
+          <div class="form-group"><label>Date(From)</label>
+            <input type="date" class="form-control" [ngModel]="date | date:'yyyy-MM-dd'" (ngModelChange)="date = $event">
+          </div>
+        </div>
+         <div class="col-sm-2">
+          <div class="form-group"><label>Date(To)</label>
+            <input type="date" class="form-control" [ngModel]="todate | date:'yyyy-MM-dd'" (ngModelChange)="todate = $event">
+          </div>
+        </div>
+         <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-primary" (click)="onGet()">Filter</button>
+          </div>
+        </div>
+        </div>
+      <app-card cardTitle="Pass Details" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table id="mytable" class="table table-stripped">
+            <thead>
+              <tr>
+                <th>ParkingSpace Name</th>
+                  <th>Pass Type</th>
+                  <th>Pass Number</th>
+                  <th>Issued By</th>
+                <th>Customer Name</th>
+                <th>Status</th>
+                <th>Days Left</th>
+                <th>Phone Number</th>
+                <th>Vehicle Number</th>
+                <th>Vehicle Type</th>
+                <th>Created Date</th>
+                <th>Expiry Date</th>
+                <th>Amount</th>
+                <!-- <th>Edit</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of MPassDetails;let i=index">
+                <td>{{item.parking_lot_name}}</td>
+                <td>{{item.type}}</td>
+                <td>{{item.passnumber}}</td>
+                <td>{{item.staffname}}</td>
+                <td>{{item.fullname}}</td>
+                <!--   -->
+                <td *ngIf="item.status=='Expired'" style="color: red;">Expired</td>
+                <td *ngIf="item.status=='Active'" style="color:green;">Active</td>
+                <td>{{item.daysleft}}</td>
+                <td>{{item.phonenumber}}</td>
+                <!-- <td>{{item.mobilenumber}}</td> -->
+                <td>{{item.vehno}}</td>
+                <!-- <td>{{item.vehiclenumber}}</td> -->
+                <td>{{item.vehtype}}</td>
+                <!-- <td>{{item.vehicletype}}</td> -->
+                <td>{{item.startdate| date:'dd-MMM-yyy'}}</td>
+                <!-- <td>{{item.fromdate}}</td> -->
+                <td>{{item.enddate| date:'dd-MMM-yyy'}}</td>
+                <!-- <td>{{item.expirydate}}</td> -->
+                <td>{{item.advamount}}</td>
+                <!-- <td>{{item.fee}}</td> -->
+                <!-- <td><a style="cursor: pointer;" data-toggle="modal" (click)="exampleModalLong1.show()"
+                    (click)="GetvalueIndex(i)"><i style="color: #1e90ff" class="fas fa-pencil-alt"
+                      aria-hidden="true"></i></a></td> -->
+  
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+  <!-- Monthly Pass View End -->
+
+
+  <ng-template #add let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add Monthlypass</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off" #f1="ngForm">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="inputtype" class="required">Parking Space</label>
+                  <select class="form-control" name="parking_lot_id" (change)="onGetFeeStructure($event)"
+                    (change)="getDayTariff($event)" ngModel #parking_lot_id="ngModel"
+                    [(ngModel)]="service.feeStructure.parking_lot_id" required>
+                    <option value="" disabled selected>Select a Parking Space</option>
+                    <option *ngFor="let list of datas" [value]="list.parking_lot_id">{{list.parking_lot_name}}</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="userid" class="required">Full Name</label>
+                  <input type="text" class="form-control" placeholder="Name"
+                        [ngClass]="{'is-invalid': !fullname.valid && fullname.errors.pattern}" ngModel #fullname="ngModel"
+                        pattern="[a-zA-Z ]*$" required name="fullname" ngModel [(ngModel)]="service.feeStructure.fullname"
+                        style="text-transform: capitalize;">
+                      <label *ngIf="!fullname.valid && fullname.errors.pattern"
+                        class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid staff Name
+                        .</label>
+                </div>
+                <div class="form-group">
+                  <label for="inputtitle" class="required">Vehicle Type</label>
+                  <select class="form-control" name="vehicletype" (change)="vehicleNumberSelect($event)"
+                    (change)="vGetFeeStructure($event)" (change)="getDayVehFeeStructure($event)" required
+                    [(ngModel)]="service.feeStructure.vehicletype">
+                    <option [value]="">Select a Vehicle</option>
+                    <option *ngFor="let vehlist of vehicletype">{{vehlist}}</option>
+                  </select>
+                  <!-- <input type="text" class="form-control" name="vehicletype" ngModel #vehicletype="ngModel" readonly
+                    placeholder="Vehicle Type" [(ngModel)]="service.feeStructure.vehicletype"> -->
+                </div>
+                <div class="form-group">
+                  <label for="inputphone" class="required">Vehicle Number</label>
+                  <input type="text" class="form-control" name="vehiclenumber" ngModel #vehiclenumber="ngModel" 
+                    placeholder="Vehicle Number" [(ngModel)]="service.feeStructure.vehiclenumber"  
+                    [ngClass]="{'is-invalid': !vehiclenumber.valid && vehiclenumber.errors.pattern}"
+                    onkeyup="this.value = this.value.toUpperCase();" title="White Space Not Allowed">
+                  <label *ngIf="!vehiclenumber.valid && vehiclenumber.errors.pattern"  class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid Vehicle Number .</label>
+                </div>
+                <div class="form-group">
+                  <label for="inputphone">Contact Number</label>
+                  <input type="text" class="form-control" name="phonenumber" ngModel #phonenumber="ngModel" maxlength="10" minlength="10" pattern="[0-9]*$"
+                   [ngClass]="{'is-invalid': !phonenumber.valid && phonenumber.errors.pattern}"
+                    [(ngModel)]="service.feeStructure.phonenumber" placeholder="Contact Number">
+                  <label *ngIf="!phonenumber.valid  && phonenumber.errors.pattern" class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid phone number.</label>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <!-- <div class="form-group">
+                  <label for="inputphone">Pass ID</label>
+                  <input type="text" class="form-control" name="passnumber" ngModel #passnumber="ngModel"
+                    pattern="^[a-zA-Z0-9]*$" required
+                    [ngClass]="{'is-invalid': !passnumber.valid && passnumber.errors.pattern}" placeholder="pass ID"
+                    [(ngModel)]="service.feeStructure.passnumber" style="text-transform: capitalize;" maxlength="7"
+                    minlength="7" onkeyup="this.value = this.value.toUpperCase();">
+                  <label *ngIf="!passnumber.valid && passnumber.errors.pattern"
+                    class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid Pass ID
+                    .</label>
+                </div> -->
+                <div class="form-group"><label>
+                    <h6>Pass Type</h6>
+                  </label>&nbsp;&nbsp;
+                  <div class="form-group d-inline">
+                    <div class="radio radio-primary d-inline">
+                      <input type="radio" name="passtype" required value="monthly" id="radio-p-fill-7"
+                        (click)="trigerMonthlyPass()">
+                      <label for="radio-p-fill-7" class="cr">Monthly</label>
+                    </div>
+                  </div>
+                  <!-- <div class="form-group d-inline">
+                    <div class="radio radio-primary d-inline">
+                      <input type="radio" name="passtype" required value="custom" id="radio-p-fill-8"
+                        (click)="trigerCustomPass()">
+                      <label for="radio-p-fill-8" class="cr">Custom</label>
+                    </div>
+                  </div> -->
+                  <!-- <select  class="select2_demo_1 form-control"  style="width: 100%"  ngModel #vehiclemake="ngModel" required  name="Payment" [(ngModel)]="data.paymenttype" >
+                  <option *ngFor="let value of VehType" [value]="value.categoryname"  [selected]="value.categoryname">{{value.categoryname}}</option>
+              </select> -->
+                </div>
+                <div class="form-group" *ngIf="viewcustompass==1">
+                  <label for="inputphone" class="required">From Date</label>
+                  <input type="date" id="fromDate" class="form-control" name="customfromdate" ngModel
+                    #customfromdate="ngModel" (change)="dayValueCalculation()" placeholder="" required [min]="myDate"
+                    [(ngModel)]="service.feeStructure.fromdate" (click)=" dateFormat()">
+                </div>
+                <div class="form-group" *ngIf="viewcustompass==1">
+                  <label for="inputphone" class="required">To Date</label>
+                  <input type="date" id="toDate" class="form-control" name="todate" ngModel #todate="ngModel"
+                    (change)="dayValueCalculation()" placeholder="" required [min]="myDate"
+                    [(ngModel)]="service.feeStructure.todate" (click)=" dateFormat()">
+                </div>
+                <div class="form-group" *ngIf="viewmonthlypass==1">
+                  <label for="inputplt" class="required">Month</label>
+                  <select class="form-control" name="month" ngModel #month="ngModel" (change)="GetFeeStructurevalue($event)"
+                    required [(ngModel)]="service.feeStructure.month">
+                    <option value="" disabled selected>Select number of month</option>
+                    <option value="1">1</option>
+      
+                  </select>
+                </div>
+                <div class="form-group" *ngIf="viewmonthlypass==1">
+                  <label for="inputphone" class="required">From Date</label>
+                  <input type="date" id="txtDate" class="form-control" name="fromdate" ngModel #fromdate="ngModel"
+                    placeholder="" required [(ngModel)]="service.feeStructure.fromdate" [min]="myDate"
+                    (click)=" dateFormat()">
+                </div>
+                <div class="form-group">
+                  <label for="inputphone">Amount</label>
+                  <input type="text" class="form-control" name="fees" ngModel #fees="ngModel" placeholder="Amount" readonly
+                    [(ngModel)]="service.feeStructure.fees">
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" [disabled]="!f1.valid"
+            (click)="modal.close('Close click')" (click)="SaveMonthPass()">Save</button>
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              (click)="ngOnInit()" (click)="onGet()">Close</button>
+          </form>
+    </div>
+  </ng-template>

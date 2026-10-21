@@ -1,0 +1,150 @@
+<div class="row">
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group"><label>Parking Area</label>
+            <select id="parkingarea" class="select2_demo_1 form-control" style="width: 100%"
+              (change)="getParkingArea($event)">
+              <option disabled selected>Select parking area</option>
+              <option [value]=0>All Parking Area</option>
+              <option *ngFor="let value of parkingarea" [value]="value.parking_lot_id">{{value.parking_lot_name}}</option>
+            </select>
+          </div>
+  
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>Parking Status</label>
+            <select id="parkingarea" class="select2_demo_1 form-control" style="width: 100%"
+              (change)="getParkingStatus($event)">
+              <option disabled selected>Select Parking status</option>
+              <option [value]=2>All</option>
+              <option [value]=0>Completed</option>
+              <option [value]=1>Parked</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>FasTag Status</label>
+            <select id="fastagstatus" class="select2_demo_1 form-control" style="width: 100%"
+              (change)="getFastagStatus($event)">
+              <option disabled selected>Select FasTag status</option>
+              <option [value]=2>All</option>
+              <option [value]=0>Invalid</option>
+              <option [value]=1>Valid</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>Parking Date</label>
+            <input type="date" class="form-control" [ngModel]="date | date:'yyyy-MM-dd'" (ngModelChange)="date = $event">
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-primary" (click)="filterFasTagData()">Filter</button>
+          </div>
+        </div>
+         <!-- <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <h4>Total Amount: {{total}}</h4>
+          </div>
+        </div> -->
+      </div>
+      <app-card cardTitle="FasTag Details" [options]="false" blockClass="table-border-style">
+         <div card-header class="d-flex justify-content-center align-items-center w-100 gap-5 py-2">
+
+  <div class="text-center">
+    <div class="text-success fw-bold" style="font-size: 25px;">
+      {{ totalentry }}
+    </div>
+    <div class="text-muted medium">Total Entry</div>
+  </div>
+
+  <div class="vr"></div> <!-- vertical divider -->
+
+  <div class="text-center">
+    <div class="text-danger fw-bold" style="font-size: 25px;">
+      {{ totalexit }}
+    </div>
+    <div class="text-muted medium">Total Exit</div>
+  </div>
+  <div class="vr"></div> <!-- vertical divider -->
+<div class="text-center">
+    <div class="text-warning fw-bold" style="font-size: 25px;">
+     ₹ {{ total }}
+    </div>
+    <div class="text-muted medium">Total collection</div>
+  </div>
+</div>
+        <div class="table-responsive">
+          <table class="table table-hover" id="mytable1">
+            <thead>
+              <tr>
+  
+                <th>ID</th>
+                <th>Vehicle Number</th>
+                <th>Chasis Number</th>
+                <th>Type</th>
+                <th>Parking Area</th>
+                <th>IN Time</th>
+                <!-- <th>Entry Images</th> -->
+                <th>Out Time</th>
+                <!-- <th>Exit Images</th> -->
+                <th>Parking Status</th>
+                <th>FasTag Status</th>
+                <th>Black Listed</th>
+                <th>Amount</th>
+                <!-- <th>Bank Status</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of fastagdata;let i=index">
+  
+                <td>{{data.id}}</td>
+                <td *ngIf='data.vehicleno=="null"'></td>
+                <td *ngIf='data.vehicleno!="null"'>{{data.vehicleno}}</td>
+                <td>{{data.chassisno}}</td>
+                <td>{{data.vehtype}}</td>
+                <td>{{data.parking_lot_name}}</td>
+                <td>{{data.startdate}}</td>
+                <!-- <td><a style="cursor: pointer;" data-toggle="modal" (click)="getIndex(i)" (click)="getEntryImage()"
+                    (click)="imgModal(img)"><i style="color: #c71c22" class=" fas fa-image "
+                      aria-hidden="true"></i></a></td> -->
+                <td>{{data.enddate}}</td>
+                <!-- <td><a style="cursor: pointer;" data-toggle="modal" (click)="getIndex(i)" (click)="getExitImage()"
+                    (click)="imgModal(img)"><i style="color: #c71c22" class="fas fa-image "
+                      aria-hidden="true"></i></a></td> -->
+                <td *ngIf="data.status=='1'">Parked</td>
+                <td *ngIf="data.status=='0'">Completed</td>
+                <td *ngIf="data.isvalid=='1'" style="color:rgb(26, 189, 11);">Valid</td>
+                <td *ngIf="data.isvalid=='0'" style="color: rgb(247, 20, 20);">Invalid</td>
+                <td *ngIf="data.isblacklist =='0'" style="color:rgb(26, 189, 11);">No</td>
+                <td *ngIf="data.isblacklist =='1'" style="color: rgb(247, 20, 20);">Yes</td>
+                <td>{{data.balamount}}</td>
+                <!-- <td *ngIf="data.txnstatus ==0"><i style="color: #c20a0a" class="fa fa-times" aria-hidden="true"></i></td>
+                <td *ngIf="data.txnstatus ==1"><i style="color: #035207" class="fa fa-check" aria-hidden="true"></i></td> -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+   <ng-template #img let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Vehicle Image</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngIf="showimg==1">
+        <div *ngFor="let img of imageurl">
+          <img [src]="img">
+        </div>
+      </div>
+      <div class="modal-body" *ngIf="showimg==0">
+        <h5>No Image Found!</h5>
+      </div>
+  </ng-template>

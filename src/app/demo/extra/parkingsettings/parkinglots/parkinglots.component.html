@@ -1,0 +1,412 @@
+<!-- View Starts -->
+<div class="container-fluid head">
+    <a style="cursor: pointer;" [routerLink]="['/admin/parkingsettings/parkingarea']"><i style="color: #1e90ff"
+        class="fas fa-arrow-left fa-2x"></i></a>
+  
+  </div>
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="row">
+        <!-- <div class="col-sm-2">
+          <button [ngStyle]="{'display': PLotsSer.AddParkLotSer ==true ? 'block' : 'none' }" type="button"
+            class="btn btn-primary" data-toggle="modal" (click)="exampleModalLong.show()">Add Parking Slot</button>
+        </div>
+        <div class="col-sm-2">
+          <button [ngStyle]="{'display': PLotsSer.AddParkLotSer ==true ? 'block' : 'none' }" type="button"
+            class="btn btn-primary" data-toggle="modal" (click)="exampleModalLong4.show()">Bulk Parking Slot</button>
+        </div>
+        <div class="col-sm-4">
+          <button type="button" class="btn btn-primary" data-toggle="modal" (click)="exampleModalLong5.show()"
+            (click)="checkParkingSlot()">Bulk Device Allocation</button>
+        </div> -->
+        <div class="col-sm-1">
+          <div class="btn-group mb-2 mr-2" ngbDropdown [placement]="'bottom-left'">
+            
+            <button [ngStyle]="{'display': PLotsSer.AddParkLotSer ==true ? 'block' : 'none' }" class="btn drp-icon btn-rounded btn-primary" ngbDropdownToggle type="button"><i class="feather icon-plus"></i></button>
+            <div ngbDropdownMenu>
+              <a class="dropdown-item" href="javascript:"  data-toggle="modal" (click)="addSlots(add)">Add Parking Slot</a>
+              <a class="dropdown-item" href="javascript:"  data-toggle="modal" (click)="addBulk(bulk)" >Bulk Parking Slot</a>
+              <a class="dropdown-item" href="javascript:"  data-toggle="modal" 
+              (click)="checkParkingSlot()" (click)="bulkDevice(bulkdevice)">Bulk Device Allocation</a>
+              <a class="dropdown-item" href="javascript:"  data-toggle="modal" (click)="generateLayout(layout)" >Generate Parking Layout</a>
+              <a class="dropdown-item" href="javascript:"  data-toggle="modal" (click)="addCluster(cluster)">Add Cluster</a>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+  
+  
+  
+    </div>
+  
+    <div class="col-xl-12">
+  
+      <app-card cardTitle="Parking Slots Details" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table id="mytable1" class="table table-stripped">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Slot ID</th>
+                <th>Type of Vehicle</th>
+                <th>Device ID</th>
+                <th>Cluster ID</th>
+                <!-- <th>Device Status</th> -->
+                <th>Created Date</th>
+                <th>Parking Slot Status</th>
+               
+                <th  [ngStyle]="{'display': PLotsSer.EditParkLotSer == true? 'block': 'none' }">Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of PLotView; let i=index">
+                <td><input type="checkbox" [checked]="checkbox"  (click)="getCheckBoxValueForCluster(i,$event)"></td>
+                <td>{{item.parkingnumber}}</td>
+                <td>{{item.vehicletype}}</td>
+                <td>{{item.devicename}}</td>
+                <td>{{item.clusterid}}</td>
+                <!-- <td>
+                  <h6 *ngIf="item.devicestatus ==1" style="color:rgb(26, 189, 11);">Active</h6>
+                  <h6 *ngIf="item.devicestatus ==0" style="color:rgb(250, 0, 0);">Inactive</h6>
+                  <h6 *ngIf="item.devicestatus ==2">New</h6>
+                  <h6 *ngIf="item.devicestatus ==3" style="color:rgb(245, 180, 3);">Joined</h6>
+                </td> -->
+                <td>{{item.createddate|date:'dd-MM-yyyy'}}</td>
+                <td><label class="switch"><input type="checkbox" (click)="StatusCheck(item)"
+                      [checked]="item.isactive==1" /><span class="slider round"></span></label></td>
+                     
+                <td  [ngStyle]="{'display': PLotsSer.EditParkLotSer == true? 'block': 'none' }"><a style="cursor: pointer;"
+                    data-toggle="modal" (click)="GetPAValue(i)" (click)="findDevice()"
+                    (click)="editSlots(edit)"><i style="color: #1e90ff" class="fas fa-pencil-alt"
+                      aria-hidden="true"></i>
+                  </a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+  <!-- View end -->
+
+
+  <!-- Add individual slots  -->
+  <ng-template #add let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add Parking Slots</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off" #addform="ngForm">
+
+            <div class="form-group" *ngFor="let value of id"><label>Parking Space</label>
+              <!-- <select  class="select2_demo_1 form-control" style="width: 100%" #roleid="ngModel" ngModel name="parking_lot_id" [(ngModel)]="PLotsSer.AddParkLot.parking_lot_id" required>
+                              <option default>Select a parking Space!</option>
+                              <option *ngFor="let item of PLotDetails"  [value]="item.parking_lot_id">{{item.parking_lot_name}}</option>
+                            </select> -->
+              <input type="text" class="form-control" required placeholder="Name" name="parkingspacename"
+                value="value.parking_lot_name" [(ngModel)]="value.parking_lot_name" style="text-transform: capitalize;"
+                readonly>
+            </div>
+    
+            <div class="form-group"><label class="required">Slot Name</label>
+              <input type="text" class="form-control" #parkingnumber="ngModel" pattern="^[a-zA-Z0-9]*$"
+                [ngClass]="{'is-invalid': !parkingnumber.valid && parkingnumber.errors.pattern}" placeholder="Name"
+                name="parkingnumber" [(ngModel)]="PLotsSer.AddParkLot.parkingnumber" style="text-transform: capitalize;"
+                required>
+              <label *ngIf="!parkingnumber.valid && parkingnumber.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid slot name
+                .</label>
+            </div>
+            <div class="form-group"><label class="required">Vehicle Type</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #vehtype="ngModel" ngModel name="vehtype"
+                [(ngModel)]="PLotsSer.AddParkLot.vehicletype" required>
+                <option value="" selected disabled>Select a Vehicle type</option>
+                <option *ngFor="let item of VehType" [value]="item.categoryname">{{item.categoryname}}</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Network Provider</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #npid="ngModel" ngModel name="npid"
+                [(ngModel)]="PLotsSer.AddParkLot.nwproviderid" (change)="selectDevicesinNetwork($event)">
+                <option value="" selected disabled>Select a Network provider</option>
+                <option *ngFor="let item of networkprovider" [value]="item.npid">{{item.npname}}</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Led Bulb</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #deviceid="ngModel" ngModel name="deviceid"
+                [(ngModel)]="PLotsSer.AddParkLot.deviceid">
+                <option value="" selected disabled>Select a Bulb</option>
+                <option *ngFor="let data of ledlight" [value]="data.deviceid">{{data.devicename}}</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Device Status</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #devicestatus="ngModel" ngModel
+                name="devicestatus" [(ngModel)]="PLotsSer.AddParkLot.devicestatus">
+                <option value="" selected disabled>Select a Status</option>
+                <option value="3">Joined</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div>
+            <div class="form-group">
+    
+              <button type="button" class="btn btn-primary me-2 mb-2" (click)="OnAddPLot()" [disabled]="!addform.valid"
+                data-dismiss="modal" (click)="modal.close('Close click')">Save</button>
+              <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                (click)="resetform()">Close</button>
+            </div>
+          </form>
+    </div>
+  </ng-template>
+  <!-- .................... -->
+
+  <!-- Bulk upload  -->
+  <ng-template #bulk let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Bulk Parking Slots</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group" *ngFor="let item of id"><label>Parking Space</label>
+              <!-- <select  class="select2_demo_1 form-control" style="width: 100%" #roleid="ngModel" ngModel name="ParkSpaceId" [(ngModel)]="BParkLot.ParkSpaceId">
+                    <option *ngFor="let item of PLotDetails" [value]="item.parking_lot_id">{{item.parking_lot_name}}</option>
+                  </select> -->
+              <input type="text" class="form-control" required placeholder="Name" name="spacename"
+                [(ngModel)]="item.parking_lot_name" style="text-transform: capitalize;" readonly>
+            </div> <br />
+    
+            <div class="form-group">
+              <label>SLots Name</label>&nbsp;&nbsp;&nbsp;
+              <button type="button" class="btn btn-primary" (click)="downloadCSV()">Download Excel</button>
+            </div><br />
+            <div class="form-group">
+              <label>Choose Excel File</label>&nbsp;&nbsp;&nbsp;&nbsp;
+              <!-- <file-upload name="file" [(ngModel)]="data"></file-upload>  -->
+              <input class="btn btn-primary" type="file" accept=".csv" (change)="convertFile($event)" />
+            </div><br />
+    
+            <!-- <div class="form=group">
+                          <a 
+                            href="assets/Csv/sample.xlsx" 
+                            class="btn btn-default" 
+                            target="_blank" 
+                            download="sample-file.csv">
+                            <p style="color: #1E90FF">Example Excel File Template To Create ParkingLots</p>
+                          </a>
+                        </div><br/> -->
+    
+            <!-- <div class="form-group">
+                            <label>Choose Excel File</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="file" (change)="onFileSelect($event.target)" name="myfile">
+                       </div><br/> -->
+    
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+            (click)="modal.close('Close click')">Close</button>
+            <!-- <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="OnAddBulkLot(BParkLot)" (click)="exampleModalLong4.hide()"  >Save </button> -->
+    
+          </form>
+    </div>
+  </ng-template>
+  <!-- ......... -->
+
+  <!-- Bulk Device Alocation -->
+  <ng-template #bulkdevice let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Bulk Device Allocation</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off" #f="ngForm">
+            <div class="form-group"><label>Network Provider</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #networkid="ngModel" ngModel name="networkid"
+                [(ngModel)]="PLotsSer.BulkdeviceAssign.networkid" (change)="checkDeviceInnetwork()">
+                <option value="" selected disabled>Select a Network provider</option>
+                <option *ngFor="let item of networkprovider" [value]="item.npid">{{item.npname}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+    
+              <h5><strong>Number of Parking Slots:{{parkinglotcount}}</strong></h5>
+            </div>
+            <div class="form-group">
+    
+              <h5><strong>Number of Sensors:{{devicecount}}</strong></h5>
+            </div>
+    
+            <div class="form-group">
+    
+              <button type="button" class="btn btn-primary me-2 mb-2" [disabled]="!savebutton || !parkval" data-dismiss="modal"
+                (click)="modal.close('Close click')" (click)="checkDeviceCount()"
+                (click)=" modalopen ? confirmBulk(bulkconfirm):modal.close('Close click')">Save</button>
+              <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                (click)="resetform()">Close</button>
+            </div>
+          </form>
+    </div>
+  </ng-template>
+  <!-- ......... -->
+
+  <!-- bulkdevice confirmation -->
+  <ng-template #bulkconfirm let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Bulk Device Allocation</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off">
+
+            <div class="form-group">
+    
+              <h5><strong>Not Enough Sensor is Available, Do You Want to Continue!</strong></h5>
+            </div>
+            <div class="form-group">
+    
+              <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+                (click)="checkassign?selectedParkingSlotSensorAssign():autoAssignSensor()">Yes</button>
+              <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+              (click)="modal.close('Close click')">No</button>
+            </div>
+          </form>
+    </div>
+  </ng-template>
+  <!-- ............ -->
+
+
+  <!-- Parking Space layout -->
+  <ng-template #layout let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Generate Parking Layout</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="fileReset()"></button>
+    </div>
+    <div class="modal-body">
+        <form action="javascript:" autocomplete="off">
+            <ul>
+              <li>
+                <h6>STEP 1: Run the Macro</h6>
+              </li>
+              <li>
+                <h6>STEP 2: Select the CSV file</h6>
+              </li>
+            </ul>
+          </form>
+          <div class="form-group"><label for="layout">Upload the csv file for generating parking space Layout</label>
+            <div class="dropzone">
+              <input type="file" #csvReader name="Upload CSV" id="txtFileUpload" accept=".csv"  (change)="uploadListener($event)"/>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"(click)="saveParkingSpacelayout()">Save</button>
+          <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+          (click)="modal.close('Close click')" (click)="fileReset()">Cancel</button>
+    </div>
+  </ng-template>
+  <!-- .......... -->
+
+  <!-- Add Cluster -->
+  <ng-template #cluster let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add Cluster</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form action="javascript:"  #form="ngForm" autocomplete="off">
+            <div class="form-group">
+              <label for="clusterid" class="required">Cluster ID</label>
+              <input type="text" class="form-control"  name="clusterid" #clusterid="ngModel" ngModel 
+              [(ngModel)]="PLotsSer.clustermodal.clusterid"
+                placeholder="Cluster ID"  required>
+            </div>
+           
+            <div class="form-group">
+              <label for="clustername" class="required">Cluster Name</label>
+              <input type="text" class="form-control"  name="clustername" #clustername="ngModel" ngModel
+              [(ngModel)]="PLotsSer.clustermodal.clustername"
+                placeholder="Cluster Name"  required>
+            </div>
+            <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal"
+            (click)="modal.close('Close click')" (click)="resetform()">Close</button>
+            <button type="button" class="pull-left btn btn-primary pull-right mb-2" data-dismiss="modal" (click)="createCluster()" [disabled]="!form.valid"
+            (click)="modal.close('Close click')">Save</button>
+          </form>
+    </div>
+  </ng-template>
+  <!-- ............ -->
+
+  <!-- Update slot details -->
+  <ng-template #edit let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Edit Parking Slots Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngFor="let data of UParkLots">
+        <form autocomplete="off" #f="ngForm">
+            <!-- <div class="row">
+                  <div class="col-sm-6"> -->
+    
+            <!-- <div class="form-group"><label>Parking Space</label>
+                        <select  class="select2_demo_1 form-control" style="width: 100%" #roleid="ngModel" ngModel name="parkingspaceid" [(ngModel)]="data.parking_lot_id" disabled>
+                          <option *ngFor="let item of PLotDetails" [value]="item.parking_lot_id">{{item.parking_lot_name}}</option>
+                        </select>
+                      </div>                       -->
+    
+            <!-- <div class="form-group"><label>SLot Name</label>
+                        <input type="text" class="form-control" 
+                        placeholder="Name" #fullname="ngModel" name="parkingnumber" ngModel [(ngModel)]="data.parkingnumber" >
+                        <label *ngIf="!parkingnumber.valid && parkingnumber.errors.pattern"  class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid slot name .</label>   
+                      </div> -->
+            <div class="form-group"><label class="required">SLot Name</label>
+              <input type="text" class="form-control" #parkingnumber="ngModel" pattern="^[a-zA-Z0-9]*$" required
+                [ngClass]="{'is-invalid': !parkingnumber.valid && parkingnumber.errors.pattern}" placeholder="Name"
+                #fullname="ngModel" name="parkingnumber" ngModel [(ngModel)]="data.parkingnumber"
+                (keyup)="countParkingSlot($event)">
+              <label *ngIf="!parkingnumber.valid && parkingnumber.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid slot name
+                .</label>
+            </div>
+    
+            <div class="form-group"><label class="required">Vehicle Type</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #roleid="ngModel" name="vehicletype" ngModel
+                [(ngModel)]="data.vehicletype">
+                <option *ngFor="let item of VehType" [value]="item.categoryname">{{item.categoryname}}</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Network Provider</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #npid="ngModel" ngModel name="npid"
+                [(ngModel)]="data.nwproviderid" (change)="selectDeviceinNetworkForEdit($event)">
+                <option value="" selected disabled>Select a Network provider</option>
+                <option *ngFor="let item of networkprovider" [value]="item.npid">{{item.npname}}</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Device ID</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #deviceid="ngModel" ngModel name="deviceid"
+                [(ngModel)]="data.deviceid">
+                <option value="" selected disabled>Select a Bulb</option>
+                <option *ngFor="let data of ledlight" [value]="data.deviceid">{{data.devicename}}</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Device Status</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #devicestatus="ngModel" ngModel
+                name="devicestatus" [(ngModel)]="data.devicestatus">
+                <option value="3">Joined</option>
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Cluster ID</label>
+              <input type="text" class="form-control" 
+                 placeholder="Cluster ID"
+                #clusterid="ngModel" name="clusterid" ngModel [(ngModel)]="data.clusterid">
+            </div>
+    
+            <!-- </div>
+                    </div> -->
+    
+            <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              [disabled]="!f.valid || !buttonview " (click)="OnUpdate(data)">Save </button>
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              (click)="ngOnInit()">Close</button>
+          </form>
+    </div>
+  </ng-template>

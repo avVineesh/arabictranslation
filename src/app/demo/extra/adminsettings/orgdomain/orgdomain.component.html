@@ -1,0 +1,214 @@
+<div class="row">
+    <div class="col-sm-1">
+      <div class="btn-group mb-2 mr-2" ngbDropdown [placement]="'bottom-left'">
+        <button class="btn drp-icon btn-rounded btn-primary" ngbDropdownToggle type="button"><i
+            class="feather icon-plus"></i></button>
+        <div ngbDropdownMenu>
+          <a class="dropdown-item" href="javascript:" data-toggle="modal" (click)="addDomain(adddomain)" >Add
+            Domain Details</a>
+          <a class="dropdown-item" href="javascript:" data-toggle="modal" (click)="bulkUpload(bulkupload)">Bulk
+            Upload</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-xl-12">
+      <app-card cardTitle="Organization Domain Details" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table class="table table-hover" id="mytable1">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Parent Organization</th>
+                <th>Company Name</th>
+                <th>Email Domain</th>
+                <th>Created Date</th>
+                <th>Domain List</th>
+                <th>Slots</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of domaindata; let i= index">
+                <td>{{data.id}}</td>
+                <td>{{data.org_name}}</td>
+                <td>{{data.companyname}}</td>
+                <td>{{data.emaildomain}}</td>
+                <td>{{data.createddate}}</td>
+                <td style="text-align: center;"> <a style="cursor: pointer;" data-toggle="modal"
+                    (click)="displayOrgDomainsList(i)" (click)="domainList(list)"><i style="color: #1e90ff" class="fas fa-list"></i></a></td>
+                <td>{{data.slots}}</td>
+                <td><label><a style="cursor: pointer;" data-toggle="modal" (click)="getDomainIndex(i)" (click)="editScreen(editscreen)" ><span><i
+                          style="color: #1e90ff" class="fas fa-pencil-alt" aria-hidden="true"></i></span>
+                    </a></label></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+ <!-- Add Domain  Details................................................................................................................ -->
+  <ng-template #adddomain let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add Organization Domain Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off" #f="ngForm">
+            <div class="form-group"><label class="required">Parent Organization</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #orgid="ngModel"
+                [(ngModel)]="service.domainData.orgid" ngModel name="orgid" required>
+                <option value="" selected disabled>Select a Parent Organization</option>
+                <option *ngFor="let list of orglist" [value]="list.orgid">{{list.org_name}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="required">Company Name</label>
+              <input type="text" class="form-control" placeholder="Company Name" name="companyname" ngModel
+                #companyname="ngModel" [(ngModel)]="service.domainData.companyname" required>
+      
+            </div>
+            <div class="form-group">
+              <label class="required">Email Domain</label>
+              <input type="text" class="form-control" placeholder="Email Domain" name="emaildomain" ngModel
+                #emaildomain="ngModel" [(ngModel)]="service.domainData.emaildomain"
+                [ngClass]="{'is-invalid': !emaildomain.valid && emaildomain.errors.pattern}"
+                pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
+              <label *ngIf="!emaildomain.valid && emaildomain.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid email
+                address.</label>
+            </div>
+            <div class="form-group">
+              <label class="required">Organization Domains</label>
+              <input type="text" class="form-control" placeholder="Organization Domains" name="orgdomains"
+                [(ngModel)]="service.domainData.orgdomains"
+                [ngClass]="{'is-invalid': !orgdomains.valid && orgdomains.errors.pattern}"
+                pattern="^([a-z0-9.-]+\.[a-z]{2,4},)*[a-z0-9.-]+\.[a-z]{2,4}$" ngModel #orgdomains="ngModel" required>
+              <label *ngIf="!orgdomains.valid && orgdomains.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter valid domains.</label>
+            </div>
+            <div class="form-group">
+              <label class="required">Allocated Slots</label>
+              <input type="number" min="0" class="form-control" placeholder="Allocated Slots" name="slots" ngModel
+                #slots="ngModel" [(ngModel)]="service.domainData.slots" required>
+      
+            </div>
+      
+            <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')" (click)="saveOrgDomain()"
+              [disabled]="!f.valid">Save</button>
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              (click)="resetform()">Close</button>
+      
+          </form>
+    </div>
+  </ng-template>
+
+  <!-- Bulk Upload ...................................................................................................................... -->
+  <ng-template #bulkupload let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Organization Domains Bulk Upload</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form #f1="ngForm">
+            <div class="form-group"><label class="required">Parent Organization</label>
+                <select class="select2_demo_1 form-control" style="width: 100%" #orgid="ngModel"
+                  [(ngModel)]="service.domainData.orgid" ngModel name="orgid" required>
+                  <option value="" selected disabled>Select a Parent Organization</option>
+                  <option *ngFor="let list of orglist" [value]="list.orgid">{{list.org_name}}</option>
+                </select>
+            </div>
+            <div class="form-group">
+              <label>Domain Details</label>&nbsp;&nbsp;&nbsp;
+              <button type="button" class="btn btn-primary" (click)="downloadCSV()">Download Excel</button>
+            </div><br />
+            <div class="form-group">
+              <label>Choose Excel File</label>&nbsp;&nbsp;&nbsp;&nbsp;
+              <input class="btn btn-primary" type="file" accept=".csv" [disabled]="!f1.valid"  (change)="bulkDomainUpload($event)" />
+            </div><br />
+    
+            <button type="button" class="btn btn-secondary bm-2" data-dismiss="modal"
+            (click)="modal.close('Close click')" (click)="resetform()">Close</button>
+          </form>
+    </div>
+  </ng-template>
+
+<!-- Edit screen ..........................................................................................................................-->
+  <ng-template #editscreen let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Edit Organization Domain Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off" #frm="ngForm">
+            <div class="form-group"><label class="required">Parent Organization</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #orgid="ngModel" disabled
+                [(ngModel)]="editdata.orgid" ngModel name="orgid" required>
+                <option value="" selected disabled>Select a Parent Organization</option>
+                <option *ngFor="let list of orglist" [value]="list.orgid">{{list.org_name}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="required">Company Name</label>
+              <input type="text" class="form-control" placeholder="Company Name" name="companyname" ngModel
+                #companyname="ngModel" [(ngModel)]="editdata.companyname" required>
+      
+            </div>
+            <div class="form-group">
+              <label class="required">Email Domain</label>
+              <input type="text" class="form-control" placeholder="Email Domain" name="emaildomain" ngModel
+                #emaildomain="ngModel" [(ngModel)]="editdata.emaildomain"
+                [ngClass]="{'is-invalid': !emaildomain.valid && emaildomain.errors.pattern}"
+                pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
+              <label *ngIf="!emaildomain.valid && emaildomain.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid email
+                address.</label>
+            </div>
+            <div class="form-group">
+              <label class="required">Organization Domains</label>
+              <input type="text" class="form-control" placeholder="Organization Domains" name="orgdomains"
+                [(ngModel)]="editdata.orgdomains"
+                [ngClass]="{'is-invalid': !orgdomains.valid && orgdomains.errors.pattern}"
+                pattern="^([a-z0-9.-]+\.[a-z]{2,4},)*[a-z0-9.-]+\.[a-z]{2,4}$" ngModel #orgdomains="ngModel" required>
+              <label *ngIf="!orgdomains.valid && orgdomains.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter valid domains.</label>
+            </div>
+            <div class="form-group">
+              <label class="required">Allocated Slots</label>
+              <input type="number" min="0" class="form-control" placeholder="Allocated Slots" name="slots" ngModel
+                #slots="ngModel" [(ngModel)]="editdata.slots" required>
+      
+            </div>
+      
+            <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              [disabled]="!frm.valid" (click)="updateOrgDomainDetails(editdata)">Save</button>
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              (click)="getOrgDomainDetails()">Close</button>
+      
+          </form>
+    </div>
+  </ng-template>
+
+  <ng-template #list let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Domain List</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form action="javascript:" autocomplete="off">
+            <ul *ngFor="let list of arraylist">
+              <li>
+                <h6>{{list}}</h6>
+              </li>
+            </ul>
+          </form>
+        </div>
+    <div *ngIf="viewlist==1" class="modal-body">
+        <h4 style="color: red;">No Domains</h4>
+      </div>
+  </ng-template>

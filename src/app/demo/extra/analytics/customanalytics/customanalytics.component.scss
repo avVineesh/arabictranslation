@@ -1,0 +1,22 @@
+.dashboard-container {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+  }
+  .entity-dropdown {
+    padding: 2px;
+    color: #000;
+    font-size: 14px;
+  }
+  
+  .selected-item {
+    font-weight: 600;
+    color: #4A5759;
+    padding-right: 10px;
+    text-transform: uppercase;
+    font-family: Roboto, monospace;
+  }
+
+  .selected-item:hover {
+   // font-size: 15px;
+    color: #007bff;
+  }

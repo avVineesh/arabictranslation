@@ -1,0 +1,154 @@
+<div class="row">
+  <div class="col-xl-12">
+      <h4 style="font-weight: bold; float: left;">Filter Options</h4>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-12">
+    
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Hierarchy" value="1" id="radio-p-fill-10" [(ngModel)]="filteroption" (click)="ngOnInit()">
+                <label for="radio-p-fill-10" class="cr">Hierarchy</label>
+              </div>
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Parkingspace" value="0" id="radio-p-fill-11" [(ngModel)]="filteroption">
+                <label for="radio-p-fill-11" class="cr">Parkingspace</label>
+              </div>
+  </div>
+</div>
+<div class="row">
+     <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==1">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <span> <i  class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3" ></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+    <option [value]="null"  selected>Select</option>
+    <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+  </select>
+  </div>
+
+  <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==0">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">Select a parkingspace</span>
+    </ng-container>
+     <ng-container >
+       <!-- <div class="form-group col-sm-2"> -->
+            <select id="parkingarea" class="entity-dropdown" (change)="parkispaceFilter($event)">
+              <option disabled selected>Select</option>
+              <option *ngFor="let option of parkingspacelist" [value]="option.parking_lot_id">{{option.parking_lot_name}}</option>
+            </select>
+          <!-- </div> -->
+     </ng-container>
+   
+  </div>
+  <div class="col-sm-12">
+     <div class="row">
+         <div class="col-sm-3">
+        <div class="form-group"><label>Vehicle Number</label>
+          <input type="text" class="form-control  w-100" [ngModel]="vehnumber "
+          placeholder="Enter the vehicle Number" (ngModelChange)="vehnumber = $event">
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group"><label>Parking Date(From)</label>
+          <input type="datetime-local" class="form-control  w-100" [ngModel]="date " (ngModelChange)="date = $event">
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group"><label>Parking Date(To)</label>
+          <input type="datetime-local" class="form-control  w-100" [ngModel]="todate "
+            (ngModelChange)="todate = $event">
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <br />
+          <button type="button" style="margin:5px;" class="btn btn-primary"
+           (click)="getParkingHistory()" >Search</button>
+        </div>
+      </div>
+    </div>
+<div>
+      <app-card cardTitle="Parking History" [options]="false"
+       cardClass="User-Activity" blockClass="pb-0">
+      <div card-header class="d-flex justify-content-center align-items-center w-100 gap-5 py-2">
+  <h4 *ngIf="showtaable==0">Please Enter the vehicle Number for Searching the Parking History</h4>
+
+</div>
+        <div class="table-responsive" *ngIf="showtaable==1">
+
+          <div class="mb-3">
+            <label ><strong>Select Columns to Show/Export:</strong><i (click)="toogleOptions()" class="fa fa-chevron-down"></i></label><br />
+            <div *ngIf="showoption">
+               <label *ngFor="let col of columnOptions; let i = index" class="me-3">
+              <input type="checkbox" [(ngModel)]="col.selected" (change)="onColumnChange()" />
+              {{ col.label }}
+            </label>
+            </div>
+           
+          </div>
+
+          <table id="mytable" class="table table-hover">
+            <thead>
+              <tr>
+                <th>Parking Space Name</th>
+                <th>Entry Type</th>
+                <th>Vehicle Type</th>
+                <th>Vehicle Number</th>
+                <th>Customer type</th>
+                <th>Owner Phone Number</th>
+                <th>Start Date</th>
+                <th >End Date</th>
+                <th>Amount</th>
+                <!-- <th class="text-right"></th> -->
+            </thead>
+           <tbody>
+              <tr *ngFor="let reportdata of historydata;let i= index;">
+                <td>
+                  <h6 class="m-0">{{reportdata.parking_lot_name}}</h6>
+                </td>
+                <td *ngIf="reportdata.type=='1'">
+                  <h6 class="m-0">Fastag</h6>
+                </td>
+                <td *ngIf="reportdata.type=='0'">
+                  <h6 class="m-0">Manual</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.vehtype}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.vehicleno}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.custtype}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.phonenumber}}</h6>
+                </td>
+                <td class="text-c-green">
+                  <h6 class="m-0">{{reportdata.startdate}}</h6>
+                </td>
+                
+                <td>
+                  <h6 class="m-0" >{{reportdata.enddate}}</h6>
+                </td>
+                
+                <td>
+                  <h6 class="m-0">{{reportdata.amount}}</h6>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <!-- </form> -->
+      </app-card>
+    </div>
+
+  </div>
+  <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+</div>

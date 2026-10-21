@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col-xl-12">
+        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" (click)="exampleModalLong.show()">Add Vehicle</button> -->
+      <app-card cardTitle="Vehicle Category" [options]= "false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table  class="table table-stripped">
+            <thead>
+              <tr>
+                <th>Vehicle Type</th>
+                <th>Description</th>
+                <!-- <th>Status</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let vehicledata of VehicleList">
+                <td>{{vehicledata.categoryname}}</td>
+                <td>{{vehicledata.categorydesc}}</td>
+                <!-- <td><label class="switch"><input type="checkbox" [checked]="vehicledata.isactive==1" (click)="changeStatus(vehicledata)" /><span class="slider round"></span> </label></td> -->
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+    </div>

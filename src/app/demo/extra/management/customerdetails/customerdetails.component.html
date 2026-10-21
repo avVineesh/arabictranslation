@@ -1,0 +1,298 @@
+
+<!-- View Customer Details -->
+<div class="row" *ngIf="buttonflag==1">
+    <div class="col-sm-4 ">
+      <button *ngIf="buttonflag==1" type="button" class="btn btn-icon btn-rounded btn-primary"(click)="addCustomer(add)"><i class="feather icon-plus"></i></button>
+    </div>
+    <!-- <div class="col-sm-1">
+      <div class="btn-group mb-2 mr-2" ngbDropdown [placement]="'bottom-left'">
+        <button *ngIf="buttonflag==1" class="btn drp-icon btn-rounded btn-primary" ngbDropdownToggle type="button"><i
+            class="feather icon-plus"></i></button>
+        <div ngbDropdownMenu>
+          <a class="dropdown-item" href="javascript:" data-toggle="modal" (click)="addCustomer(add)">Add
+            Employee</a>
+          <a class="dropdown-item" href="javascript:" data-toggle="modal" (click)="bulkUpload(bulk)">Bulk
+            Upload</a>
+        </div>
+      </div>
+    </div> -->
+  </div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="mb-3">Whitelist Details</h5>
+            <ul class="nav nav-pills mb-3" ngbNav #nav1="ngbNav">
+              <li class="nav-item" [ngbNavItem]="1">
+                <a class="nav-link" ngbNavLink aria-controls="pills-home" aria-selected="true" (click)="getOwnStaff()">Whitelist DETAILS</a>
+                <ng-template ngbNavContent>
+                    <div class="table-responsive">
+                        <table class="table table-stripped" id="ownusertable">
+                          <thead>
+                            <tr>
+            
+                              <th>Name</th>
+                              <th>Organization</th>
+                              <!-- <th>Tag ID</th> -->
+                              <!-- <th>Type</th>
+                              <th>Parking Space</th> -->
+                              <!-- <th>Expiry Date</th> -->
+                              <th>Vehicle Details</th>
+                              <th>Status</th>
+                              <!-- <th>Tag Status</th> -->
+                              <!-- <th [ngStyle]="{'display' : service.edit === true ? 'block' : 'none' }">Edit</th> -->
+            
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let data of owndata; let i = index">
+            
+                              <td>{{data.fullname}}</td>
+                              <td>{{data.org_name}}</td>
+                              <!-- <td>{{data.phone}}</td>
+                              <td>{{data.empid}}</td> -->
+                              <!-- <td>{{data.tagid}}</td> -->
+                              <!-- <td>{{data.type}}</td>
+                              <td>{{data.parking_lot_name}}</td> -->
+                              <!-- <td>{{data.enddate}}</td> -->
+                              <td><label><a (click)="getOwnUserIndex(i)" style="cursor: pointer;" data-toggle="modal"
+                                [routerLink]="['/admin/management/customervehicle']"><span><i style="color: #1e90ff"
+                                        class="fas fa-car" aria-hidden="true"></i></span>
+                                  </a></label></td>
+                              <td *ngIf="data.isactive==1"><label class="switch">
+                                  <input type="checkbox" [checked]="data.isactive==1" (click)="changeOwnUserStatus(data)" />
+                                  <span class="slider round"></span> </label></td>
+                              <td *ngIf="data.isactive==0"><label class="switch">
+                                  <input type="checkbox" [checked]="data.isactive==1" (click)="changeOwnUserStatus(data)" />
+                                  <span class="slider round"></span> </label></td>
+                              <!-- <td *ngIf="data.tagstatus==1"><label class="switch">
+                                  <input type="checkbox" [checked]="data.tagstatus==1" (click)="changeTagStatus(data)" />
+                                  <span class="slider round"></span> </label></td> -->
+                              <!-- <td *ngIf="data.tagstatus==0"><label class="switch">
+                                  <input type="checkbox" [checked]="data.tagstatus==1" (click)="changeTagStatus(data)" />
+                                  <span class="slider round"></span> </label></td> -->
+                                  
+                              <!-- <td [ngStyle]="{'display' : service.edit === true ? 'block' : 'none' }"><label><a
+                                    (click)="getOwnUserIndex(i)" style="cursor: pointer;" data-toggle="modal"
+                                    (click)="editModal(edit)"><span><i style="color: #1e90ff" class="fas fa-pencil-alt"
+                                        aria-hidden="true"></i></span>
+                                  </a></label></td> -->
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                </ng-template>
+              </li>
+              <li class="nav-item" [ngbNavItem]="2">
+                <a class="nav-link" ngbNavLink aria-controls="pills-home" aria-selected="true" (click)="getAllVehicleList()">Vehicle List</a>
+                <ng-template ngbNavContent>
+                    <div class="table-responsive">
+                        <table class="table table-stripped" id="custtable">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Organization</th>
+                              <th>Vehicle Number</th>
+                              <th>Type</th>
+                              <th>Segment</th>
+                              <th>Created Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let list of datalist;let i=index">
+                              <td>{{list.fullname}}</td>
+                              <td>{{list.org_name}}</td>
+                              <td>{{list.vehicleno}}</td>
+                              <td>{{list.vehicletype}}</td>
+                              <td>{{list.segmentname}}</td>
+                              <td>{{list.createddate}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                </ng-template>
+              </li>
+            </ul>
+            <div [ngbNavOutlet]="nav1" class="mt-2"></div>
+          </div>
+        </div>
+      </div>
+</div>
+<!-- .................... -->
+
+
+<!-- Add New Employee Details....................... -->
+<ng-template #add let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add New Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off" #f="ngForm">
+            <div class="form-group">
+              <label class="required">Referance Name</label>
+              <input type="text" class="form-control" placeholder="Reference Name" name="fullname" ngModel #fullname="ngModel"
+                [(ngModel)]="service.addCustomer.fullname" required>
+            </div>
+            <!-- <div class="form-group">
+              <label class="required">Employee ID</label>
+              <input type="text" class="form-control" placeholder="Employee ID" name="empid" ngModel #empid="ngModel"
+                [(ngModel)]="service.addCustomer.empid" required>
+      
+            </div> -->
+            <div class="form-group">
+              <label>Organization</label>
+                <select class="select2_demo_1 form-control" style="width: 100%" #ctype="ngModel"
+                [(ngModel)]="service.addCustomer.orgid" ngModel name="orgid" >
+                <option value="" selected disabled>Select a Organization</option>
+                <option *ngFor="let item of organizations" [value]="item.orgid">{{item.org_name}}</option>
+              </select>
+      
+            </div>
+            <!-- <div class="form-group">
+              <label>Contact Number</label>
+              <input type="text" class="form-control" name="phone" ngModel [(ngModel)]="service.addCustomer.phone"
+                placeholder="Contact Number" #phone="ngModel" pattern="^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$"
+                [ngClass]="{'is-invalid': !phone.valid && phone.errors.pattern}" maxlength="10" minlength="10">
+              <label *ngIf="!phone.valid && phone.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid phone
+                number.</label>
+            </div> -->
+           
+            <!-- <div class="form-group">
+              <label>Vehicle Number</label>
+              <input type="text" class="form-control" name="vehiclenumber" ngModel #vehiclenumber="ngModel"
+                placeholder="Vehicle Number" onkeyup="this.value = this.value.toUpperCase();" title="White Space Not Allowed"
+                pattern="^[a-zA-Z0-9]*$" [(ngModel)]="service.addCustomer.vehiclenumber" required
+                [ngClass]="{'is-invalid': !vehiclenumber.valid && vehiclenumber.errors.pattern}">
+              <label *ngIf="!vehiclenumber.valid && vehiclenumber.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid Vehicle Number
+                .</label>
+            </div> -->
+            <!-- <div class="form-group">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="isspecial" id="checkbox-fill-1" [(ngModel)]="service.addCustomer.isspecial">
+                <label for="checkbox-fill-1" class="cr">Special User (Y/N) </label>
+              </div>
+            </div> -->
+            <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              [disabled]="!f.valid" (click)="onAdd()">Save</button>
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              (click)="resetform()">Close</button>
+      
+          </form>
+    </div>
+  </ng-template>
+<!-- ............................................ -->
+
+<!-- Bulk Upload -->
+<ng-template #bulk let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Bulk Employee Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+              <label>Employee Details</label>&nbsp;&nbsp;&nbsp;
+              <button type="button" class="btn btn-primary" (click)="downloadCSV()">Download Excel</button>
+            </div><br />
+            <div class="form-group">
+              <label>Choose Excel File</label>&nbsp;&nbsp;&nbsp;&nbsp;
+              <input class="btn btn-primary" type="file" accept=".csv" (change)="employeeBulkUpload($event)" />
+            </div><br />
+    
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+            (click)="modal.close('Close click')">Close</button>
+          </form>
+    </div>
+  </ng-template>
+  <!-- ........................ -->
+
+
+  <!-- Edit employee details ............-->
+  <ng-template #edit let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Update Employee Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngFor="let editdata of ownuserindexdata">
+        <form autocomplete="off" #f2="ngForm">
+            <div class="form-group">
+              <label class="required" for="inputenterprisename">Employee Name</label>
+              <input type="text" class="form-control" placeholder="Customer Name" name="fullname" ngModel #fullname="ngModel"
+                [(ngModel)]="editdata.fullname" required>
+      
+            </div>
+            <div class="form-group">
+              <label for="employeeid">Employee ID</label>
+              <input type="text" class="form-control" placeholder="Employee ID" name="empid" ngModel #empid="ngModel"
+                [(ngModel)]="editdata.empid">
+      
+            </div>
+            <div class="form-group">
+              <label>Tag ID</label>
+              <!-- <input type="text" class="form-control" placeholder="Tag ID" name="tagid" ngModel #tagid="ngModel"
+                [(ngModel)]="editdata.tagid"> -->
+                <select class="select2_demo_1 form-control" style="width: 100%" #ctype="ngModel"
+                [(ngModel)]="editdata.tagid" ngModel name="tagid" required>
+                <option value="" selected disabled>Select a Tag ID</option>
+                <option *ngFor="let item of rftagid" [value]="item.usermapid">{{item.tagnumber}}</option>
+              </select>
+      
+            </div>
+            <div class="form-group">
+              <label for="inputlattitude">Contact Number</label>
+              <input type="text" class="form-control" name="phone" ngModel [(ngModel)]="editdata.phone"
+                placeholder="Contact Number" #phone="ngModel" pattern="^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$"
+                [ngClass]="{'is-invalid': !phone.valid && phone.errors.pattern}" maxlength="10" minlength="10">
+              <label *ngIf="!phone.valid && phone.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid phone
+                number.</label>
+            </div>
+            <!-- <div class="form-group"><label class="required">Usertype</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #cid="ngModel"
+                [(ngModel)]="editdata.cid" ngModel name="cid" required>
+                <option value="" selected disabled>Select a User type</option>
+                <option *ngFor="let item of custtype" [value]="item.id">{{item.type}}</option>
+              </select>
+            </div> -->
+            <!-- <div class="form-group"><label>Parking Space</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #parkinglotid="ngModel"
+                [(ngModel)]="editdata.parkinglotid" ngModel name="parkinglotid">
+                <option value=null selected disabled>Select a Parking Space</option>
+                <option *ngFor="let list of parkingspace" [value]="list.parking_lot_id">{{list.parking_lot_name}}</option>
+              </select>
+            </div> -->
+            <div class="form-group">
+              <label for="enddate">Expiry Date</label>
+              <input type="date" id="enddate" class="form-control" name="enddate" ngModel #enddate="ngModel" placeholder=""
+                [min]="myDate" [(ngModel)]="editdata.enddate" (click)=" dateFormat()">
+            </div>
+            <div class="form-group">
+              <label for="staffimage">Image</label>
+              <div class="dropzone" dropZone (hovered)="toggleHover($event)" (dropped)="onFileSelected($event)"
+                >
+                <div class="file">
+                  <label class="file-label">
+                    <input type="file" id="file" accept="image/*" #userPhoto (change)="onFileSelected($event)" name="image"
+                      autocomplete="off" />
+                  </label>
+                </div>
+                <!-- <button type="button" class="btn btn-secondary" (click)="urlvalue(url)">Upload Image</button> -->
+                <div *ngIf="percentage | async as pct">
+                  <progress class="progress-bar" [value]="pct" max="100">
+                  </progress>
+                  {{ pct | number }}%
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              [disabled]="!f2.valid" (click)="updateOwnUserData(editdata)">Save</button>
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              (click)="getOwnStaff()">Close</button>
+      
+          </form>
+    </div>
+  </ng-template>
+  <!-- .................................... -->

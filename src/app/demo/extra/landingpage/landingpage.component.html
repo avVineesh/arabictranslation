@@ -1,0 +1,71 @@
+<div class="mobile-landing-page">
+  <div class="bg-circle top"></div>
+  <div class="bg-circle bottom"></div>
+
+  <div class="hero-section">
+    <h1>{{ pageTitle }}</h1>
+    <p>{{ pageSubtitle }}</p>
+  </div>
+
+  <div class="menu-grid">
+    <div class="menu-card" routerLink="../dashboard"
+      [ngClass]="{ active: selectedMenu === 'dashboard' }"
+      (click)="selectMenu('dashboard')">
+      <div class="icon blue"><i class="fas fa-chart-line"></i></div>
+      <div class="text-area">
+        <h3>{{ 'Dashboard' | translate }}</h3>
+        <span>{{ 'Live monitoring & reports' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="menu-card" *ngIf="managementview"
+      [ngClass]="{ active: selectedMenu === 'management' }"
+      (click)="selectMenu('management')" (click)="openMenu('management')">
+      <div class="icon purple"><i class="fas fa-users-cog"></i></div>
+      <div class="text-area">
+        <h3>{{ 'Management' | translate }}</h3>
+        <span>{{ 'Manage Vehicles, Assets & operations' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="menu-card" *ngIf="financeview"
+      [ngClass]="{ active: selectedMenu === 'accounts' }"
+      (click)="selectMenu('accounts')" (click)="openMenu('accounts')">
+      <div class="icon green"><i class="fas fa-wallet"></i></div>
+      <div class="text-area">
+        <h3>{{ 'Accounts' | translate }}</h3>
+        <span>{{ 'Revenue & settlements' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="menu-card" *ngIf="analyticsview"
+      [ngClass]="{ active: selectedMenu === 'analytics' }"
+      (click)="selectMenu('analytics')" (click)="openMenu('analytics')">
+      <div class="icon orange"><i class="fas fa-chart-pie"></i></div>
+      <div class="text-area">
+        <h3>{{ 'Analytics' | translate }}</h3>
+        <span>{{ 'Occupancy & trends' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="menu-card" *ngIf="adminview"
+      [ngClass]="{ active: selectedMenu === 'adminsettings' }"
+      (click)="selectMenu('adminsettings')" (click)="openMenu('adminsettings')">
+      <div class="icon dark"><i class="fas fa-user-shield"></i></div>
+      <div class="text-area">
+        <h3>{{ 'Admin Settings' | translate }}</h3>
+        <span>{{ 'Roles, permissions & Tariffs' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="menu-card" *ngIf="parkingitems"
+      [ngClass]="{ active: selectedMenu === 'parkingsettings' }"
+      (click)="selectMenu('parkingsettings')" (click)="openMenu('parkingsettings')">
+      <div class="icon red"><i class="fas fa-parking"></i></div>
+      <div class="text-area">
+        <h3>{{ 'Parking Settings' | translate }}</h3>
+        <span>{{ 'Parking Space Settings & parking slots' | translate }}</span>
+      </div>
+    </div>
+  </div>
+</div>

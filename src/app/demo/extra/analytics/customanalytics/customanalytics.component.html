@@ -1,0 +1,133 @@
+<div class="row">
+  <div class="col-xl-12">
+      <h4 style="font-weight: bold; float: left;">Filter Options</h4>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-12">
+    
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Hierarchy" value="1" id="radio-p-fill-10" [(ngModel)]="filteroption" (click)="ngOnInit()">
+                <label for="radio-p-fill-10" class="cr">Hierarchy</label>
+              </div>
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Parkingspace" value="0" id="radio-p-fill-11" [(ngModel)]="filteroption">
+                <label for="radio-p-fill-11" class="cr">Parkingspace</label>
+              </div>
+  </div>
+</div>
+
+<div class="row">
+ <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==1">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <span> <i  class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3" ></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+    <option [value]="null"  selected>Select</option>
+    <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+  </select>
+  </div>
+
+   <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==0">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">Select a parkingspace</span>
+    </ng-container>
+     <ng-container >
+       <!-- <div class="form-group col-sm-2"> -->
+            <select id="parkingarea" class="entity-dropdown" (change)="parkispaceFilter($event)">
+              <option disabled selected>Select</option>
+              <option *ngFor="let option of parkingspacelist" [value]="option.parking_lot_id">{{option.parking_lot_name}}</option>
+            </select>
+          <!-- </div> -->
+     </ng-container>
+   
+  </div>
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group"><label>Chart Type</label>
+            <select #select id="charttype" class="select2_demo_1 form-control" style="width: 100%" name="charttype"
+              (change)="typeSelect($event)">
+              <option disabled selected>Select Chart Type</option>
+              <option value=areaspline>Line</option>
+              <option value=column>Column</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>Type of Analytics</label>
+            <select #select1 class="select2_demo_1 form-control" style="width: 100%" (change)="setType($event)">
+              <option disabled selected>Select an Option</option>
+              <option value=vehiclecount>Vehicle Count</option>
+              <option value=revenue>Revenue</option>
+              <option value=Staff>Staff</option>
+              <option value=Occupancy>Occupancy</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>Filter Range</label>
+            <select #select2 id="range" class="select2_demo_1 form-control" style="width: 100%" (change)="setRange($event)">
+              <option disabled selected>Select an Option</option>
+              <option value=today>Today</option>
+              <option value=lastweek>Last Week</option>
+              <option value=lastmonth>Last Month</option>
+              <option value=custom>Custom</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2" *ngIf="showdate">
+          <div class="form-group"><label>From</label>
+            <input type="date" class="form-control" [ngModel]="from | date:'yyyy-MM-dd'" (ngModelChange)="from = $event">
+          </div>
+        </div>
+        <div class="col-sm-2" *ngIf="showdate">
+          <div class="form-group"><label>To</label>
+            <input type="date" class="form-control" [ngModel]="to | date:'yyyy-MM-dd'" (ngModelChange)="to = $event">
+          </div>
+        </div>
+        <!-- <div class="col-sm-2">
+          <div class="form-group"><label>Parking Date</label>
+            <input type="date" class="form-control" [ngModel]="date | date:'yyyy-MM-dd'"  (change)="getDate($event)">
+          </div>
+        </div> -->
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-primary"
+              (click)="getCustomAnalytics()">Filter</button>
+          </div>
+        </div>
+  
+      </div>
+      <app-card cardTitle="Custom Analytics" [options]="false" blockClass="table-border-style">
+        <div  *ngIf="service.customanalytics.analytics!='Occupancy'">
+          <div id="container" style="height:340px;"></div>
+          <div *ngIf="service.customanalytics.analytics != 'Staff'" class="d-flex justify-content-center">
+            <div class="col-sm-2">
+              <h6><b>Fastag - {{fastagsum}}</b></h6>
+            </div>
+            <div class="col-sm-2">
+              <h6><b>Manual - {{manualsum}}</b></h6>
+            </div>
+            <!-- <div class="col-sm-2">
+              <h6><b>Valet - {{valetsum}}</b></h6>
+            </div> -->
+            <div class="col-sm-2">
+              <h6><b>Booking - {{bookingsum}}</b></h6>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="service.customanalytics.analytics=='Occupancy'">
+          <div id="container1" style="height:340px;"></div>
+        </div>
+      </app-card>
+  
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>

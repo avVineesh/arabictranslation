@@ -1,0 +1,13 @@
+@if (!item.hidden) {
+  <li class="nav-item pcoded-menu-caption">
+    <label for="title">{{ item.title | translate }}</label>
+  </li>
+  @for (item of item.children; track item) {
+    @if (item.type === 'collapse') {
+      <app-nav-collapse [item]="item" />
+    }
+    @if (item.type === 'item') {
+      <app-nav-item [item]="item" />
+    }
+  }
+}

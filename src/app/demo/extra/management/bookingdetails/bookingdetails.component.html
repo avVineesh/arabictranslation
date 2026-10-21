@@ -1,0 +1,103 @@
+<div class="row">
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group"><label>Parking Area</label>
+            <select id="parkingarea" class="select2_demo_1 form-control" style="width: 100%"
+            (change)="getParkingArea($event)">
+              <option disabled selected>Select parking area</option>
+              <option [value]=0>All Parking Area</option>
+              <option *ngFor="let value of parkingarea" [value]="value.parking_lot_id">{{value.parking_lot_name}}</option>
+            </select>
+          </div>
+  
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>Booking Status</label>
+            <select id="parkingarea" class="select2_demo_1 form-control" style="width: 100%"
+            (change)="getBookingStatus($event)">
+              <option disabled selected>Select booking status</option>
+              <option [value]=5>All</option>
+              <!-- <option [value]=0>Unprocessed</option> -->
+              <option [value]=1>Reserved</option>
+              <option [value]=2>Parked</option>
+              <option [value]=3>Completed</option>
+              <option [value]=4>Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>Booking Date</label>
+            <input type="date" class="form-control" [ngModel]="date | date:'yyyy-MM-dd'" (ngModelChange)="date = $event">
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-primary"
+              (click)="filterBooking()">Filter</button>
+          </div>
+        </div>
+      </div>
+      <app-card cardTitle="Booking Details" [options]="false" blockClass="table-border-style">
+        <!-- <div class="search-class pull-right">
+        <input class="form-control" type="text" name="search" [(ngModel)]="searchText" autocomplete="off" placeholder="Start searching">
+      </div> -->
+        <div class="table-responsive">
+          <table id="mytable" class="table table-stripped">
+            <thead>
+              <tr>
+  
+                <th>Customer Name</th>
+                <th>Vehicle Number</th>
+                <th>Parking Area</th>
+                <th>Parking Slot</th>
+                <th>Bookingdate</th>
+                <th>Startdate</th>
+                <th>Booking Status</th>
+                <th>Type</th>
+                <th>Enddate</th>
+                <th>PaymentID</th>
+                <th>Duration(Hr)</th>
+                <!-- <th>Parking Log</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of bookingdata; let i = index">
+                <td>{{data.customername}}</td>
+                <td>{{data.vehicleno}}</td>
+                <td>{{data.parkingarea}}</td> 
+                <td>{{data.parkinglot}}</td>
+                <td>{{data.bookingdate}}</td>
+                <td>{{data.startdate}}</td>
+                <!-- <td *ngIf="data.bookingstatus == 0" style="color: rgb(39, 8, 245);">Unprocessed</td> -->
+                <td *ngIf="data.bookingstatus == 1" style="color: rgb(183, 0, 255);">Reserved</td>
+                <td *ngIf="data.bookingstatus == 2" style="color: green;">Parked</td>
+                <td *ngIf="data.bookingstatus == 3" style="color: red;">Completed</td>
+                <td *ngIf="data.bookingstatus == 4">Cancelled</td>
+                <td *ngIf="data.isextended=='1'">Extended</td>
+                <td *ngIf="data.isextended=='0'">Regular</td>
+                <td>{{data.enddate}}</td>
+                <td>{{data.paymentid}}</td>
+                <td>{{data.duration}}</td>
+                <!-- <td><a style="cursor: pointer;"
+                  data-toggle="modal"><i (click)="getIndex(i)" [routerLink]="['/admin/management/bookinglogdetails']"
+                    style="color: #c71c22" class="fa fa-th-list"></i></a></td> -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+  <!-- <ng-template #img let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Image</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+       
+    </div>
+  </ng-template> -->

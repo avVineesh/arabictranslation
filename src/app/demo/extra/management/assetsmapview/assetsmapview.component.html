@@ -1,0 +1,64 @@
+<div class="row">
+  <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <span> <i  class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3" ></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+    <option [value]="null"  selected>Select</option>
+    <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+  </select>
+  </div>
+  <google-map height="850px" width="100%" [center]="center" [zoom]="zoom" [options]="mapOptions">
+    @for (position of markerPositions; track position) {
+      <map-advanced-marker  
+        #marker="mapAdvancedMarker" 
+        [position]="{lat:position.lat, lng:position.lng}" 
+        [title]="position.parking_lot_name"
+        [options]="{ content: getMarkerContent(position.imageUrl) }"
+        (mapClick)="onMarkerClick(position, marker)">
+      </map-advanced-marker>
+    }
+  
+    <!-- Google Maps Info Window -->
+    <map-info-window #infoWindow>
+      <div class="info-window-content">
+        <h2>{{ markerDetails?.title }}</h2>
+        <div class="parking-info">
+          <h4 style="color:darkmagenta"><em>Parking Slots:</em> </h4>
+          <ul class="slot-list">
+            <li *ngFor="let slot of countdetails">
+              <span class="slot-icon">{{ getVehicleIcon(slot.vehicletype) }}</span>
+              <span class="slot-name">{{ slot.vehicletype }}:</span>
+              <span class="slot-count">{{ slot.count }}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="other-details">
+          <h4 style="color: darkmagenta;"><em>Assets Details:</em> </h4>
+          <ul class="custom-list">
+            <li class="custom-list-header">
+              <span class="item-name">Item</span>
+              <div class="count-wrapper">
+                <span class="item-count">Total</span>
+                <span class="item-error">Inactive</span>
+              </div>
+            </li>
+            <li *ngFor="let data of assetscount">
+              <span class="item-name"><b>{{ data.itemname }}:</b></span>
+              <div class="count-wrapper">
+                <span class="item-count">{{ data.count }}</span>
+                <span class="item-error">{{ data.inactivedevice_count }}</span>
+              </div>
+            </li>
+          </ul>
+          
+        </div>
+      </div>
+    </map-info-window>
+  </google-map>
+</div>
+ 

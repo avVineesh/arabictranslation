@@ -1,0 +1,242 @@
+// label {
+//     display: block;
+//     font: 1rem 'Fira Sans', sans-serif;
+// }
+
+// input,
+// label {
+//     margin: .4rem 0;
+// }
+
+
+// //@import "~ng-pick-datetime/assets/style/picker.min.css"
+
+
+.card-custom {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .select2_demo_1 {
+    height: 38px;
+    border-radius: 6px;
+  }
+  
+  .table-custom th,
+  .table-custom td {
+    vertical-align: middle;
+    font-size: 15px;
+  }
+  
+  .table-custom tr:nth-child(even) {
+    background-color: #f8f9fa;
+  }
+  
+  .summary-header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .section-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+  }
+  
+  .btn-custom {
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+  
+
+  .table-custom {
+    font-size: 15px;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  
+  .table-custom thead th {
+    background-color: #f1f1f1;
+    font-weight: 600;
+  }
+  
+  .table-custom tbody tr:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+  
+  .rounded {
+    border-radius: 12px !important;
+  }
+  
+  .bg-white {
+    background: #ffffff !important;
+  }
+  // .hover-shadow:hover {
+  //   box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+  //   transition: box-shadow 0.3s ease;
+  // }
+  
+  .remove-shadow * {
+    box-shadow: none !important;
+    filter: none !important;
+  }
+  
+
+
+  .summary-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.25s ease;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-card:hover {
+  transform: translateY(-5px) scale(1.02);
+}
+
+/* ICON */
+.summary-icon {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+/* TEXT */
+.summary-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.summary-count {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 4px;
+}
+
+.summary-amount {
+  font-size: 16px;
+  font-weight: bold;
+  color: #212529;
+}
+
+/* COLOR THEMES */
+.cash {
+  border-top: 3px solid #28a745;
+}
+.cash .summary-icon {
+  color: #28a745;
+}
+
+.upi {
+  border-top: 3px solid #007bff;
+}
+.upi .summary-icon {
+  color: #007bff;
+}
+
+.qr {
+  border-top: 3px solid #ffc107;
+}
+.qr .summary-icon {
+  color: #ffc107;
+}
+
+.card {
+  border-top: 3px solid #17a2b8;
+}
+.card .summary-icon {
+  color: #17a2b8;
+}
+
+.fastag {
+  border-top: 3px solid #6f42c1;
+}
+.fastag .summary-icon {
+  color: #6f42c1;
+}
+.booking {
+  border-top: 3px solid #f00f1a;
+}
+.booking .summary-icon {
+  color: #f00f1a;
+}
+.vehicle-count {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #2d3748;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+
+
+
+
+.form-label {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.form-control {
+  height: 38px;
+  font-size: 13px;
+}
+
+.btn {
+  height: 38px;
+}
+
+.card {
+  border-radius: 10px;
+}
+
+.select2-container .select2-selection--single {
+  height: 38px !important;
+}
+
+.btn-check:checked + .btn {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+
+
+.pdf-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.pdf-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 350px;
+  text-align: center;
+}
+

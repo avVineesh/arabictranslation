@@ -1,0 +1,14 @@
+.left-image {
+    justify-self: start;
+    max-width: 70px; /* Adjust size as needed */
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.right-image {
+    justify-self: start;
+    max-width: 120px; /* Adjust size as needed */
+    height: auto;
+    transition: transform 0.3s ease;
+    margin-left: 20px; /* Add space between images */
+}

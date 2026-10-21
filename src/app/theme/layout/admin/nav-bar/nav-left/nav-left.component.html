@@ -1,0 +1,20 @@
+
+<ul class="navbar-nav">
+  <li>
+    <a href="javascript:" class="full-screen" (click)="toggleFullscreen()">
+      @if (screenFull === true) {
+        <i class="feather icon-maximize"></i>
+      } @else {
+        <i class="feather icon-minimize"></i>
+      }
+    </a>
+  </li>
+  <li class="nav-item show-items" ngbDropdown placement="auto">
+    <!-- <a href="javascript:" ngbDropdownToggle>Dropdown</a> -->
+    <ul >
+      <img src="assets/images/csml new.png" class="left-image">
+      <img *ngIf="logo=='1'" src="assets/images/KMRL-logo.png" class="right-image">
+    </ul>
+    
+  </li>
+</ul>

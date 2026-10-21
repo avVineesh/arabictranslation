@@ -1,0 +1,380 @@
+<!-- Responsive page try -->
+<div class="row">
+    <div class="col-xl-12">
+     <div class="filter-toolbar card shadow-sm mb-3">
+  <div class="card-body py-2">
+
+    <div class="d-flex flex-wrap align-items-center gap-2">
+
+      <!-- Parking -->
+      <select class="form-select form-select-sm w-auto"
+              (change)="getPArkingspaceid($event)">
+        <option value="">Parking Space</option>
+        <option value="All">All</option>
+        <option *ngFor="let data of parkingspace"
+                [value]="data.parking_lot_id">
+          {{ data.parking_lot_name }}
+        </option>
+      </select>
+
+      <!-- Summary Type -->
+      <select class="form-select form-select-sm w-auto"
+              (change)="getSummarytypeoption($event)">
+        <option value="">Summary Type</option>
+        <option value="Vehicle">Vehicle</option>
+        <option value="Staff">Staff</option>
+      </select>
+
+      <!-- Summary By -->
+      <select class="form-select form-select-sm w-auto"
+              (change)="getSummaryType($event)">
+              <option disabled selected>Select</option>
+        <option value="invoice">Invoice</option>
+        <option value="date">Date</option>
+      </select>
+
+      <!-- Date / Invoice Inputs -->
+      <input *ngIf="showinvoice==1"
+             class="form-control form-control-sm w-auto"
+             placeholder="Invoice From"
+             [(ngModel)]="service.frominvoice">
+
+      <input *ngIf="showinvoice==1"
+             class="form-control form-control-sm w-auto"
+             placeholder="Invoice To"
+             [(ngModel)]="service.toinvoice">
+
+      <input *ngIf="showdate==1"
+             type="datetime-local"
+             class="form-control form-control-sm w-auto"
+             [(ngModel)]="service.from">
+
+      <input *ngIf="showdate==1"
+             type="datetime-local"
+             class="form-control form-control-sm w-auto"
+             [(ngModel)]="service.to">
+
+      <!-- Generate Button -->
+      <button class="btn btn-secondary btn-sm"
+              (click)="showinvoice==1 ? getSummary() : getSummaryByDate()">
+        Generate
+      </button>
+
+      <!-- RIGHT SIDE -->
+      <div class="ms-auto d-flex align-items-center gap-3">
+
+        <!-- View Toggle -->
+        <div class="btn-group btn-group-sm" *ngIf="showexport">
+
+          <input type="radio" class="btn-check"
+                 name="specification"
+                 id="groupView"
+                 value="Group"
+                 [(ngModel)]="specification"
+                 checked>
+
+          <label class="btn btn-outline-primary" for="groupView">Group</label>
+
+          <input type="radio" class="btn-check"
+                 name="specification"
+                 id="splitView"
+                 value="Split"
+                 [(ngModel)]="specification">
+
+          <label class="btn btn-outline-primary" for="splitView">Split</label>
+
+        </div>
+
+        <!-- Export -->
+       <div  placement="bottom-end" *ngIf="showexport">
+  <button class="btn btn-success btn-md" (click)="downloadModal(download)">
+    Export
+  </button>
+
+</div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+      
+          
+      
+          <app-card cardTitle="Summary"[options]="false"blockClass="p-5 bg-white shadow rounded-4" id="print-section"#content>
+          <!-- Header -->
+        <div class="text-center mb-4">
+  <h3 class="fw-bold text-primary mb-1">
+    Cochin Smart Mission Limited
+  </h3>
+
+  <div class="text-muted">
+    {{ parkinglotname }} • Revenue Summary Report
+  </div>
+
+  <small class="text-muted">
+    Generated: {{ time }}
+  </small>
+</div>
+        
+          <!-- Highlight: Total Revenue -->
+          <div class="bg-light p-4 mb-4 rounded-3 shadow-sm text-center">
+
+  <h5 class="text-uppercase text-muted">Total Collection</h5>
+
+  <!-- Amount -->
+  <h1 class="display-5 fw-bold text-success">
+    ₹ {{ sum || 0 | number:'1.2-2' }}
+  </h1>
+
+  <!-- NEW: Vehicle Count -->
+  <div class="vehicle-count">
+    {{ totalcount || 0 }} Vehicles Billed
+  </div>
+
+  <!-- Range Info -->
+  <div class="text-muted small mt-2">
+    
+    <span *ngIf="invoiceid?.length">
+      <h6>
+        Invoice From <strong>{{ invoiceid[0]?.from_invoice }}</strong>
+        to <strong>{{ invoiceid[0]?.to_invoice }}</strong>
+      </h6>
+    </span>
+
+    <span *ngIf="daterange?.length">
+      <h6>
+        Date From <strong>{{ daterange[0]?.from_date }}</strong>
+        to <strong>{{ daterange[0]?.to_date }}</strong>
+      </h6>
+    </span>
+
+  </div>
+
+</div>
+        
+          <!-- Breakdown Table -->
+        
+        <div *ngIf="summarytypeoption === 'Vehicle' && specification=='Split'"  class="table-responsive mb-4"  >
+            <table class="table table-striped table-hover  table-bordered  border text-center align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-start">Parkingspace Name</th>
+                  <th >Vehicle Type</th>
+                  <th>Payment Mode</th>
+                  <th>Count</th>
+                  <th class="text-end">Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of summary">
+                  <td class="text-start">{{item.parking_lot_name}}</td>
+                  <td >{{ item.vehtype }}</td>
+                  <td>{{ item.paytype }}</td>
+                  <td>{{ item.vehtypecount }}</td>
+                  <td class="text-end fw-medium ">
+                    {{ item.amt | number:'1.2-2' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+           <div *ngIf="summarytypeoption === 'Vehicle' && specification=='Split'"  class="table-responsive mb-4"  >
+            <table class="table table-striped table-hover  table-bordered  border text-center align-middle">
+              <thead class="table-light">
+                <tr >
+                  <th class="text-start">Parkingspace Name</th>
+                  <th >Vehicle Type</th>
+                  <th>Count</th>
+                  <th class="text-end">Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of vehsummary">
+                  <td class="text-start">{{data.parking_lot_name}}</td>
+                  <td >{{data.vehtype}}</td>
+                  <td>{{ data.vehtypecount }}</td>
+                  <td class="text-end fw-medium ">
+                    {{ data.amt | number:'1.2-2' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+           <div *ngIf="summarytypeoption === 'Vehicle' && specification=='Group'"  class="table-responsive mb-4"  >
+            <table class="table table-striped table-hover  table-bordered  border text-center align-middle">
+              <thead class="table-light">
+                <tr >
+                  <th class="text-start">Parkingspace Name</th>
+                  <th >Bike(count)</th>
+                  <th >Car(count)</th>
+                  <th >Auto(count)</th>
+                  <th >Tempotraveller(count)</th>
+                  <th >Minibus/Van(count)</th>
+                  <th >Tempo(count)</th>
+                  <th >Bus(count)</th>
+                  <th >Lorry(count)</th>
+                  <th class="text-end">Total Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of specificationsummary">
+                  <td class="text-start">{{data.Location}}</td>
+                  <td >{{data.TwoWheeler}}</td>
+                  <td>{{ data.FourWheeler }}</td>
+                  <td>{{ data.Auto }}</td>
+                  <td>{{ data.Tempotraveller }}</td>
+                   <td>{{ data.MiniBus_Van }}</td>
+                    <td>{{ data.Tempo }}</td>
+                     <td>{{ data.Bus }}</td>
+                     <td>{{ data.Lorry }}</td>
+                  <td class="text-end fw-medium ">
+                    {{ data.Totalcollection | number:'1.2-2' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        
+<div *ngIf="summarytypeoption === 'Staff' && specification=='Split'"    class="table-responsive mb-4">
+                 <table class="table table-striped table-light table-hover border text-center align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-start">Parkingspace Name</th>
+                  <th >Staff Name</th>
+                  <th>Payment Mode</th>
+                  <th>Count</th>
+                  <th class="text-end">Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of summary">
+                  <td class="text-start">{{item.parking_lot_name}}</td>
+                  <td >{{ item.fullname }}</td>
+                  <td>{{ item.paytype }}</td>
+                  <td>{{ item.vehtypecount }}</td>
+                  <td class="text-end fw-medium text-dark">
+                    {{ item.amt | number:'1.2-2' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="summarytypeoption === 'Staff' && specification=='Group'"    class="table-responsive mb-4">
+                 <table class="table table-striped table-light table-hover border text-center align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-start">Parkingspace Name</th>
+                  <th >Staff Name</th>
+                  <th>Cash</th>
+                  <th>UPI</th>
+                   <th>Card</th>
+                    <th>QR</th>
+                  <th class="text-end">Total Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of specificationsummary">
+                  <td class="text-start">{{item.parking_lot_name}}</td>
+                  <td >{{item.fullname}}</td>
+                  <td >{{ item.Cash }}</td>
+                  <td>{{ item.UPI }}</td>
+                  <td>{{ item.Card }}</td>
+                  <td>{{ item.QR }}</td>
+                  <td class="text-end fw-medium text-dark">
+                    {{ item.TotalCollection | number:'1.2-2' }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+ <div class="row g-3 mb-4" *ngIf="showinfo==1">
+
+  <div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl" *ngFor="let item of summaryData">
+    <div class="summary-card text-center h-100 w-100" [ngClass]="item.class">
+
+      <div class="summary-icon">
+        <i [class]="item.icon"></i>
+      </div>
+
+      <div class="summary-title">{{item.label}}</div>
+      <div class="summary-count">({{item.count}})</div>
+      <div class="summary-amount">₹{{item.amount}}</div>
+
+    </div>
+  </div>
+
+</div>
+
+          <!-- Info Message -->
+          <div class="text-center mt-4" *ngIf="showinfo == 0">
+            <div class="alert alert-info d-inline-flex align-items-center px-4 py-2 rounded-pill shadow-sm">
+              <i class="fas fa-info-circle me-2"></i>
+              Select a Parking Space and enter invoice numbers or date to view summary
+            </div>
+          </div>
+           <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+        </app-card>
+        
+
+          
+    </div>
+     <ngx-spinner bdColor="rgba(0,0,0,0.6)" size="medium" color="#fff" type="ball-scale-multiple">
+
+    <p style="color:white">
+      Fetching Summary...
+    </p>
+
+  </ngx-spinner>
+  </div>
+
+  <ng-template #download let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center">
+    <h5 class="modal-title h4 mb-0">Download Report</h5>
+
+    <button type="button" class="btn-close" (click)="modal.close()">
+    </button>
+  </div>
+
+  <div class="modal-body text-center p-5">
+
+    <h6 class="mb-4">Choose Download Format</h6>
+
+    <div class="d-flex justify-content-center gap-3">
+
+      <button type="button" class="btn btn-danger btn-lg" (click)="downloadPDF()">
+        <i class="fa fa-file-pdf me-2"></i>
+        Download PDF
+      </button>
+
+      <button type="button" class="btn btn-success btn-lg" (click)="exportToExcel()">
+        <i class="fa fa-file-excel me-2"></i>
+        Download Excel
+      </button>
+
+    </div>
+
+  </div>
+</ng-template>
+<div *ngIf="isPdfGenerating" class="pdf-overlay">
+
+  <div class="pdf-box">
+
+    <h5>Generating PDF...</h5>
+
+    <p>{{pdfStatus}}</p>
+
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+        [style.width.%]="pdfProgress">
+        {{pdfProgress}}%
+      </div>
+    </div>
+
+  </div>
+
+</div>

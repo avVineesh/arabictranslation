@@ -1,0 +1,163 @@
+<!-- View Led................................................................ -->
+<div class="row">
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-sm-1">
+              <div class="btn-group mb-2 mr-2"  ngbDropdown [placement]="'bottom-left'">
+                <button class="btn drp-icon btn-rounded btn-primary" ngbDropdownToggle type="button"><i class="feather icon-plus"></i></button>
+                <div ngbDropdownMenu>
+                  <a class="dropdown-item" href="javascript:" data-toggle="modal" (click)="addLed(add)">Add LED </a>
+                  <a class="dropdown-item" href="javascript:"  data-toggle="modal" (click)="bulkLed(bulk)">Bulk Upload</a>
+                </div>
+              </div>
+            </div>
+           
+          </div>
+        </div>
+  
+      </div>
+  
+      <app-card cardTitle="LED Configuration" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table id="mytable" class="table table-hover">
+            <thead>
+              <tr>
+                <th>Deviceid</th>
+                <th>Mac-Address</th>
+                <th>Created Date</th>
+                <th>Status</th>
+                <th >Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor ="let data of leddata; let i =index">
+                <td>{{data.deviceid}}</td>
+                <td>{{data.macid}}</td>
+                <td>{{data.createddate| date:'dd-MMM-yyy'}}</td>
+                <td *ngIf="data.status==1"><label class="switch">
+                  <input type="checkbox" [checked]="data.status==1" (click)="changeStatus(data)" />
+                  <span class="slider round"></span> </label></td>
+              <td *ngIf="data.status==0"><label class="switch">
+                  <input type="checkbox" [checked]="data.status==1" (click)="changeStatus(data)" />
+                  <span class="slider round"></span> </label></td>
+                <td><a style="cursor: pointer;"
+                    data-toggle="modal" (click)="getIndex(i)"><i style="color: #1e90ff"
+                      class="fas fa-pencil-alt" aria-hidden="true" (click)="updateLed(edit)"></i></a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+
+  <!-- Add Led Details -->
+  <ng-template #add let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add LED Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off" #f="ngForm">
+
+            <div class="form-group"><label class="required">Device ID</label>
+              <input type="text" class="form-control" required placeholder="Device ID" name="deviceid"
+                [ngClass]="{'is-invalid': !deviceid.valid && deviceid.errors.pattern}" ngModel #deviceid="ngModel" required
+                ngModel pattern="^[a-zA-Z0-9]*$" maxlength="16" [(ngModel)]="service.ledmodal.deviceid">
+              <label *ngIf="!deviceid.valid && deviceid.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid device id
+                .</label>
+            </div>
+            <div class="form-group"><label>Mac ID</label>
+              <input type="text" class="form-control" placeholder="Mac ID" name="macid" ngModel #macid="ngModel" ngModel
+              [(ngModel)]="service.ledmodal.mac_id" required>
+            </div>
+            
+            <div class="form-group"><label>Mqtt-Topic</label>
+              <input type="text" class="form-control" placeholder="Mqtt-Topic" name="topic" ngModel #topic="ngModel" ngModel
+              [(ngModel)]="service.ledmodal.topic">
+            </div>
+            <div class="form-group">
+    
+              <button type="button" class="btn btn-primary me-2 mb-2" [disabled]="!f.valid" data-dismiss="modal"
+              (click)="modal.close('Close click')" (click)="addNewLed()">Save</button>
+              <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+              (click)="modal.close('Close click')" (click)="resetform()">Close</button>
+            </div>
+          </form>
+    </div>
+  </ng-template>
+
+
+  <!-- Edit Led  Details-->
+  <ng-template #edit let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Edit LED Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngFor="let editdata of ledindex">
+        <form autocomplete="off" #f="ngForm">
+  
+            <div class="form-group"><label class="required">Device ID</label>
+              <input type="text" class="form-control" required placeholder="Device ID" name="deviceid"
+                [ngClass]="{'is-invalid': !deviceid.valid && deviceid.errors.pattern}" ngModel #deviceid="ngModel" required
+                ngModel pattern="^[a-zA-Z0-9]*$" maxlength="16" [(ngModel)]="editdata.deviceid">
+              <label *ngIf="!deviceid.valid && deviceid.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid device id
+                .</label>
+            </div>
+            <div class="form-group"><label>Mac ID</label>
+              <input type="text" class="form-control" placeholder="Mac ID" name="macid" ngModel #macid="ngModel" ngModel
+              [(ngModel)]="editdata.macid" required>
+            </div>
+            
+            <div class="form-group"><label>Mqtt-Topic</label>
+              <input type="text" class="form-control" placeholder="Mqtt-Topic" name="topic" ngModel #topic="ngModel" ngModel
+              [(ngModel)]="editdata.topic">
+            </div>
+            <div class="form-group">
+    
+              <button type="button" class="btn btn-primary me-2 mb-2" [disabled]="!f.valid" data-dismiss="modal"
+              (click)="modal.close('Close click')" (click)="editLed(editdata)">Save</button>
+              <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+              (click)="modal.close('Close click')" (click)="resetform()">Close</button>
+            </div>
+          </form>
+    </div>
+  </ng-template>
+
+
+  <!-- Bulk Upload -->
+  <ng-template #bulk let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Bulk LED Upload</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" >
+        <form #form="ngForm">
+            <!-- <div class="form-group"><label>Network Provider</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" name="npid"
+                 [(ngModel)]="sensorbulkupload.npid">
+                 <option value="" disabled selected>Select Network Provider</option>
+                <option *ngFor="let data of networkprovider" [value]="data.npid">{{data.npname}}</option>
+              </select>
+            </div> -->
+            <div class="form-group">
+              <label>LED Details</label>&nbsp;&nbsp;&nbsp;
+          <button type="button" class="btn btn-primary" (click)="downloadCSV()">Download Excel</button>
+            </div><br/>
+          <div class="form-group">
+                <label>Choose Excel File</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                <input class="btn btn-primary" type="file" accept=".csv" (change)="ledBulkUpload($event)"/> 
+                  </div><br/> 
+    
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"  (click)="modal.close('Close click')" (click)="resetform()">Close</button>
+            <!-- <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="OnAddBulkLot(BParkLot)" (click)="exampleModalLong4.hide()"  >Save </button> -->
+    
+          </form>
+    </div>
+  </ng-template>

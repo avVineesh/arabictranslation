@@ -1,0 +1,258 @@
+<div class="row">
+  <div class="col-xl-12">
+      <h4 style="font-weight: bold; float: left;">Filter Options</h4>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-12">
+    
+    <div class="radio radio-primary d-inline" style="float: left;" *ngIf="activeTab === 'Parked'">
+                <input type="radio" name="Hierarchy" value="1" id="radio-p-fill-10" [(ngModel)]="filteroption" (click)="ngOnInit()">
+                <label for="radio-p-fill-10" class="cr">Hierarchy</label>
+              </div>
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Parkingspace" value="0" id="radio-p-fill-11" [(ngModel)]="filteroption">
+                <label for="radio-p-fill-11" class="cr">Parkingspace</label>
+              </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==1">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <span> <i  class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3" ></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+    <option [value]="null"  selected>Select</option>
+    <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+  </select>
+  </div>
+
+   <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==0">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">Select a parkingspace</span>
+    </ng-container>
+     <ng-container >
+       <!-- <div class="form-group col-sm-2"> -->
+            <select id="parkingarea" class="entity-dropdown" (change)="parkispaceFilter($event)">
+              <option disabled selected>Select</option>
+              <option *ngFor="let option of parkingspacelist" [value]="option.parking_lot_id">{{option.parking_lot_name}}</option>
+            </select>
+          <!-- </div> -->
+     </ng-container>
+   
+  </div>
+    <div class="col-xl-12">
+      <div class="row align-items-center mb-3">
+        <div class="col-sm-3">
+          <div class="form-group"><label>Parking Date(From)</label>
+            <input type="datetime-local" class="form-control" [formControl]="dateControl" [ngModel]="date"  (change)="getDate($event)">
+          </div>
+        </div>
+         <div class="col-sm-3">
+          <div class="form-group"><label>Parking Date(To)</label>
+            <input type="datetime-local" class="form-control" [formControl]="dateControl" [ngModel]="todate"  (change)="gettoDate($event)">
+          </div>
+        </div>
+        <div class="col-12 col-md d-flex flex-wrap gap-2">
+            <button type="button" style="margin:5px;" class="btn btn-primary" (click)="loadFilter()">Filter</button>
+          </div>
+          <!-- <div class="col-12 col-md d-flex flex-wrap gap-2" *ngIf="activeTab === 'Balance'|| activeTab==='Clear'">
+           <h4>Total Balance Amount: {{totalbalamount}}</h4>
+          </div> -->
+        <div class="col-12 col-md d-flex justify-content-md-end mt-2 mt-md-0">
+         
+            <button type="button" style="margin:5px;" class="btn btn-secondary mb-2 pull-right"
+            *ngIf="activeTab==='Parked'"  (click)="clearParking()">Clear</button>
+         
+        </div>
+      </div>
+       <ul class="custom-tab-header">
+      <li [class.active]="activeTab === 'Parked'" (click)="setActiveTab('Parked')">Parked Vehicles</li>
+      <!-- <li [class.active]="activeTab === 'Forced'" (click)="setActiveTab('Forced')">Forced Exit Report</li> -->
+      <li [class.active]="activeTab === 'Balance'" (click)="setActiveTab('Balance')">Balance Amount</li>
+        <li [class.active]="activeTab === 'Clear'" (click)="setActiveTab('Clear')">Manually Cleared Vehicles</li>
+    </ul>
+      <div>
+      <app-card [cardTitle]="activeTab === 'Clear' ? 'Manually Cleared Vehicles' : 'Parked Vehicles'" [options]="false" blockClass="table-border-style">
+          <div class="table-responsive" *ngIf="activeTab === 'Parked'">
+            <table class="table table-hover" id="mytable1">
+              <thead>
+                <tr>
+                  <th>All<input type="checkbox" id="checkall"  name="vehicles" value="h1" (change)="checkUncheckAll($event)"/></th>
+                  <!-- <th>ID</th> -->
+                  <th>Vehicle Number</th>
+                  <th>Entry Type</th>
+                  <th>Vehicle Type</th>
+                  <th>Parkingspace</th>
+                  <th>Start Date</th>
+                  <th>Advance Amount</th>
+                  <th>Balance Amount</th>
+                  <th>Duration</th>
+                  <th>Phone Number</th>
+                  <th>Image</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of parkedvehicles;let i=index">
+                    <td><input type="checkbox" [(ngModel)]="data.checked" id="vehiclelist"  name="vehiclelist" value="{{data.id}}" (change)="checkIndividual($event)" (change)="checkFatagCheck($event)"/></td>
+                 
+                 <td *ngIf="data.notificationstatus=='0'"><h6 class="m-0" style="color:rgb(26, 189, 11);">{{data.vehno}}</h6></td>
+                 <td *ngIf="data.notificationstatus=='1'"><h6 class="m-0" style="color:rgb(247, 20, 20);">{{data.vehno}}</h6></td>
+                 <td *ngIf="data.type=='1'">
+                  Fastag
+                </td>
+                <td *ngIf="data.type=='0'">
+                  Manual
+                </td>
+                <td>{{data.vehtype}}</td>
+                <td>{{data.parkingspace}}</td>
+                <td>{{data.startdate}}</td>
+                <td>{{data.advamount}}</td>
+                <td>{{data.balamount}}</td>
+                <td>{{data.duration}}</td>
+                <td>{{data.phonenumber}}</td>
+                 <td><a style="cursor: pointer;" data-toggle="modal" (click)="getIndex(i)" (click)="getEntryImage()"
+                  (click)="entryImage(img)"><i style="color: #c71c22" class=" fa fa-picture-o "
+                    aria-hidden="true"></i></a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+             <div card-header class="d-flex justify-content-center align-items-center w-100 gap-5 py-2">
+               <div class="text-center" *ngIf="activeTab === 'Balance'|| activeTab==='Clear'">
+    <div class="text-dark fw-bold" style="font-size: 25px;">
+      {{ totalcount }}
+    </div>
+    <div class="text-muted medium">Total count</div>
+  </div>
+
+  <div class="vr"></div> <!-- vertical divider -->
+  <div class="text-center" *ngIf="activeTab === 'Balance'">
+    <div class="text-warning fw-bold" style="font-size: 25px;">
+      ₹ {{ totalbalamount }}
+    </div>
+    <div class="text-muted medium">Total Balance amount </div>
+  </div>
+  <div class="text-center" *ngIf="activeTab === 'Clear'">
+    <div class="text-danger fw-bold" style="font-size: 25px;">
+      ₹ {{ totalbalamount }}
+    </div>
+    <div class="text-muted medium"> Revenue Shortfall</div>
+     <!-- Disclaimer -->
+  <div class="text-info mt-2 fst-italic disclaimer-text">
+    *Total duration and amount are calculated based on the manually cleared date and time. 
+    Values may vary when calculated using the actual exit time.
+  </div>
+  </div>
+  </div>
+
+           <div class="table-responsive" *ngIf="activeTab === 'Balance'">
+            <table class="table table-hover" id="mytable1">
+              <thead>
+                <tr>
+                  <th>Vehicle Number</th>
+                  <th>Entry Type</th>
+                  <th>Vehicle Type</th>
+                  <th>Parkingspace</th>
+                  <th>Start Date</th>
+                  <th>Advance Amount</th>
+                  <th>Balance Amount</th>
+                  <th>Duration</th>
+                  <th>Phone Number</th>
+                  <th>Image</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of balancedata;let i=index">
+                 <td >{{data.vehno}}</td>
+                 <td *ngIf="data.type=='1'">
+                  Fastag
+                </td>
+                <td *ngIf="data.type=='0'">
+                  Manual
+                </td>
+                <td>{{data.vehtype}}</td>
+                <td>{{data.parkingspace}}</td>
+                <td>{{data.startdate}}</td>
+                <td>{{data.advamount}}</td>
+                <td>{{data.calculatedbalanceamount}}</td>
+                <td>{{data.duration}}</td>
+                <td>{{data.phonenumber}}</td>
+                 <td><a style="cursor: pointer;" data-toggle="modal" (click)="getIndex(i)" (click)="getEntryImage()"
+                  (click)="entryImage(img)"><i style="color: #c71c22" class=" fa fa-picture-o "
+                    aria-hidden="true"></i></a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-responsive" *ngIf="activeTab === 'Clear'">
+            <table class="table table-hover" id="mytable1">
+              <thead>
+                <tr>
+                  <th>Vehicle Number</th>
+                  <th>Entry Type</th>
+                  <th>Vehicle Type</th>
+                  <th>Parkingspace</th>
+                  <th>Start Date</th>
+                  <th>Cleared Date</th>
+                  <th>Advance Amount</th>
+                  <th>Balance Amount</th>
+                  <th>Duration</th>
+                  <th>Phone Number</th>
+                  <th>Image</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of cleareddata;let i=index">
+                 <td >{{data.vehno}}</td>
+                 <td *ngIf="data.type=='1'">
+                  Fastag
+                </td>
+                <td *ngIf="data.type=='0'">
+                  Manual
+                </td>
+                <td>{{data.vehtype}}</td>
+                <td>{{data.parkingspace}}</td>
+                <td>{{data.startdate}}</td>
+                <td>{{data.cleareddate}}</td>
+                <td>{{data.advamount}}</td>
+                <td>{{data.calculatedbalanceamount}}</td>
+                <td>{{data.duration}}</td>
+                <td>{{data.phonenumber}}</td>
+                 <td><a style="cursor: pointer;" data-toggle="modal" (click)="getIndex(i)" (click)="getEntryImage()"
+                  (click)="entryImage(img)"><i style="color: #c71c22" class=" fa fa-picture-o "
+                    aria-hidden="true"></i></a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </app-card>
+        </div>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+  
+ 
+
+
+  <ng-template #img let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Entry Image</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngIf="showimg==1">
+        <div *ngFor="let img of imageurl">
+          <img [src]="img">
+        </div>
+      </div>
+      <div class="modal-body" *ngIf="showimg==0">
+        <h5>No Image Found!</h5>
+      </div>
+  </ng-template>

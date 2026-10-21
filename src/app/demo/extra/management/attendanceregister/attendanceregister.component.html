@@ -1,0 +1,97 @@
+<div class="row">
+  <div class="col-xl-12">
+    <div class="row">
+  <div class="col-xl-12">
+      <h4 style="font-weight: bold; float: left;">Filter Options</h4>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-12">
+    
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Hierarchy" value="1" id="radio-p-fill-10" [(ngModel)]="filteroption" (click)="ngOnInit()">
+                <label for="radio-p-fill-10" class="cr">Hierarchy</label>
+              </div>
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Parkingspace" value="0" id="radio-p-fill-11" [(ngModel)]="filteroption">
+                <label for="radio-p-fill-11" class="cr">Parkingspace</label>
+              </div>
+  </div>
+</div>
+<div class="row">
+   <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==1">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <span> <i  class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3" ></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+    <option [value]="null"  selected>Select</option>
+    <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+  </select>
+  </div>
+
+   <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==0">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">Select a parkingspace</span>
+    </ng-container>
+     <ng-container >
+       <!-- <div class="form-group col-sm-2"> -->
+            <select id="parkingarea" class="entity-dropdown" (change)="parkispaceFilter($event)">
+              <option disabled selected>Select</option>
+              <option *ngFor="let option of parkingspacelist" [value]="option.parking_lot_id">{{option.parking_lot_name}}</option>
+            </select>
+          <!-- </div> -->
+     </ng-container>
+   
+  </div>
+  <div class="col-xl-12">
+    <div class="row">
+      <div class="col-sm-3">
+          <div class="form-group"><label>Date(From)</label>
+            <input type="datetime-local" class="form-control" [ngModel]="date" (ngModelChange)="date = $event">
+          </div>
+        </div>
+         <div class="col-sm-3">
+          <div class="form-group"><label>Date(To)</label>
+            <input type="datetime-local" class="form-control" [ngModel]="todate" (ngModelChange)="todate = $event">
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-primary" (click)="getAttendanceReg()">Filter</button>
+          </div>
+        </div>
+    </div>
+  </div>
+       <app-card cardTitle="Attendance Register" [options]="false" blockClass="table-border-style">
+    <div class="table-responsive">
+      <table class="table table-hover" id="mytable">
+        <thead>
+          <tr>
+            <th>Staff name</th>
+            <th>Organization</th>
+             <th>Parking Space</th>
+             <th>Login Time</th>
+            <th>Logout Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of staffsttendance; let i = index">
+            <td>{{data.fullname}}</td>
+                <td>{{data.org_name}}</td>
+                <td>{{data.parking_lot_name}}</td>
+                <td>{{data.logintime}}</td>
+                <td>{{data.logouttime}}</td>
+            
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </app-card>
+  </div>
+       <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+</div>

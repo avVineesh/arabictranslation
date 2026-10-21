@@ -1,0 +1,33 @@
+
+<button id="mybutton" style="margin: 5px" type="button" class="btn btn-primary" printSectionId="printsection" ngxPrint>Print</button> 
+<button id="mybutton1" style="margin: 5px" type="button" class="btn btn-primary" (click)="exportArray()">Export to Excel</button> 
+<button id="printbutton" style="margin: 5px" type="button" class="btn btn-primary" (click)="downloadPDF()">Export to PDF</button>
+<button id="mybutton2" style="margin: 5px" type="button" class="btn btn-primary pull-right" (click)="allStaff()">All Staff</button> 
+<div class="row" id="printsection" #printsection>
+    <div class="col-xl-8 col-md-6">
+        <app-card cardTitle="Organizational Functional Map" [options]="false">
+            <!-- <ejs-treeview id="listtree" [fields]='listfields' expandOn='Click'
+             (nodeSelected)='nodeSelect($event)' [cssClass]='cssClass'>
+            </ejs-treeview> -->
+            <ul>
+                <li *ngFor="let item of flatData" (click)="nodeSelect(item.id)" style="cursor: pointer;">
+                  {{ item.levelIndicator }} {{ item.name }}
+                </li>
+              </ul>
+        </app-card>
+    </div>
+    <div class="col-xl-4 col-md-6" >
+        <app-card cardTitle="Staff Under Organization" [options]="false" *ngIf = "cardview==0">
+                <h4>{{orgname}}</h4>
+            <ol *ngIf= "viewdata==1">
+                <li *ngFor="let staff of staffdata">{{staff.fullname}}</li>
+              </ol>
+              <h5 *ngIf = "viewdata ==0" style="text-align: center; color: red;">No staff available</h5>
+        </app-card>
+        <app-card cardTitle="Staff List" [options]="false" *ngIf = "cardview==1">
+        <ol>
+            <li *ngFor="let data of staffdetails">{{data.fullname}}-{{data.org_name}}</li>
+          </ol>
+    </app-card>
+    </div>
+</div>

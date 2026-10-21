@@ -1,0 +1,746 @@
+<!-- edit organisation popup modal starts -->
+<app-ui-modal #exampleModalLong [dialogClass]="'modal-lg'">
+    <div class="app-modal-header">
+      <h5 class="modal-title">Edit Organization</h5>
+      <button type="button" class="close basic-close" data-dismiss="modal" aria-label="Close"
+        (click)="exampleModalLong.hide()"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div class="app-modal-body" *ngFor="let list of orgdata">
+      <!-- <div class="row">
+        <div class="col-md-6"> -->
+      <form action="javascript:" #form="ngForm">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="inputenterprisename" class="required">Enterprise Name</label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="list.org_name" name="orgname"
+                placeholder="Enterprise Name" style="text-transform: capitalize;" readonly>
+  
+            </div>
+            <div class="form-group"><label class="required">Organization Type</label>
+              <!-- <input type="text" class="form-control" ngModel [(ngModel)]="list.hierarchy_type" name="hierarchy_type"
+                placeholder="Enterprise Name" style="text-transform: capitalize;" readonly> -->
+              <select id="orgtypename3" name="hierarchyid" class="select2_demo_1 form-control" style="width: 100%"
+                (change)="getOrganization($event)" (change)="showDropdown()" [(ngModel)]="list.hierarchyid">
+                <option value="" disabled selected>Choose a Organization Type</option>
+                <option *ngFor="let values of addorgtypedrp" [value]="values.hierarchyid">{{values.hierarchy_type}}
+                </option>
+  
+              </select>
+            </div>
+            <div class="form-group"><label class="required">Parent Organization</label>
+              <input *ngIf="showvalue==0" type="text" class="form-control" ngModel [(ngModel)]="list.parent" name="parent"
+                placeholder="Enterprise Name" style="text-transform: capitalize;" readonly>
+              <select *ngIf="showvalue==1" id="orgtypename4" name="orgid" class="select2_demo_1 form-control"
+                style="width: 100%" [(ngModel)]="list.parentid">
+                <option value="" disabled selected>Choose a Parent Organization</option>
+                <option *ngFor="let values of organizations" [value]="values.orgid">{{values.org_name}}</option>
+                
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="inputlattitude" class="required">Latitude</label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="list.latitude" name="lat" required
+                placeholder="Latitude" #lat="ngModel" [ngClass]="{'is-invalid': !lat.valid && lat.errors.pattern}"
+                pattern="^(\+|-)?((\d((\.)|\.\d{1,6})?)|(0*?[0-8]\d((\.)|\.\d{1,6})?)|(0*?90((\.)|\.0{1,6})?))$">
+              <label *ngIf="!lat.valid && lat.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please Enter a valid
+                Latitude.</label>
+            </div>
+            <div class="form-group">
+              <label for="inputlongitude" class="required">Longitude</label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="list.longitude" name="lng" required
+                placeholder="Longitude" #lng="ngModel" [ngClass]="{'is-invalid': !lng.valid && lng.errors.pattern}"
+                pattern="^(\+|-)?((\d((\.)|\.\d{1,6})?)|(0*?\d\d((\.)|\.\d{1,6})?)|(0*?1[0-7]\d((\.)|\.\d{1,6})?)|(0*?180((\.)|\.0{1,6})?))$">
+              <label *ngIf="!lng.valid && lng.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please Enter a Valid
+                Longtitude.</label>
+            </div>
+            <div class="form-group">
+              <label for="inputaddress1">Address1</label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="list.add1" name="add1" placeholder="Address1"
+                style="text-transform: capitalize;">
+  
+            </div>
+            <div class="form-group">
+              <label for="inputaddress2">Address2</label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="list.add2" name="add2" placeholder="Address2"
+                style="text-transform: capitalize;">
+  
+            </div>
+            <div class="form-group">
+              <label for="inputcity" class="required">City</label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="list.city" name="city" placeholder="City"
+                style="text-transform: capitalize;" required>
+  
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="inputstate" class="required">State</label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="list.state" name="state" placeholder="State"
+                style="text-transform: capitalize;" required>
+  
+            </div>
+            <div class="form-group">
+              <label for="inputpin">Pin</label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="list.pin" name="pin" placeholder="Pin" ngModel
+                #pin="ngModel" [ngClass]="{'is-invalid': !pin.valid && pin.errors.pattern}" pattern="\d{1,6}">
+              <label *ngIf="!pin.valid && pin.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please Enter a valid Pin.</label>
+            </div>
+            <div class="form-group">
+              <label for="inputtype" class="required">Type</label>
+              <!-- <input type="text" class="form-control"
+                ngModel [(ngModel)]="list.org_type"
+                name="orgtype" placeholder="Type"> -->
+              <select class="form-control" name="orgtype" ngModel [(ngModel)]="list.org_type" required>
+                <!-- <option [selected]="list.org_type"></option> -->
+                <option>Public</option>
+                <option>Private</option>
+  
+  
+              </select>
+            </div>
+            <div class="form-group"><label class="required">User in Charge</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" #roleid="ngModel" ngModel name="staffid"
+                [(ngModel)]="list.staffid" required>
+                <option *ngFor="let data of userincharge" [value]="data.staffid">{{data.fullname}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="inputlogo">Logo</label>
+  
+              <div class="dropzone" dropZone (hovered)="toggleHover($event)" (dropped)="startUpload($event)"
+                [class.hovering]="isHovering">
+  
+                <div class="file">
+                  <label class="file-label">
+  
+  
+                    <input class="file-input" type="file" (change)="startUpload($event.target.files)">
+  
+  
+  
+                  </label>
+                </div>
+  
+  
+                <!-- <button type="button" class="btn btn-secondary" (click)="urlvalue(url)">Upload Image</button> -->
+                <div *ngIf="percentage | async as pct">
+  
+                  <progress class="progress is-info" [value]="pct" max="100">
+                  </progress>
+  
+                  {{ pct | number }}%
+                  <div *ngIf="downloadURL | async as url">
+  
+  
+                    <button type="button" class="btn btn-secondary" (click)="urlvalue(url)" ngModel
+                      [(ngModel)]="list.org_logo" name="org_logo">Upload Image</button>
+                    <a [href]="url" target="_blank" rel="noopener">View Image</a>
+                  </div>
+  
+                </div>
+  
+  
+                <!-- <div *ngIf="snapshot | async as snap">
+            {{ snap.bytesTransferred  }} of {{ snap.totalBytes  }} 
+          
+            <div *ngIf="downloadURL | async as url">
+              <h3>Results!</h3>
+              <img [src]="url"><br>
+              <a [href]="url" target="_blank" rel="noopener">Download Me!</a>
+            </div> 
+          
+            <button (click)="task.pause()" class="button is-warning" [disabled]="!isActive(snap)">Pause</button>
+            <button (click)="task.cancel()" class="button is-danger" [disabled]="!isActive(snap)">Cancel</button>
+            <button (click)="task.resume()" class="button is-info"   [disabled]="!(snap?.state === 'paused')">Resume</button>
+          
+          </div> -->
+              </div>
+            </div>
+  
+          </div>
+  
+        </div>
+  
+  
+        <div class="app-modal-footer">
+          <button type="button" class=" btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="onUpdate(list)"
+          (click)="exampleModalLong.hide()" [disabled]="!form.valid">Save</button>
+        <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+          (click)="exampleModalLong.hide()" (click)="onGet()">Close</button>
+        </div>
+  
+      </form>
+      <!-- </div>
+        </div> -->
+    </div>
+  
+  </app-ui-modal>
+  <!-- edit organisation popup modal ends -->
+  
+  <!-- Organization profile settings starts -->
+  <app-ui-modal #exampleModalLong1 [dialogClass]="'modal-lg'">
+    <div class="app-modal-header">
+      <h5 class="modal-title">Organization Settings</h5>
+      <button type="button" class="close basic-close" data-dismiss="modal" aria-label="Close"
+        (click)="exampleModalLong1.hide()"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div class="app-modal-body">
+      <form action="javascript:" #f="ngForm">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="fullname" id="checkbox-fill-1" [checked]="orgSetting.fullname==1"
+                  [(ngModel)]="orgSettings.fullname">
+                <label for="checkbox-fill-1" class="cr">User Full Name Required (Y/N) </label>
+              </div>
+            </div>
+  
+            <div class="form-group">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="reservation" id="checkbox-fill-2" [checked]="orgSetting.reservation==1"
+                  [(ngModel)]="orgSettings.reservation">
+                <label for="checkbox-fill-2" class="cr">Reservation Required (Y/N) </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="parkingnumber" id="checkbox-fill-3" [checked]="orgSetting.parkingnumber==1"
+                  [(ngModel)]="orgSettings.parkingnumber">
+                <label for="checkbox-fill-3" class="cr">Parking Number Required (Y/N) </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="layout" id="checkbox-fill-4" [checked]="orgSetting.layout==1"
+                  [(ngModel)]="orgSettings.layout">
+                <label for="checkbox-fill-4" class="cr">Layout Available(Y/N) </label>
+              </div>
+            </div>
+             <div class="form-group">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="flagexit" id="checkbox-fill-9" [checked]="orgSetting.flagexit==1"
+                  [(ngModel)]="orgSettings.flagexit">
+                <label for="checkbox-fill-9" class="cr">Flag Exit(Y/N) </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="cancellation" id="checkbox-fill-5" [checked]="orgSetting.cancellation==1"
+                  (click)="viewCancellationData($event)" [(ngModel)]="orgSettings.cancellation">
+                <label for="checkbox-fill-5" class="cr">Cancellation Available(Y/N) </label>
+              </div>
+            </div>
+            <div class="form-group" *ngIf="canceldataview ==1 || orgSetting.cancellation==1">
+              <label>Cancellation Time(in Minutes)</label>
+              <input type="text" class="form-control" placeholder="Cancellation Time" name="cancellationtime"
+                [ngClass]="{'is-invalid': !cancellationtime.valid && cancellationtime.errors.pattern}" ngModel
+                pattern="\d{1,5}" [(ngModel)]="orgSettings.cancellationtime" #cancellationtime="ngModel">
+                <label *ngIf="!cancellationtime.valid && cancellationtime.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid time
+                .</label>
+            </div>
+            <div  class="form-group" *ngIf="canceldataview ==1||orgSetting.cancellationmethod!=''"><label>
+              <h6>Cancellation Method</h6>
+            </label>&nbsp;&nbsp;
+            <div class="form-group d-inline">
+              <div class="radio radio-primary d-inline">
+                <input type="radio" name="absolute" value="absolute" id="radio-p-fill-7" (click)="viewAmount()"
+                [(ngModel)]="orgSetting.cancellationmethod">
+                <label for="radio-p-fill-7" class="cr">Absolute</label>
+              </div>
+            </div>
+            <div class="form-group d-inline">
+              <div class="radio radio-primary d-inline">
+                <input type="radio" name="percentage" value="percentage"id="radio-p-fill-8" (click)="viewPercentage()"
+                [(ngModel)]="orgSetting.cancellationmethod">
+                <label for="radio-p-fill-8" class="cr">Percentage</label>
+              </div>
+            </div>
+            <!-- <select  class="select2_demo_1 form-control"  style="width: 100%"  ngModel #vehiclemake="ngModel" required  name="Payment" [(ngModel)]="data.paymenttype" >
+                <option *ngFor="let value of VehType" [value]="value.categoryname"  [selected]="value.categoryname">{{value.categoryname}}</option>
+            </select> -->
+          </div>
+            <div class="form-group" *ngIf="amountview ==1">
+              <label>Cancellation Amount(in RS)</label>
+              <input type="text" class="form-control" placeholder="Cancellation Amount" name="cancellationamount"
+                [ngClass]="{'is-invalid': !cancellationamount.valid && cancellationamount.errors.pattern}" ngModel
+                [(ngModel)]="orgSettings.cancellationamount" pattern="\d{1,5}" #cancellationamount="ngModel">
+              <label *ngIf="!cancellationamount.valid && cancellationamount.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid amount
+                .</label>
+            </div>
+            <div class="form-group" *ngIf="percentview ==1">
+              <label>Cancellation Percentage(in %)</label>
+              <input type="text" class="form-control" placeholder="Cancellation Percentage" name="cancellationpercent"
+                [ngClass]="{'is-invalid': !cancellationpercent.valid && cancellationpercent.errors.pattern}"
+                [(ngModel)]="orgSettings.cancellationpercent"  ngModel pattern="\d{1,5}" #cancellationpercent="ngModel">
+              <label *ngIf="!cancellationpercent.valid && cancellationpercent.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid percentage
+                .</label>
+            </div>
+            <div class="form-group">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="penality" id="checkbox-fill-6" [checked]="orgSetting.penalty==1"
+                  [(ngModel)]="orgSettings.penalty">
+                <label for="checkbox-fill-6" class="cr">Penalty Available(Y/N) </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="groupby" id="checkbox-fill-7" [checked]="orgSetting.groupby==1"
+                  [(ngModel)]="orgSettings.groupby">
+                <label for="checkbox-fill-7" class="cr">Groupby Available(Y/N) </label>
+              </div>
+            </div>
+            <div class="form-group"><label>
+                <h6>Availability Time</h6>
+              </label>&nbsp;&nbsp;
+              <div class="form-group d-inline">
+                <div class="radio radio-primary d-inline">
+                  <input type="radio" name="time" value="daily" id="radio-p-fill-5" (click)="triggerValuefalse()"
+                    [(ngModel)]="orgSetting.availability">
+                  <label for="radio-p-fill-5" class="cr">24*7</label>
+                </div>
+              </div>
+              <div class="form-group d-inline">
+                <div class="radio radio-primary d-inline">
+                  <input type="radio" name="time" value="custom" id="radio-p-fill-6" (click)="triggervaluetrue()"
+                    [(ngModel)]="orgSetting.availability">
+                  <label for="radio-p-fill-6" class="cr">Custom</label>
+                </div>
+              </div>
+              <!-- <select  class="select2_demo_1 form-control"  style="width: 100%"  ngModel #vehiclemake="ngModel" required  name="Payment" [(ngModel)]="data.paymenttype" >
+                    <option *ngFor="let value of VehType" [value]="value.categoryname"  [selected]="value.categoryname">{{value.categoryname}}</option>
+                </select> -->
+            </div>
+            <!-- <div class="form-group" *ngIf="viewflag==1 ||orgSetting.availability=='custom'">
+              <label>
+                <h6>From</h6>
+              </label>
+              <input type="time" name="start" ngModel [(ngModel)]="orgSetting.start">
+              <label>
+                <h6>To</h6>
+              </label>
+              <input type="time" name="end" ngModel [(ngModel)]="orgSetting.end">
+            </div> -->
+  
+            <div class="form-group" *ngIf="viewflag==1 ||orgSetting.availability=='custom'">
+              <label>
+                <h6>From</h6>
+              </label>
+              <input type="time" name="start" ngModel [(ngModel)]="orgSetting.start">
+              <!-- <ejs-timepicker placeholder='Select a time' name="start" [(ngModel)]="orgSetting.start"></ejs-timepicker> -->
+            </div>
+            <div class="form-group" *ngIf="viewflag==1 ||orgSetting.availability=='custom'">
+              <label>
+                <h6>To</h6>
+              </label>
+              <input type="time" name="end" ngModel [(ngModel)]="orgSetting.end">
+              <!-- <ejs-timepicker placeholder='Select a time' name="end" [(ngModel)]="orgSetting.end"></ejs-timepicker> -->
+            </div>
+          </div>
+          <div class="col-sm-6">
+  
+            <div class="form-group">
+              <label for="inputdescription">
+                <h6>Terms and Conditions</h6>
+              </label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="orgSettings.tac" name="termsconditions"
+                placeholder="Terms and Conditions">
+              <!-- <textarea class="form-control" name="termsconditions" ngModel [(ngModel)]="orgSettings.tac"
+                id="exampleFormControlTextarea1" rows="5" style="text-transform: capitalize;"></textarea> -->
+  
+            </div>
+            <div class="form-group">
+              <label for="inputdescription">
+                <h6>About</h6>
+              </label>
+              <!-- <input type="text" class="form-control" 
+                      ngModel [(ngModel)]="service.FormData.roledesc"
+                      name="roledesc" placeholder="Role Description"> -->
+              <textarea class="form-control" name="about" ngModel [(ngModel)]="orgSettings.about"
+                id="exampleFormControlTextarea2" rows="5" style="text-transform: capitalize;"></textarea>
+  
+            </div>
+            <div class="form-group">
+              <label for="inputdescription">
+                <h6>Privacy policy</h6>
+              </label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="orgSettings.privacy" name="privacy"
+                placeholder="Privacy Policy">
+              <!-- <textarea class="form-control" name="privacy" ngModel [(ngModel)]="orgSettings.privacy"
+                id="exampleFormControlTextarea3" rows="5" style="text-transform: capitalize;"></textarea> -->
+  
+            </div>
+          </div>
+  
+  
+  
+  
+         
+        </div>
+  
+  
+      </form>
+      <button type="button" class=" btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="onSubmit(orgSettings)" [disabled]="!f.valid"
+      (click)="exampleModalLong1.hide()">Save</button>
+    <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+      (click)="exampleModalLong1.hide()">Close</button>
+    </div>
+  
+  </app-ui-modal>
+  
+  <!-- Organization profile settings ends -->
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-sm-2">
+          <br /><br />
+          <button [ngStyle]="{'display': service.AddOrgP == true ? '' : 'none'}" type="button" class="btn btn-primary"
+            (click)="exampleModalLong2.show()">Add Organization</button>
+          <!-- <div class="form-group">
+          <br />
+          <br />
+          <button type="button" style="margin-bottom: 2px;" class="btn btn-primary" (click)="exampleModalLong2.show()" >Add Organization</button>
+        </div> -->
+        </div>
+  
+        <div class="col-sm-2">
+  
+          <div class="form-group"><label>Organization Type</label>
+            <select id="orgtypename" class="select2_demo_1 form-control" style="width: 100%"
+              (change)="getOrganization($event)">
+              <option [value]=0>All Organization type</option>
+              <option *ngFor="let value of addorgtypedrp" [value]="value.hierarchyid">{{value.hierarchy_type}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group"><label>Organization</label>
+            <select id="orgtypename" class="select2_demo_1 form-control" style="width: 100%"
+              (change)="getOrgUndId($event)">
+              <option [value]="" selected>Select Organization</option>
+              <option [value]=0>All</option>
+              <option *ngFor="let value of list" [value]="value.orgid">{{value.org_name}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-primary"
+              (click)="organizationunder()">Filter</button>
+          </div>
+        </div>
+      </div>
+      <app-card cardTitle="Organization Profile" [options]="true" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table id="mytable" class="table table-hover">
+            <thead>
+              <tr>
+  
+                <th>Enterprise Name</th>
+                <th>Organization Type</th>
+                <th>Address</th>
+                <!-- <th>User in Charge</th>
+                <th>Phone Number</th> -->
+                <th>Email</th>
+                <th [ngStyle]="{'display': service.EditP == true ? '' : 'none'}">Edit</th>
+                <th [ngStyle]="{'display':service.EditP == true ? '' : 'none'}">Settings</th>
+                <th>Bank Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor='let list of OrgList; let i=index'>
+  
+                <td>{{list.org_name}}</td>
+                <td>{{list.hierarchy_type}}</td>
+                <td>{{list.add1+' '+list.add2+' '+list.city}}</td>
+                <!-- <td>{{list.contactperson}}</td>
+                <td>{{list.contactnumber}}</td> -->
+                <td>{{list.contactemail}}</td>
+                <td [ngStyle]="{'display': service.EditP == true ? '' : 'none'}"><a style="cursor: pointer;"
+                    data-toggle="modal" (click)="GetPAValue(i)" (click)="exampleModalLong.show()"><i style="color: #1e90ff" class="fas fa-pencil-alt"
+                      aria-hidden="true"></i>
+                  </a></td>
+                <td [ngStyle]="{'display': service.EditP == true ? '' : 'none'}"><a style="cursor: pointer;"
+                    data-toggle="modal" (click)="exampleModalLong1.show()" (click)="GetPAValue(i)"
+                    (click)="onGetSettings()"><i style="color: #1e90ff" class="fas fa-cog"></i></a></td>
+                    
+                    <td [ngStyle]="{'display': service.EditP == true ? '' : 'none'}"><a style="cursor: pointer;"
+                      data-toggle="modal"   (click)="addBankdetails(add)" (click)="GetPAValue(i)" (click)="getBankDetails()"
+                      ><i style="color: #1e90ff"  class="fas fa-list"></i></a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <!-- <ngx-spinner></ngx-spinner> -->
+  </div>
+  
+  <!-- Organization Profile  Add Starts -->
+  <app-ui-modal #exampleModalLong2 [dialogClass]="'modal-lg'">
+    <div class="app-modal-header">
+      <h5 class="modal-title">Add Organization</h5>
+      <button type="button" class="close basic-close" data-dismiss="modal" aria-label="Close"
+        (click)="exampleModalLong2.hide()" (click)="resetform()"><span aria-hidden="true">&times;</span></button>
+    </div>
+    <div class="app-modal-body">
+      <!-- <div class="row">
+        <div class="col-md-6"> -->
+      <form action="javascript:" #form="ngForm">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label class="required" for="inputenterprisename">Enterprise Name</label>
+              <input type="text" class="form-control" name="org_name" ngModel [(ngModel)]="service.orgadd.org_name"
+                required placeholder="Enterprise Name" style="text-transform: capitalize;">
+  
+            </div>
+            <div class="form-group"><label class="required">Organization Type</label>
+              <select id="organizationtype" class="form-control" style="width: 100%" name="hierarchytype"
+                (change)="getOrganization($event)" ngModel [(ngModel)]="service.orgadd.hierarchytype" required>
+                <option value="" disabled selected>Choose a Organization Type</option>
+                <option *ngFor="let value of addorgtypedrp" [value]="value.hierarchyid">{{value.hierarchy_type}}</option>
+                <!-- <option>All</option> -->
+              </select>
+            </div>
+            <div class="form-group"><label class="required">Parent Organization</label>
+              <select id="parent" class="form-control" style="width: 100%" name="parentid" ngModel
+                [(ngModel)]="service.orgadd.parentid" required>
+                <option value="" disabled selected>Choose a Parent Organization</option>
+                <option *ngFor="let value of organizations" [value]="value.orgid">{{value.org_name}}</option>
+                <!-- <option>KMRL</option>
+                <option>GCDA</option>
+                <option>Corporation</option>
+                <option>GIDA</option> -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="inputlattitude" class="required">Latitude</label>
+              <input type="text" class="form-control" name="lat" ngModel #lat="ngModel"
+                [(ngModel)]="service.orgadd.latitude" required placeholder="Latitude"
+                [ngClass]="{'is-invalid': !lat.valid && lat.errors.pattern}"
+                pattern="^(\+|-)?((\d((\.)|\.\d{1,6})?)|(0*?[0-8]\d((\.)|\.\d{1,6})?)|(0*?90((\.)|\.0{1,6})?))$">
+              <label *ngIf="!lat.valid && lat.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please Enter a valid
+                Latitude.</label>
+            </div>
+            <div class="form-group">
+              <label for="inputlongitude" class="required">Longitude</label>
+              <input type="text" class="form-control" name="lng" ngModel #lng="ngModel"
+                [(ngModel)]="service.orgadd.longitude" required placeholder="Longitude"
+                [ngClass]="{'is-invalid': !lng.valid && lng.errors.pattern}"
+                pattern="^(\+|-)?((\d((\.)|\.\d{1,6})?)|(0*?\d\d((\.)|\.\d{1,6})?)|(0*?1[0-7]\d((\.)|\.\d{1,6})?)|(0*?180((\.)|\.0{1,6})?))$">
+              <label *ngIf="!lng.valid && lng.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please Enter a Valid
+                Longtitude.</label>
+            </div>
+            <div class="form-group">
+              <label for="inputaddress1">Address1</label>
+              <input type="text" class="form-control" name="add1" placeholder="Address1"
+                style="text-transform: capitalize;" [(ngModel)]="service.orgadd.add1">
+  
+            </div>
+            <div class="form-group">
+              <label for="inputaddress2">Address2</label>
+              <input type="text" class="form-control" name="add2" placeholder="Address2"
+                style="text-transform: capitalize;" [(ngModel)]="service.orgadd.add2">
+  
+            </div>
+            <div class="form-group">
+              <label for="inputcity" class="required">City</label>
+              <input type="text" class="form-control" name="city" placeholder="City" style="text-transform: capitalize;"
+                [(ngModel)]="service.orgadd.city" required>
+  
+            </div>
+  
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="inputstate" class="required">State</label>
+              <input type="text" class="form-control" name="state" placeholder="State" style="text-transform: capitalize;"
+                [(ngModel)]="service.orgadd.state" required>
+  
+            </div>
+            <div class="form-group">
+              <label for="inputpin">Pin</label>
+              <input type="text" class="form-control" name="pin" placeholder="Pin" ngModel #pin="ngModel"
+                [(ngModel)]="service.orgadd.pin" [ngClass]="{'is-invalid': !pin.valid && pin.errors.pattern}"
+                pattern="\d{1,6}">
+              <label *ngIf="!pin.valid && pin.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please Enter a valid Pin.</label>
+            </div>
+            <div class="form-group">
+              <label for="inputtype" class="required">Type</label>
+              <!-- <input type="text" class="form-control"
+                ngModel [(ngModel)]="list.org_type"
+                name="orgtype" placeholder="Type"> -->
+              <select class="form-control" name="orgtype" [(ngModel)]="service.orgadd.org_type" required>
+                <option value="" disabled selected>Choose a Type</option>
+                <option>Public</option>
+                <option>Private</option>
+  
+  
+              </select>
+            </div>
+  
+            <!-- <div class="form-group">
+              <label for="inputmobilrnumber">Mobile Number</label>
+              <input type="text" class="form-control" ngModel [(ngModel)]="list.contactnumber" name="number"
+                placeholder="Number">
+  
+            </div> -->
+            <!-- <div class="form-group">
+              <label for="inputemail">Email</label>
+              <input type="email" class="form-control" ngModel [(ngModel)]="list.contactemail" name="email"
+                placeholder="Email">
+  
+            </div> -->
+            <!-- <div class="form-group">
+              <label>User in Charge</label>
+              
+              <select class="select2_demo_1 form-control" style="width: 100%" ngModel name="staffid" [(ngModel)]="list.staffid">
+                 
+                <option *ngFor="let data of stafflist" [value]="data.staffid">{{data.fullname}}</option>
+              </select>
+  
+            </div> -->
+            <div class="form-group"><label class="required">User incharge</label>
+              <select class="select2_demo_1 form-control" style="width: 100%" [(ngModel)]="service.orgadd.staffid"
+                name="staffid" required>
+                <option value="" disabled selected>Choose a User</option>
+                <option *ngFor="let data of userincharge" [value]="data.staffid">{{data.fullname}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="inputlogo">Logo</label>
+  
+              <div class="dropzone" dropZone (hovered)="toggleHover($event)" (dropped)="startUpload($event)"
+                [class.hovering]="isHovering">
+  
+                <div class="file">
+                  <label class="file-label">
+  
+  
+                    <input class="file-input" type="file" (change)="startUpload($event.target.files)">
+  
+  
+  
+                  </label>
+                </div>
+  
+  
+                <!-- <button type="button" class="btn btn-secondary" (click)="urlvalue(url)">Upload Image</button> -->
+                <div *ngIf="percentage | async as pct">
+  
+                  <progress class="progress is-info" [value]="pct" max="100">
+                  </progress>
+  
+                  {{ pct | number }}%
+                  <div *ngIf="downloadURL | async as url">
+  
+  
+                    <button type="button" class="btn btn-secondary" (click)="urlvalue(url)"
+                      [(ngModel)]="service.orgadd.org_logo" name="org_logo">Upload Image</button>
+                    <a [href]="url" target="_blank" rel="noopener">View Image</a>
+                  </div>
+  
+                </div>
+  
+  
+                <div *ngIf="snapshot | async as snap">
+                  {{ snap.bytesTransferred  }} of {{ snap.totalBytes  }}
+  
+                  <!-- <div *ngIf="downloadURL | async as url">
+              <h3>Results!</h3>
+              <img [src]="url"><br>
+              <a [href]="url" target="_blank" rel="noopener">Download Me!</a>
+            </div>  -->
+  
+                  <!-- <button (click)="task.pause()" class="button is-warning" [disabled]="!isActive(snap)">Pause</button>
+            <button (click)="task.cancel()" class="button is-danger" [disabled]="!isActive(snap)">Cancel</button>
+            <button (click)="task.resume()" class="button is-info"   [disabled]="!(snap?.state === 'paused')">Resume</button> -->
+  
+                </div>
+              </div>
+            </div>
+  
+          </div>
+  
+        </div>
+  
+  
+        <!-- <button type="button" class="btn btn-primary" data-dismiss="modal" [disabled]="!form.valid"
+          (click)="saveOrganization()" (click)="exampleModalLong2.hide()">Save</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="exampleModalLong2.hide()"
+          (click)="resetform()">Close</button> -->
+  
+      </form>
+      <!-- </div>
+        </div> -->
+    </div>
+  <div class="app-modal-footer">
+    <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" [disabled]="!form.valid"
+    (click)="saveOrganization()" (click)="exampleModalLong2.hide()">Save</button>
+  <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="exampleModalLong2.hide()"
+    (click)="resetform()">Close</button>
+  </div>
+  </app-ui-modal>
+  <!-- Organization Profile Add Ends -->
+
+
+  <ng-template #add let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add Bank Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+      <form action="javascript:" #form="ngForm" autocomplete="off">
+        <div class="form-group">
+          <label for="name" class="required">Account Name</label>
+          <input type="text" class="form-control" placeholder="Account Name"
+            ngModel #accountname="ngModel" [(ngModel)]="bankdetails.accountname"
+             required name="accountname">
+        </div>
+        <div class="form-group">
+          <label for="name" class="required">Account Number</label>
+          <input type="text" class="form-control" placeholder="Account Number"
+            ngModel #accountnumber="ngModel" [(ngModel)]="bankdetails.accountnumber"
+             required name="accountnumber">
+        </div>
+        <div class="form-group">
+          <label for="name" class="required">IFSC</label>
+          <input type="text" class="form-control" placeholder="IFSC"
+            ngModel #ifsc="ngModel" [(ngModel)]="bankdetails.ifsc"
+             required name="ifsc">
+        </div>
+        <div class="form-group">
+          <label for="name" class="required">Email Address</label>
+          <input type="text" class="form-control" placeholder="Email" [ngClass]="{'is-invalid': !emailid.valid && emailid.errors.pattern}"
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+            ngModel #emailid="ngModel" [(ngModel)]="bankdetails.emailid"
+             required name="emailid">
+             <label *ngIf="!emailid.valid && emailid.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please Enter a valid
+                Email ID.</label>
+        </div>
+        <div class="form-group">
+          <label for="name" >Account ID</label>
+          <input type="text" class="form-control" placeholder="Account ID"
+            ngModel #accountid="ngModel" [(ngModel)]="bankdetails.accountid"
+              name="accountid">
+        </div>
+        <button type="button" class="btn btn-secondary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+          (click)="resetform()">Close</button>
+        <button type="button" class="pull-left btn btn-primary pull-right me-2 mb-2" data-dismiss="modal" [disabled]="!form.valid"
+        (click)="modal.close('Close click')" (click)="saveBankInfo(bankdetails)">Save</button>
+      </form>
+    </div>
+  </ng-template>

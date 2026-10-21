@@ -1,0 +1,101 @@
+<div class="row">
+    <div class="col-xl-12">
+      <div class="row">
+        <div class="col-sm-2">
+          <div class="form-group"><label>Parking Area</label>
+            <select id="parkingarea" class="select2_demo_1 form-control" style="width: 100%"
+              (change)="getParkingArea($event)">
+              <option disabled selected>Select parking area</option>
+              <option [value]=0>All Parking Area</option>
+              <option *ngFor="let value of parkingarea" [value]="value.parking_lot_id">{{value.parking_lot_name}}</option>
+            </select>
+          </div>
+  
+        </div>
+        <div class="col-sm-8">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-primary" (click)="filterBBOffline()">Filter</button>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <br />
+            <button type="button" style="margin:5px;" class="btn btn-secondary pull-right"
+              (click)="getNetworkLag()">Refresh</button>
+          </div>
+        </div>
+      </div>
+      <app-card cardTitle="Network Operations Center" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table class="table table-hover" id="mytable1">
+            <thead>
+              <tr>
+                <th>Device ID</th>
+                <th>ParkingSpace Name</th>
+                <th>Gate</th>
+                <th>Status</th>
+                <th>Last Stop Time</th>
+                <th>Last Upate</th>
+                <th>Detailed Log</th>
+              </tr>
+            </thead>
+            <tbody >
+              <!-- <tr *ngIf="offdata.fetchingtime==1" style="background-color: red;"> -->
+              <tr *ngFor="let offdata of data;let i=index">
+                <td *ngIf="offdata.fetchingtime==1" style="color: red;">{{offdata.deviceid}}</td>
+                <td *ngIf="offdata.fetchingtime==0">{{offdata.deviceid}}</td>
+                <td *ngIf="offdata.fetchingtime==1" style="color: red;">{{offdata.parking_lot_name}}</td>
+                <td *ngIf="offdata.fetchingtime==0">{{offdata.parking_lot_name}}</td>
+                <td *ngIf="offdata.fetchingtime==0">{{offdata.boombarriername}}</td>
+                <td *ngIf="offdata.fetchingtime==1" style="color: red;">{{offdata.boombarriername}}</td>
+                <td *ngIf="offdata.fetchingtime==1" style="color: red;">Down</td>
+                <td *ngIf="offdata.fetchingtime==0" style="color: green;">Active</td>
+                <td *ngIf="offdata.fetchingtime==0">{{offdata.laststoptime|date:'shortTime'}}</td>
+                <td *ngIf="offdata.fetchingtime==1" style="color: red;">{{offdata.laststoptime}}</td>
+                <td *ngIf="offdata.fetchingtime==0">{{offdata.createddate|date:'shortTime'}}</td>
+                <td *ngIf="offdata.fetchingtime==1" style="color: red;">{{offdata.createddate}}</td>
+                <td><a style="cursor: pointer;" data-toggle="modal" (click)="getIndex(i)" (click)="getDetailedLog()"
+                    (click)="viewModal(view)"><i style="color: #1e90ff" class=" fas fa-info-circle "
+                      aria-hidden="true"></i></a></td>
+              </tr>
+              <!-- <tr *ngIf="offdata.fetchingtime==0">
+  
+                <td>{{offdata.deviceid}}</td>
+                <td>{{offdata.parking_lot_name}}</td>
+                <td>{{offdata.boombarriername}}</td>
+                <td>Active</td>
+                <td>{{offdata.laststoptime|date:'shortTime'}}</td>
+                <td>{{offdata.createddate|date:'shortTime'}}</td>
+                <td ><a style="cursor: pointer;"
+                  data-toggle="modal" (click)="getIndex(i)" (click)="exampleModalCenter.show()"><i style="color: #1e90ff"
+                    class=" fas fa-info-circle " aria-hidden="true"></i></a></td>
+              </tr> -->
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+  <ng-template #view let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Detailed Log</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body" *ngFor="let indexdata of indexdata">
+        <h5>Device ID: {{indexdata.deviceid}}</h5>
+    <h5>Parking Space Name: {{indexdata.parking_lot_name}}</h5>
+    <h5>Gate: {{indexdata.boombarriername}}</h5>
+    <h5 *ngIf="indexdata.fetchingtime == 0" style="color: green;">Status: Active</h5>
+    <h5 *ngIf="indexdata.fetchingtime == 1" style="color: red;">Status: Down</h5>
+    <h5>Last Stop Time: {{indexdata.laststoptime|date:'medium'}}</h5>
+    <h5>Last Update: {{indexdata.createddate|date:'medium'}}</h5>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary pull-right mb-2" data-dismiss="modal"
+    (click)="modal.close('Close click')">Close</button>
+  </div>
+   
+  </ng-template>

@@ -1,0 +1,45 @@
+<div class="container-fluid head">
+    <a style="cursor: pointer;" [routerLink]="['/admin/parkingsettings/camera']"><i style="color: #1e90ff"
+        class="fas fa-arrow-left fa-2x"></i></a>
+  
+  </div>
+  
+  <div class="row">
+              
+    <div class="col-xl-12" style="overflow-y: auto; overflow-x: auto;">
+<div class="form-container">
+  <div class="form-group">
+    <label for="plotType"><h6> Plot Type </h6></label>
+    <select id="plotType" name="type" (change)="getPlotType($event)">
+      <option value="" disabled selected>Select Plot Type</option>
+      <option value="line">Line</option>
+      <option value="box">Box</option>
+    </select>
+  </div>
+
+  <div *ngIf="showimg === 1" class="form-group">
+    <button type="button" (click)="saveCoordinates()">Set Points</button>
+  </div>
+
+  <div *ngIf="showimg === 1" class="form-group">
+    <button type="button" class="btn-secondary" (click)="clearCanvas()">Reset Points</button>
+  </div>
+</div>
+        
+      <canvas id="mycanvas" #mycanvas 
+      (mousedown)="plottype=='line'? onMouseDown($event): onMouseDownrect($event)" 
+          (mousemove)="plottype=='line'? onMouseMove($event): onMouseMoverect($event)" 
+          (mouseup)="plottype=='line'? onMouseUp($event): onMouseUprect($event)"></canvas>
+      <!-- <canvas id="mycanvas" #mycanvas (click)=mouseClick($event)></canvas> -->
+      <!-- <div  *ngIf="showimg==1" >
+        <div *ngFor="let img of imageurl">
+          <img id="fx" [src]="img"  (click)=mouseClick($event)>
+        </div>
+      </div> -->
+      <div  *ngIf="showimg==0">
+        <h5>No Image Found!</h5>
+      </div>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+  

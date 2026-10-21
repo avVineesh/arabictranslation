@@ -1,0 +1,108 @@
+<div class="row">
+    <!-- <div class="col-sm-4 ">
+      <button *ngIf="buttonflag==1" type="button" class="btn btn-icon btn-rounded btn-primary" (click)="exampleModalLong1.show()"><i class="feather icon-plus"></i></button>
+    </div> -->
+    <div class="col-sm-1">
+      <div class="btn-group mb-2 mr-2" ngbDropdown [placement]="'bottom-left'">
+        <button  class="btn drp-icon btn-rounded btn-primary" ngbDropdownToggle type="button"><i
+            class="feather icon-plus"></i></button>
+        <div ngbDropdownMenu>
+          <a class="dropdown-item" href="javascript:" data-toggle="modal" (click)=" addTags(add)">Add
+            RFTag Details</a>
+          <a class="dropdown-item" href="javascript:" data-toggle="modal" (click)="bulkUpload(bulk)">Bulk
+            Upload</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-xl-12">
+      <app-card cardTitle="Custom RF Tag Details" [options]="false" blockClass="table-border-style">
+        <div class="table-responsive">
+          <table class="table table-hover" id="mytable1">
+            <thead>
+              <tr>
+  
+                <th>Tag No</th>
+                <!-- <th>EPC Id</th> -->
+                <th>Created Date</th>
+                <th>Employee Name</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of rfdata; let i=index">
+                <td>{{data.tagnumber}}</td>
+                <!-- <td>{{data.epcid}}</td> -->
+                <td>{{data.createddate | date: "longDate"}}</td>
+                <td>{{data.fullname }}</td>
+                <td *ngIf="data.status==1"><label class="switch">
+                  <input type="checkbox" [checked]="data.status==1" (click)="changeTagStatus(data)" />
+                  <span class="slider round"></span> </label></td>
+              <td *ngIf="data.status==0"><label class="switch">
+                  <input type="checkbox" [checked]="data.status==1" (click)="changeTagStatus(data)" />
+                  <span class="slider round"></span> </label></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </app-card>
+    </div>
+    <ngx-spinner type="ball-scale-multiple"></ngx-spinner>
+  </div>
+
+
+  <ng-template #add let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Add RF Tag Details</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form autocomplete="off" #f="ngForm">
+            <div class="form-group">
+              <label class="required">Tag Number</label>
+              <input type="number" class="form-control" placeholder="Tag Number" name="tagnumber" ngModel #tagnumber="ngModel"
+                [(ngModel)]="service.rfTagData.tagnumber" required>
+      
+            </div>
+            <div class="form-group">
+              <label class="required">EPC ID</label>
+              <input type="text" class="form-control" placeholder="EPC ID" name="epcid" ngModel #epcid="ngModel"
+                [(ngModel)]="service.rfTagData.epcid" pattern="^[a-zA-Z0-9]*$" [ngClass]="{'is-invalid': !epcid.valid && epcid.errors.pattern}" required>
+      
+                <label *ngIf="!epcid.valid && epcid.errors.pattern"
+                class="error jquery-validation-error small form-text invalid-feedback">Please enter a valid EPC ID
+                .</label>
+            </div>
+            
+            <button type="button" class="btn btn-primary me-2 mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              [disabled]="!f.valid" (click)="saveRFtagData()">Save</button>
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal" (click)="modal.close('Close click')"
+              (click)="resetform()">Close</button>
+      
+          </form>
+    </div>
+  </ng-template>
+
+  <ng-template #bulk let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title h4" id="myLargeModalLabel">Bulk Upload</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')" (click)="resetform()"></button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+              <label>Tag Details Format</label>&nbsp;&nbsp;&nbsp;
+              <button type="button" class="btn btn-primary" (click)="downloadCSV()">Download Excel</button>
+            </div><br />
+            <div class="form-group">
+              <label>Choose Excel File</label>&nbsp;&nbsp;&nbsp;&nbsp;
+              <input class="btn btn-primary" type="file" accept=".csv" (change)="employeeTagBulkUpload($event)" />
+            </div><br />
+    
+            <button type="button" class="btn btn-secondary mb-2" data-dismiss="modal"
+            (click)="modal.close('Close click')">Close</button>
+          </form>
+    </div>
+  </ng-template>

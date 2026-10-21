@@ -1,0 +1,259 @@
+<div class="row">
+  <div class="col-xl-12">
+      <h4 style="font-weight: bold; float: left;">Filter Options</h4>
+  </div>
+   <div class="col sm 6">
+      <h6 style="font-weight: bold; float: right;"> Data for periods longer than one month will be downloaded
+        automatically as Excel or PDF.</h6>
+    </div>
+</div>
+<div class="row">
+  <div class="col-xl-12">
+    
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Hierarchy" value="1" id="radio-p-fill-10" [(ngModel)]="filteroption" (click)="ngOnInit()">
+                <label for="radio-p-fill-10" class="cr">Hierarchy</label>
+              </div>
+    <div class="radio radio-primary d-inline" style="float: left;">
+                <input type="radio" name="Parkingspace" value="0" id="radio-p-fill-11" [(ngModel)]="filteroption">
+                <label for="radio-p-fill-11" class="cr">Parkingspace</label>
+              </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==1">
+    <ng-container>
+      <span class="selected-item" (click)="ngOnInit()">{{orgname}}</span>
+    </ng-container>
+    <ng-container *ngFor="let item of nameArray">
+      <!-- <span> ➔ <i class="fas fa-chevron-circle-right"></i> </span> -->
+      <span> <i class="fas fa-chevron-right" style="padding-right: 10px; font-size:16px;color:#2196F3"></i></span>
+      <span class="selected-item" (click)="getId(item.id)">{{ item.name }}</span>
+    </ng-container>
+    <select *ngIf="resLength!='2'" class="entity-dropdown" (change)=selectEvent($event)>
+      <option [value]="null" selected>Select</option>
+      <option *ngFor="let option of orglist" [value]="option.id">{{option.name}}</option>
+    </select>
+  </div>
+
+  <div class="dashboard-container" style="cursor: pointer;padding-bottom: 15px;" *ngIf="filteroption==0">
+    <ng-container >
+      <span class="selected-item" (click)="ngOnInit()">Select a parkingspace</span>
+    </ng-container>
+     <ng-container >
+       <!-- <div class="form-group col-sm-2"> -->
+            <select id="parkingarea" class="entity-dropdown" (change)="parkispaceFilter($event)">
+              <option disabled selected>Select</option>
+              <option *ngFor="let option of parkingspacelist" [value]="option.parking_lot_id">{{option.parking_lot_name}}</option>
+            </select>
+          <!-- </div> -->
+     </ng-container>
+   
+  </div>
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="col-sm-3">
+        <div class="form-group"><label>Parking Date(From)</label>
+          <input type="datetime-local" class="form-control  w-100" [ngModel]="date " (ngModelChange)="date = $event">
+        </div>
+      </div>
+      <div class="col-sm-3">
+        <div class="form-group"><label>Parking Date(To)</label>
+          <input type="datetime-local" class="form-control  w-100" [ngModel]="todate "
+            (ngModelChange)="todate = $event">
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <br />
+          <button type="button" style="margin:5px;" class="btn btn-primary"
+            (click)="loadDataByTabFilter()">Filter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab -->
+    <ul class="custom-tab-header">
+      <li [class.active]="activeTab === 'Daily'" (click)="setActiveTab('Daily')">Daily Transaction Report</li>
+      <!-- <li [class.active]="activeTab === 'Forced'" (click)="setActiveTab('Forced')">Forced Exit Report</li> -->
+      <li [class.active]="activeTab === 'Zero'" (click)="setActiveTab('Zero')">Zero Bill Entry Report</li>
+    </ul>
+    <div>
+      <app-card [cardTitle]="activeTab === 'Daily' ? 'Daily Transaction' : 'Zero Bill Entry'" 
+       cardClass="User-Activity" blockClass="pb-0">
+      <div card-header class="d-flex justify-content-center align-items-center w-100 gap-5 py-2">
+
+  <div class="text-center">
+    <div class="text-success fw-bold" style="font-size: 25px;">
+      {{ totalentry }}
+    </div>
+    <div class="text-muted medium">Total Entry</div>
+  </div>
+
+  <div class="vr"></div> <!-- vertical divider -->
+
+  <div class="text-center">
+    <div class="text-danger fw-bold" style="font-size: 25px;">
+      {{ totalexit }}
+    </div>
+    <div class="text-muted medium">Total Exit</div>
+  </div>
+
+</div>
+        <div class="table-responsive">
+
+          <div class="mb-3">
+            <label ><strong>Select Columns to Show/Export:</strong><i (click)="toogleOptions()" class="fa fa-chevron-down"></i></label><br />
+            <div *ngIf="showoption">
+               <label *ngFor="let col of columnOptions; let i = index" class="me-3">
+              <input type="checkbox" [(ngModel)]="col.selected" (change)="onColumnChange()" />
+              {{ col.label }}
+            </label>
+            </div>
+           
+          </div>
+
+          <table id="mytable" class="table table-hover">
+            <thead>
+              <tr>
+                <th>Parking Space Name</th>
+                <th>Entry Type</th>
+                <th>Vehicle Type</th>
+                <th>Vehicle Number</th>
+                <th>Customer type</th>
+                <th>Owner Phone Number</th>
+                <th>Start Date</th>
+                <th>Entry Image</th>
+                <th [ngStyle]="{'display': activeTab == 'Daily' ? '' : 'none'}">End Date</th>
+                <th [ngStyle]="{'display': activeTab == 'Daily' ? '' : 'none'}">Exit Image</th>
+                <th [ngStyle]="{'display': activeTab == 'Daily' ? '' : 'none'}">Duration(Hr)</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <!-- <th class="text-right"></th> -->
+            </thead>
+            <tbody>
+              <tr *ngFor="let reportdata of report;let i= index;">
+                <td>
+                  <h6 class="m-0">{{reportdata.parking_lot_name}}</h6>
+                </td>
+                <td *ngIf="reportdata.type=='1'">
+                  <h6 class="m-0">Fastag</h6>
+                </td>
+                <td *ngIf="reportdata.type=='0'">
+                  <h6 class="m-0">Manual</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.vehtype}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.vehicleno}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.custtype}}</h6>
+                </td>
+                <td>
+                  <h6 class="m-0">{{reportdata.phonenumber}}</h6>
+                </td>
+                <td class="text-c-green">
+                  <h6 class="m-0">{{reportdata.startdate}}</h6>
+                </td>
+                <td style="text-align: center;"><a style="cursor: pointer;" data-toggle="modal" (click)="getIndex(i)"
+                    (click)="getEntryImage()" (click)="viewImg(img)"><i style="color: #c71c22" class=" fas fa-image "
+                      aria-hidden="true"></i></a></td>
+                <td [ngStyle]="{'display': activeTab == 'Daily' ? '' : 'none'}">
+                  <h6 class="m-0" >{{reportdata.enddate}}</h6>
+                </td>
+                <td [ngStyle]="{'display': activeTab == 'Daily' ? '' : 'none'}" style="text-align: center;"><a style="cursor: pointer;" data-toggle="modal" (click)="getIndex(i)"
+                    (click)="getExitImage()" (click)="viewImg(img)"><i style="color: #c71c22" class="fas fa-image "
+                      aria-hidden="true"></i></a></td>
+                      <td [ngStyle]="{'display': activeTab == 'Daily' ? '' : 'none'}"><h6 class="m-0">{{reportdata.duration}}</h6></td>
+                <td>
+                  <h6 class="m-0">{{reportdata.amount}}</h6>
+                </td>
+                <td *ngIf="reportdata.status=='1'">
+                  <h6 class="m-0">Parked</h6>
+                </td>
+                <td *ngIf="reportdata.status=='0'">
+                  <h6 class="m-0">Completed</h6>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <!-- </form> -->
+      </app-card>
+    </div>
+</div>
+<ngx-spinner type="ball-scale-multiple">
+   <p style="color:white">
+      Fetching Daily Transaction Details...
+    </p>
+</ngx-spinner>
+</div>
+
+
+<ng-template #img let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title h4" id="myLargeModalLabel">Parking Images</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.close('Close click')"
+      (click)="resetform()"></button>
+  </div>
+  <div class="modal-body" *ngIf="showimg==1">
+    <div *ngFor="let img of imageurl">
+      <img [src]="img">
+    </div>
+  </div>
+  <div class="modal-body" *ngIf="showimg==0">
+    <h5>No Image Found!</h5>
+  </div>
+</ng-template>
+
+<ng-template #download let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center">
+    <h5 class="modal-title h4 mb-0">Download Report</h5>
+
+    <button type="button" class="btn-close" (click)="modal.close()">
+    </button>
+  </div>
+
+  <div class="modal-body text-center p-5">
+
+    <h6 class="mb-4">Choose Download Format</h6>
+
+    <div class="d-flex justify-content-center gap-3">
+
+      <button type="button" class="btn btn-danger btn-lg" (click)="exportPDF()">
+        <i class="fa fa-file-pdf me-2"></i>
+        Download PDF
+      </button>
+
+      <button type="button" class="btn btn-success btn-lg" (click)="exportExcel()">
+        <i class="fa fa-file-excel me-2"></i>
+        Download Excel
+      </button>
+
+    </div>
+
+  </div>
+</ng-template>
+
+<div *ngIf="isPdfGenerating" class="pdf-overlay">
+
+  <div class="pdf-box">
+
+    <h5>Generating PDF...</h5>
+
+    <p>{{pdfStatus}}</p>
+
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+        [style.width.%]="pdfProgress">
+        {{pdfProgress}}%
+      </div>
+    </div>
+
+  </div>
+
+</div>
